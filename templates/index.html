@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionale Articoli</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .card-img-top {
+            height: 300px;
+            object-fit: contain;
+            background-color: #f8f9fa;
+            padding: 10px;
+        }
+        .keyword-tag {
+            display: inline-block;
+            background-color: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin: 2px;
+            font-size: 0.9em;
+        }
+        .frase-generata {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .brand-btn {
+            margin: 5px 5px 10px 0;
+            font-size: 1.1em;
+        }
+        @media (max-width: 767px) {
+            .card-img-top {
+                height: 180px;
+                padding: 5px;
+            }
+            .col-md-4 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <h1 class="mb-4">Gestionale Articoli</h1>
+        
+        <!-- Form per nuovo articolo -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Nuovo Articolo</h5>
+                <form id="articoloForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="nome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="brand" class="form-label">Brand</label>
+                        <select class="form-select" id="brand" required>
+                            <option value="">Seleziona un brand</option>
+                            <option value="Louis Vuitton">Louis Vuitton</option>
+                            <option value="Gucci">Gucci</option>
+                            <option value="Hermès">Hermès</option>
+                            <option value="Chanel">Chanel</option>
+                            <option value="Prada">Prada</option>
+                            <option value="Dior">Dior</option>
+                            <option value="Balenciaga">Balenciaga</option>
+                            <option value="Fendi">Fendi</option>
+                            <option value="Bottega Veneta">Bottega Veneta</option>
+                            <option value="Saint Laurent">Saint Laurent</option>
+                            <option value="Burberry">Burberry</option>
+                            <option value="Valentino">Valentino</option>
+                            <option value="Givenchy">Givenchy</option>
+                            <option value="Versace">Versace</option>
+                            <option value="Dolce & Gabbana">Dolce & Gabbana</option>
+                            <option value="Coach">Coach</option>
+                            <option value="Pinko">Pinko</option>
+                            <option value="Celine">Celine</option>
+                            <option value="Salvatore Ferragamo">Salvatore Ferragamo</option>
+                            <option value="Michael Kors">Michael Kors</option>
+                            <option value="Moschino">Moschino</option>
+                            <option value="Miu Miu">Miu Miu</option>
+                            <option value="Tom Ford">Tom Ford</option>
+                            <option value="Alexander McQueen">Alexander McQueen</option>
+                            <option value="Stella McCartney">Stella McCartney</option>
+                            <option value="Jimmy Choo">Jimmy Choo</option>
+                            <option value="Loewe">Loewe</option>
+                            <option value="Longchamp">Longchamp</option>
+                            <option value="Marc Jacobs">Marc Jacobs</option>
+                            <option value="Philipp Plein">Philipp Plein</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="immagine" class="form-label">Immagine</label>
+                        <input type="file" class="form-control" id="immagine" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label for="keywords" class="form-label">Parole chiave (separate da virgola)</label>
+                        <input type="text" class="form-control" id="keywords" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salva</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Sezione brand -->
+        <div id="brandSection" class="mb-4">
+            <!-- I brand verranno inseriti qui -->
+        </div>
+
+        <!-- Lista articoli -->
+        <div class="row" id="articoliList">
+            <!-- Gli articoli verranno inseriti qui dinamicamente -->
+        </div>
+        <button id="backToBrands" class="btn btn-secondary d-none mt-3">Torna ai brand</button>
+    </div>
+
+    <!-- Template per la card articolo -->
+    <template id="articoloTemplate">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="" class="card-img-top" alt="">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <p class="card-text text-muted brand-text"></p>
+                    <div class="keywords-container mb-3"></div>
+                    <div class="frase-generata d-none">
+                        <p class="mb-2"></p>
+                        <button class="btn btn-sm btn-outline-secondary copy-btn">
+                            <i class="fas fa-copy"></i> Copia
+                        </button>
+                    </div>
+                    <button class="btn btn-primary genera-frase-btn">Genera Frase</button>
+                    <button class="btn btn-warning edit-btn">Modifica</button>
+                    <button class="btn btn-danger delete-btn">Elimina</button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        let articoliGlobal = [];
+        let brandSelezionato = null;
+
+        // Funzioni di utilità
+        function showAlert(message, type = 'success') {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.container').insertBefore(alert, document.querySelector('.card'));
+            setTimeout(() => alert.remove(), 3000);
+        }
+
+        // Gestione form
+        document.getElementById('articoloForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('nome', document.getElementById('nome').value);
+            formData.append('brand', document.getElementById('brand').value);
+            formData.append('keywords', document.getElementById('keywords').value);
+            
+            const immagine = document.getElementById('immagine').files[0];
+            if (immagine) {
+                formData.append('immagine', immagine);
+            }
+
+            try {
+                const response = await fetch('/api/articoli', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    showAlert('Articolo creato con successo!');
+                    e.target.reset();
+                    loadArticoli();
+                } else {
+                    throw new Error('Errore nella creazione dell\'articolo');
+                }
+            } catch (error) {
+                showAlert(error.message, 'danger');
+            }
+        });
+
+        // Caricamento articoli
+        async function loadArticoli() {
+            try {
+                const response = await fetch('/api/articoli');
+                const articoli = await response.json();
+                articoliGlobal = articoli;
+                mostraBrand(articoli);
+                mostraArticoli([]); // Nasconde gli articoli finché non si seleziona un brand
+            } catch (error) {
+                showAlert('Errore nel caricamento degli articoli', 'danger');
+            }
+        }
+
+        // Mostra solo i brand presenti
+        function mostraBrand(articoli) {
+            const brandSection = document.getElementById('brandSection');
+            brandSection.innerHTML = '';
+            const brands = [...new Set(articoli.map(a => a.brand))];
+            brands.forEach(brand => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline-dark brand-btn';
+                btn.textContent = brand;
+                btn.onclick = () => {
+                    brandSelezionato = brand;
+                    mostraArticoli(articoliGlobal.filter(a => a.brand === brand));
+                    document.getElementById('backToBrands').classList.remove('d-none');
+                    brandSection.classList.add('d-none');
+                };
+                brandSection.appendChild(btn);
+            });
+        }
+
+        // Mostra gli articoli di un brand
+        function mostraArticoli(articoli) {
+            const container = document.getElementById('articoliList');
+            container.innerHTML = '';
+            articoli.forEach(articolo => {
+                const template = document.getElementById('articoloTemplate');
+                const clone = template.content.cloneNode(true);
+                
+                // Popola i dati
+                const card = clone.querySelector('.card');
+                card.dataset.id = articolo.id;
+                
+                const img = clone.querySelector('.card-img-top');
+                img.src = articolo.immagine ? `/static/uploads/${articolo.immagine}` : 'https://via.placeholder.com/300x300';
+                
+                clone.querySelector('.card-title').textContent = articolo.nome;
+                clone.querySelector('.brand-text').textContent = articolo.brand;
+                
+                const keywordsContainer = clone.querySelector('.keywords-container');
+                articolo.keywords.forEach(keyword => {
+                    const tag = document.createElement('span');
+                    tag.className = 'keyword-tag';
+                    tag.textContent = keyword;
+                    keywordsContainer.appendChild(tag);
+                });
+
+                // Gestione pulsanti
+                clone.querySelector('.genera-frase-btn').addEventListener('click', () => generaFrase(articolo.id, card));
+                clone.querySelector('.edit-btn').addEventListener('click', () => editArticolo(articolo));
+                clone.querySelector('.delete-btn').addEventListener('click', () => deleteArticolo(articolo.id));
+                clone.querySelector('.copy-btn').addEventListener('click', () => copyFrase(card));
+
+                container.appendChild(clone);
+            });
+        }
+
+        // Torna ai brand
+        document.getElementById('backToBrands').addEventListener('click', () => {
+            mostraBrand(articoliGlobal);
+            mostraArticoli([]);
+            document.getElementById('backToBrands').classList.add('d-none');
+            document.getElementById('brandSection').classList.remove('d-none');
+        });
+
+        // Generazione frase
+        async function generaFrase(id, card) {
+            try {
+                const response = await fetch(`/api/genera-frase/${id}`);
+                const data = await response.json();
+                
+                const fraseContainer = card.querySelector('.frase-generata');
+                fraseContainer.classList.remove('d-none');
+                fraseContainer.querySelector('p').textContent = data.frase;
+            } catch (error) {
+                showAlert('Errore nella generazione della frase', 'danger');
+            }
+        }
+
+        // Copia frase
+        function copyFrase(card) {
+            const frase = card.querySelector('.frase-generata p').textContent;
+            navigator.clipboard.writeText(frase).then(() => {
+                showAlert('Frase copiata negli appunti!');
+            });
+        }
+
+        // Modifica articolo
+        function editArticolo(articolo) {
+            document.getElementById('nome').value = articolo.nome;
+            document.getElementById('brand').value = articolo.brand;
+            document.getElementById('keywords').value = articolo.keywords.join(', ');
+            
+            const form = document.getElementById('articoloForm');
+            form.dataset.editId = articolo.id;
+            
+            form.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Elimina articolo
+        async function deleteArticolo(id) {
+            if (!confirm('Sei sicuro di voler eliminare questo articolo?')) return;
+            
+            try {
+                const response = await fetch(`/api/articoli/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showAlert('Articolo eliminato con successo!');
+                    loadArticoli();
+                } else {
+                    throw new Error('Errore nell\'eliminazione dell\'articolo');
+                }
+            } catch (error) {
+                showAlert(error.message, 'danger');
+            }
+        }
+
+        // Carica gli articoli all'avvio
+        loadArticoli();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
