@@ -20,6 +20,8 @@ class Articolo(db.Model):
     immagine = db.Column(db.String(200))
     keywords = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    colore = db.Column(db.String(50))
+    materiale = db.Column(db.String(50))
 
     def to_dict(self):
         return {
@@ -27,6 +29,8 @@ class Articolo(db.Model):
             'nome': self.nome,
             'brand': self.brand,
             'immagine': self.immagine,
+            'colore': self.colore,
+            'materiale': self.materiale,
             'keywords': self.keywords.split(',') if self.keywords else []
         }
 
@@ -58,6 +62,8 @@ def create_articolo():
         nome=data['nome'],
         brand=data['brand'],
         immagine=filename,
+        colore=data.get('colore', ''),
+        materiale=data.get('materiale', ''),
         keywords=data['keywords']
     )
     
@@ -73,6 +79,8 @@ def update_articolo(id):
     
     articolo.nome = data['nome']
     articolo.brand = data['brand']
+    articolo.colore = data.get('colore', '')
+    articolo.materiale = data.get('materiale', '')
     articolo.keywords = data['keywords']
     
     file = request.files.get('immagine')
@@ -121,29 +129,45 @@ def estrai_colore_materiale(keywords):
 @app.route('/api/genera-frase/<int:id>', methods=['GET'])
 def genera_frase(id):
     articolo = Articolo.query.get_or_404(id)
+    colore = articolo.colore.strip() if articolo.colore else ''
+    materiale = articolo.materiale.strip() if articolo.materiale else ''
     keywords = articolo.keywords.split(',') if articolo.keywords else []
+    keywords = [k.strip() for k in keywords if k.strip()]
     brand = articolo.brand
-    
-    if not keywords:
-        return jsonify({'frase': 'Nessuna parola chiave disponibile'})
-    
-    # Schemi fraseologici descrittivi/emozionali
-    schemi = [
-        f"{brand}: {{keyword1}} e {{keyword2}} si fondono in un articolo che trasmette {{keyword3}}.",
-        f"Lasciati conquistare dall'eleganza di {brand}, dove {{keyword1}} e {{keyword2}} incontrano la {{keyword3}}.",
-        f"Con {brand}, ogni dettaglio racconta una storia di {{keyword1}}, {{keyword2}} e {{keyword3}}.",
-        f"Scopri la magia di {brand}: {{keyword1}}, {{keyword2}} e un tocco di {{keyword3}} per emozionare ogni giorno.",
-        f"{brand} presenta un articolo che unisce {{keyword1}}, {{keyword2}} e {{keyword3}} in un'esperienza unica."
-    ]
-    
-    schema = random.choice(schemi)
-    selected_keywords = random.sample(keywords, min(3, len(keywords)))
-    frase1 = schema.format(
-        keyword1=selected_keywords[0].strip(),
-        keyword2=selected_keywords[1].strip() if len(selected_keywords) > 1 else selected_keywords[0].strip(),
-        keyword3=selected_keywords[2].strip() if len(selected_keywords) > 2 else selected_keywords[0].strip()
-    )
-    frase2 = "Ti abbiamo inviato un'offerta ad un prezzo ulteriormente scontato, cogli subito questa occasione irripetibile!"
+    nome = articolo.nome
+
+    varianti = []
+    # Variante completa
+    if colore and materiale and keywords:
+        varianti.append(f"{brand} presenta {nome} in {materiale} {colore} con dettagli come {', '.join(keywords)}.")
+        varianti.append(f"Scopri {nome} di {brand}: {materiale} {colore}, {', '.join(keywords)} e stile unico.")
+    # Solo colore e materiale
+    if colore and materiale:
+        varianti.append(f"{brand} {nome} in {materiale} {colore}, un classico intramontabile.")
+        varianti.append(f"Eleganza {colore} e qualità {materiale} per {nome} di {brand}.")
+    # Solo colore
+    if colore:
+        varianti.append(f"{brand} {nome} nella raffinata tonalità {colore}.")
+        varianti.append(f"Scopri il fascino del {colore} con {nome} di {brand}.")
+    # Solo materiale
+    if materiale:
+        varianti.append(f"{brand} {nome} realizzato in pregiato {materiale}.")
+        varianti.append(f"Materiale: {materiale}. Un must firmato {brand}.")
+    # Solo keyword
+    if keywords:
+        varianti.append(f"{brand} {nome}: {', '.join(keywords)}.")
+        varianti.append(f"Lasciati conquistare da {nome} di {brand}, {', '.join(keywords)}.")
+    # Nessuna info
+    if not (colore or materiale or keywords):
+        varianti.append(f"{brand} presenta {nome}, un articolo esclusivo.")
+        varianti.append(f"Scopri {nome} di {brand}, stile e unicità.")
+
+    frase1 = random.choice(varianti)
+    frase2 = random.choice([
+        "Ti abbiamo inviato un'offerta ad un prezzo ulteriormente scontato, cogli subito questa occasione irripetibile!",
+        "Approfitta ora di questa proposta esclusiva!",
+        "Non lasciarti sfuggire questa opportunità unica!"
+    ])
     frase = frase1 + " " + frase2
     return jsonify({'frase': frase})
 

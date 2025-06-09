@@ -97,8 +97,16 @@
                         <input type="file" class="form-control" id="immagine" accept="image/*">
                     </div>
                     <div class="mb-3">
-                        <label for="keywords" class="form-label">Parole chiave (separate da virgola)</label>
-                        <input type="text" class="form-control" id="keywords" required>
+                        <label for="colore" class="form-label">Colore (opzionale)</label>
+                        <input type="text" class="form-control" id="colore" placeholder="Es: nero, rosso, beige...">
+                    </div>
+                    <div class="mb-3">
+                        <label for="materiale" class="form-label">Materiale (opzionale)</label>
+                        <input type="text" class="form-control" id="materiale" placeholder="Es: pelle, tessuto, cotone...">
+                    </div>
+                    <div class="mb-3">
+                        <label for="keywords" class="form-label">Altre parole chiave (separate da virgola, opzionali)</label>
+                        <input type="text" class="form-control" id="keywords" placeholder="Es: tracolla, borchie, vintage...">
                     </div>
                     <button type="submit" class="btn btn-primary">Salva</button>
                 </form>
@@ -163,6 +171,8 @@
             formData.append('nome', document.getElementById('nome').value);
             formData.append('brand', document.getElementById('brand').value);
             formData.append('keywords', document.getElementById('keywords').value);
+            formData.append('colore', document.getElementById('colore').value);
+            formData.append('materiale', document.getElementById('materiale').value);
             
             const immagine = document.getElementById('immagine').files[0];
             if (immagine) {
@@ -289,11 +299,11 @@
         function editArticolo(articolo) {
             document.getElementById('nome').value = articolo.nome;
             document.getElementById('brand').value = articolo.brand;
+            document.getElementById('colore').value = articolo.colore || '';
+            document.getElementById('materiale').value = articolo.materiale || '';
             document.getElementById('keywords').value = articolo.keywords.join(', ');
-            
             const form = document.getElementById('articoloForm');
             form.dataset.editId = articolo.id;
-            
             form.scrollIntoView({ behavior: 'smooth' });
         }
 
