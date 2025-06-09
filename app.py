@@ -164,7 +164,9 @@ def genera_frase(id):
 
     frase1 = random.choice(varianti)
     frase2 = random.choice([
-        "Ti abbiamo inviato un'offerta ad un prezzo ulteriormente scontato, cogli subito questa occasione irripetibile!"
+        "Ti abbiamo inviato un'offerta ad un prezzo ulteriormente scontato, cogli subito questa occasione irripetibile!",
+        "Ti abbiamo inviato un'offerta ad un prezzo ulteriormente scontato, approfitta ora di questa proposta esclusiva!",
+        "Ti abbiamo inviato un'offerta ad un prezzo ulteriormente scontato, non lasciarti sfuggire questa opportunità unica!"
     ])
     frase = frase1 + " " + frase2
     return jsonify({'frase': frase})
