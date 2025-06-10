@@ -6,7 +6,19 @@ import random
 import re
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gestionale.db'
+
+# Configurazione database: PostgreSQL se disponibile, altrimenti SQLite
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    # Render/Heroku fornisce DATABASE_URL per PostgreSQL
+    if DATABASE_URL.startswith('postgres://'):
+        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+else:
+    # Fallback a SQLite per sviluppo locale
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gestionale.db'
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 db = SQLAlchemy(app)
 
@@ -45,8 +57,14 @@ class Articolo(db.Model):
         }
 
 with app.app_context():
-    db.drop_all()
-    db.create_all()
+    # In produzione non droppiamo le tabelle, solo le creiamo se non esistono
+    if os.environ.get('DATABASE_URL'):
+        # Produzione: crea solo tabelle mancanti
+        db.create_all()
+    else:
+        # Sviluppo locale: ricrea tutto
+        db.drop_all()
+        db.create_all()
 
 @app.route('/')
 def index():
