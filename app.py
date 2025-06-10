@@ -10,7 +10,12 @@ app = Flask(__name__)
 # Configurazione database: Supabase PostgreSQL con SSL
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
-    # Supabase richiede SSL - aggiungiamo sslmode se mancante
+    # Supabase connessioni:
+    # - Direct connection: db.[ref].supabase.co:5432 (IPv6 only) 
+    # - Session mode: aws-0-[region].pooler.supabase.com:5432 (IPv4/IPv6) ← Render
+    # - Transaction mode: aws-0-[region].pooler.supabase.com:6543 (IPv4/IPv6)
+    
+    # Assicuriamoci che sia in formato corretto
     if 'supabase.co' in DATABASE_URL and 'sslmode' not in DATABASE_URL:
         DATABASE_URL += '?sslmode=require'
     
