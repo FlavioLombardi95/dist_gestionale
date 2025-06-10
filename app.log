@@ -351,3 +351,25 @@
 2025-06-10 17:21:05,531 - __main__ - ERROR - Errore nella generazione frase per articolo 1: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
 2025-06-10 17:21:05,531 - __main__ - ERROR - Errore in genera_frase: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
 2025-06-10 17:21:05,532 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:21:05] "[35m[1mGET /api/genera-frase/1?stile=professionale HTTP/1.1[0m" 500 -
+2025-06-10 17:23:28,625 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-10 17:23:28,817 - werkzeug - INFO -  * Restarting with stat
+2025-06-10 17:23:29,515 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-10 17:23:29,555 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-10 17:23:29,561 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-10 17:23:29,626 - werkzeug - WARNING -  * Debugger is active!
+2025-06-10 17:23:29,640 - werkzeug - INFO -  * Debugger PIN: 141-811-908
+2025-06-10 17:23:58,975 - __main__ - INFO - Articolo creato: 1 - Borsa Chanel Classica
+2025-06-10 17:23:58,976 - __main__ - INFO - POST /api/articoli - 0.018s
+2025-06-10 17:23:58,976 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:23:58] "[35m[1mPOST /api/articoli HTTP/1.1[0m" 201 -
+2025-06-10 17:24:15,774 - __main__ - INFO - Frase generata per articolo 1 con stile 'professionale'
+2025-06-10 17:24:15,774 - __main__ - INFO - GET /api/genera-frase/1 - 0.004s
+2025-06-10 17:24:15,775 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:24:15] "GET /api/genera-frase/1?stile=professionale HTTP/1.1" 200 -
+2025-06-10 17:24:23,693 - __main__ - INFO - Frase generata per articolo 1 con stile 'professionale'
+2025-06-10 17:24:23,694 - __main__ - INFO - GET /api/genera-frase/1 - 0.002s
+2025-06-10 17:24:23,694 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:24:23] "GET /api/genera-frase/1?stile=professionale HTTP/1.1" 200 -
+2025-06-10 17:24:23,714 - __main__ - INFO - Frase generata per articolo 1 con stile 'professionale'
+2025-06-10 17:24:23,714 - __main__ - INFO - GET /api/genera-frase/1 - 0.002s
+2025-06-10 17:24:23,715 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:24:23] "GET /api/genera-frase/1?stile=professionale HTTP/1.1" 200 -
+2025-06-10 17:24:23,735 - __main__ - INFO - Frase generata per articolo 1 con stile 'professionale'
+2025-06-10 17:24:23,736 - __main__ - INFO - GET /api/genera-frase/1 - 0.002s
+2025-06-10 17:24:23,736 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:24:23] "GET /api/genera-frase/1?stile=professionale HTTP/1.1" 200 -

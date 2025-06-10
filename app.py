@@ -1124,7 +1124,7 @@ def _get_templates_per_stile(stile: str, nome_completo: str, desc_materiali: str
         'professionale': [
             f"Articolo di qualità: {nome_completo} {desc_materiali}, {desc_condizioni}, con certificazione di autenticità.",
             f"Specifiche tecniche: {art_det} {nome_completo} {desc_materiali} è {desc_condizioni} e {desc_rarita}.",
-            f"Articolo {aggettivo_brand}: {nome_completo} {desc_materiali}, classificat{suffisso} {desc_condizioni}.",
+            f"Articolo {concordanza_aggettivo(aggettivo_brand, 'm')}: {nome_completo} {desc_materiali}, classificat{suffisso} {desc_condizioni}.",
             f"Dettagli del prodotto: quest{suffisso} {nome_completo} {desc_materiali} presenta ottime caratteristiche.",
             f"Articolo da collezione: {art_det} {nome_completo} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
             f"Scheda prodotto: {nome_completo} {desc_materiali}, {desc_condizioni}, {desc_target}.",
