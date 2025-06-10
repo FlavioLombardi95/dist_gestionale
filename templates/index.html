@@ -16,120 +16,127 @@
             --danger-color: #e74c3c;
             --light-bg: #f8f9fa;
             --dark-text: #2c3e50;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: var(--dark-text);
         }
 
         .main-container {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: var(--box-shadow);
             margin: 20px auto;
-            padding: 30px;
+            padding: 32px;
             max-width: 1400px;
         }
 
         .header-section {
             text-align: center;
             margin-bottom: 40px;
-            padding: 20px 0;
-            border-bottom: 2px solid var(--light-bg);
+            padding-bottom: 24px;
+            border-bottom: 1px solid #e9ecef;
         }
 
         .header-section h1 {
             color: var(--primary-color);
             font-weight: 700;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            margin-bottom: 8px;
+            font-size: 2.2em;
         }
 
         .header-section p {
-            color: #7f8c8d;
-            font-size: 1.1em;
+            color: #6c757d;
+            font-size: 1em;
             margin-bottom: 0;
+            font-weight: 400;
         }
 
         .form-card {
             background: var(--light-bg);
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            margin-bottom: 30px;
-        }
-
-        .form-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            margin-bottom: 32px;
         }
 
         .form-card .card-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: var(--primary-color);
             color: white;
-            border-radius: 15px 15px 0 0 !important;
-            padding: 20px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            padding: 16px 24px;
             border: none;
         }
 
         .form-card .card-header h5 {
             margin: 0;
             font-weight: 600;
-            font-size: 1.3em;
+            font-size: 1.1em;
         }
 
         .form-control, .form-select {
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: var(--border-radius);
             padding: 12px 16px;
-            transition: all 0.3s ease;
-            font-size: 1em;
+            transition: var(--transition);
+            font-size: 0.95em;
         }
 
         .form-control:focus, .form-select:focus {
             border-color: var(--secondary-color);
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
-            transform: translateY(-2px);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
         }
 
         .form-label {
             font-weight: 600;
             color: var(--dark-text);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            font-size: 0.9em;
         }
 
         .btn {
-            border-radius: 10px;
-            padding: 12px 24px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
+            border-radius: var(--border-radius);
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: var(--transition);
             border: none;
+            font-size: 0.9em;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
         }
 
         .btn-success {
-            background: linear-gradient(135deg, var(--success-color), #229954);
+            background: var(--success-color);
+            color: white;
         }
 
         .btn-warning {
-            background: linear-gradient(135deg, var(--warning-color), #d68910);
+            background: var(--warning-color);
+            color: white;
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, var(--danger-color), #c0392b);
+            background: var(--danger-color);
+            color: white;
         }
 
         .btn-outline-dark {
@@ -144,74 +151,67 @@
         }
 
         .card-img-top {
-            height: 300px;
+            height: 280px;
             object-fit: contain;
-            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-            padding: 20px;
-            border-radius: 15px 15px 0 0;
-            transition: all 0.3s ease;
-        }
-
-        .card-img-top:hover {
-            transform: scale(1.05);
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            transition: var(--transition);
         }
 
         .keyword-tag {
             display: inline-block;
-            background: linear-gradient(135deg, var(--secondary-color), #3498db);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            margin: 4px;
-            font-size: 0.85em;
+            background: #e9ecef;
+            color: var(--dark-text);
+            padding: 4px 12px;
+            border-radius: 16px;
+            margin: 2px;
+            font-size: 0.8em;
             font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .keyword-tag:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+            border: 1px solid #dee2e6;
         }
 
         .frase-generata {
-            background: linear-gradient(135deg, #e8f5e8, #d4edda);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 15px;
-            border-left: 5px solid var(--success-color);
-            transition: all 0.3s ease;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 16px;
+            border-radius: var(--border-radius);
+            margin-top: 16px;
         }
 
         .frase-generata p {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-style: italic;
             color: var(--dark-text);
+            line-height: 1.5;
         }
 
         .brand-btn {
-            margin: 8px;
-            font-size: 1.1em;
+            margin: 6px;
+            font-size: 1em;
             min-width: 140px;
-            transition: all 0.3s ease;
+            transition: var(--transition);
+            padding: 12px 20px;
         }
 
         .search-container {
             background: white;
-            border-radius: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
             padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+            box-shadow: var(--box-shadow);
         }
 
         .loading-spinner {
             display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--secondary-color);
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--secondary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-right: 10px;
+            margin-right: 8px;
         }
 
         @keyframes spin {
@@ -221,10 +221,10 @@
 
         .preview-container {
             max-width: 200px;
-            margin: 10px 0;
-            border-radius: 10px;
+            margin: 12px 0;
+            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: var(--box-shadow);
         }
 
         .preview-container img {
@@ -234,93 +234,104 @@
         }
 
         .stats-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 15px;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
             padding: 20px;
             text-align: center;
             margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
         .stats-card h3 {
             margin: 0;
             font-weight: 700;
+            color: var(--primary-color);
         }
 
         .stats-card p {
-            margin: 5px 0 0 0;
-            opacity: 0.9;
+            margin: 8px 0 0 0;
+            color: #6c757d;
+            font-size: 0.9em;
         }
 
         .articolo-card {
-            border: none;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
             overflow: hidden;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
+            background: white;
         }
 
         .articolo-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
         .articolo-card .card-body {
-            padding: 25px;
+            padding: 20px;
         }
 
         .articolo-card .card-title {
             color: var(--primary-color);
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1em;
         }
 
         .status-badge {
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 12px;
+            right: 12px;
             z-index: 10;
         }
 
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #7f8c8d;
+            color: #6c757d;
         }
 
         .empty-state i {
-            font-size: 4em;
-            margin-bottom: 20px;
+            font-size: 3em;
+            margin-bottom: 16px;
             opacity: 0.5;
         }
 
         .floating-action {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            background: var(--secondary-color);
             border: none;
             color: white;
-            font-size: 1.5em;
-            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.4);
-            transition: all 0.3s ease;
+            font-size: 1.3em;
+            box-shadow: 0 4px 16px rgba(52, 152, 219, 0.3);
+            transition: var(--transition);
             z-index: 1000;
         }
 
         .floating-action:hover {
             transform: scale(1.1);
-            box-shadow: 0 15px 40px rgba(52, 152, 219, 0.6);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
         }
 
         .validation-feedback {
             display: block;
-            font-size: 0.875em;
-            margin-top: 5px;
-            transition: all 0.3s ease;
+            font-size: 0.8em;
+            margin-top: 4px;
+            transition: var(--transition);
         }
 
         .form-control.is-valid {
@@ -331,33 +342,93 @@
             border-color: var(--danger-color);
         }
 
+        /* Style selector professionale */
+        .style-selector-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .style-option {
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: white;
+            position: relative;
+        }
+
+        .style-option:hover {
+            border-color: var(--secondary-color);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
+        }
+
+        .style-option.selected {
+            border-color: var(--secondary-color);
+            background: #f8f9fa;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+        }
+
+        .style-option h6 {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .style-option .description {
+            font-size: 0.85em;
+            color: #6c757d;
+            line-height: 1.4;
+        }
+
+        .style-badge {
+            font-size: 0.75em;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+
+        .bg-gradient-elegante { background: #6c757d; color: white; }
+        .bg-gradient-emotivo { background: #e74c3c; color: white; }
+        .bg-gradient-amichevole { background: #f39c12; color: white; }
+        .bg-gradient-professionale { background: #17a2b8; color: white; }
+        .bg-gradient-esclusivo { background: #6f42c1; color: white; }
+
         @media (max-width: 768px) {
             .main-container {
                 margin: 10px;
                 padding: 20px;
-                border-radius: 15px;
+                border-radius: var(--border-radius);
             }
             
             .header-section h1 {
-                font-size: 2em;
+                font-size: 1.8em;
             }
             
             .card-img-top {
                 height: 200px;
-                padding: 10px;
+                padding: 12px;
             }
             
             .floating-action {
                 bottom: 20px;
                 right: 20px;
-                width: 50px;
-                height: 50px;
-                font-size: 1.2em;
+                width: 48px;
+                height: 48px;
+                font-size: 1.1em;
+            }
+
+            .style-selector-grid {
+                grid-template-columns: 1fr;
             }
         }
 
         .fade-in {
-            animation: fadeIn 0.6s ease-in;
+            animation: fadeIn 0.4s ease-in;
         }
 
         @keyframes fadeIn {
@@ -366,7 +437,7 @@
         }
 
         .slide-in {
-            animation: slideIn 0.5s ease-out;
+            animation: slideIn 0.3s ease-out;
         }
 
         @keyframes slideIn {
@@ -374,59 +445,34 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Badge stili generazione frasi */
-        .style-badge {
-            font-size: 0.8em;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-weight: 600;
-            margin-right: 10px;
-            border: 2px solid transparent;
+        /* Alert professionale */
+        .alert {
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 500;
         }
 
-        .bg-gradient-elegante {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
         }
 
-        .bg-gradient-emotivo {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            color: white;
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
         }
 
-        .bg-gradient-amichevole {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            color: white;
+        .alert-info {
+            background: #cce7ff;
+            color: #0c5460;
         }
-
-        .bg-gradient-professionale {
-            background: linear-gradient(135deg, #43e97b, #38f9d7);
-            color: #2c3e50;
-        }
-
-        .bg-gradient-esclusivo {
-            background: linear-gradient(135deg, #fa709a, #fee140);
-            color: #2c3e50;
-        }
-
-        /* Style selector modal enhancements */
-        .style-selector-modal .swal2-popup {
-            border-radius: 20px;
-            padding: 30px;
-        }
-
-        .style-selector-modal .swal2-title {
-            color: var(--primary-color);
-        }
-
-        /* Miglioramenti generali */
     </style>
 </head>
 <body>
     <div class="main-container">
         <!-- Header migliorato -->
         <div class="header-section">
-            <h1><i class="fas fa-gem"></i> Gestionale Articoli di Lusso</h1>
+            <h1>Gestionale Articoli di Lusso</h1>
             <p>Sistema professionale per la gestione e promozione di articoli di lusso</p>
         </div>
 
@@ -461,7 +507,7 @@
         <!-- Form migliorato per nuovo articolo -->
         <div class="form-card card">
             <div class="card-header">
-                <h5><i class="fas fa-plus-circle"></i> <span id="formTitle">Nuovo Articolo</span></h5>
+                <h5><i class="fas fa-plus"></i> <span id="formTitle">Nuovo Articolo</span></h5>
             </div>
             <div class="card-body">
                 <form id="articoloForm" enctype="multipart/form-data">
@@ -600,7 +646,7 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="vintage">
                                     <label class="form-check-label" for="vintage">
-                                        <i class="fas fa-history"></i> Articolo Vintage
+                                        Articolo Vintage
                                     </label>
                                 </div>
                             </div>
@@ -757,6 +803,178 @@
             element.disabled = false;
         }
 
+        // Aggiorna statistiche con chiamata alle nuove API
+        async function updateStats(articoli) {
+            const totalArticoli = articoli.length;
+            const totalBrands = [...new Set(articoli.map(a => a.brand))].length;
+            const articoliVintage = articoli.filter(a => a.vintage).length;
+            
+            // Chiama API per statistiche frasi avanzate
+            try {
+                const response = await fetch('/api/statistiche-frasi');
+                if (response.ok) {
+                    const statsFrasi = await response.json();
+                    frasiGenerateCount = statsFrasi.total_frasi_generate;
+                    
+                    // Mostra statistiche avanzate se disponibili
+                    if (statsFrasi.total_frasi_generate > 0) {
+                        showAdvancedFraseStats(statsFrasi);
+                    }
+                } else {
+                    // Fallback alle statistiche locali
+                    frasiGenerateCount = 0;
+                }
+            } catch (error) {
+                console.log('Statistiche frasi non disponibili, uso fallback');
+                frasiGenerateCount = 0;
+            }
+            
+            // Animazione contatori
+            animateCounter('totalArticoli', totalArticoli);
+            animateCounter('totalBrands', totalBrands);
+            animateCounter('frasiGenerate', frasiGenerateCount);
+            animateCounter('articoliVintage', articoliVintage);
+        }
+
+        function showAdvancedFraseStats(stats) {
+            // Aggiungi tooltip avanzato alla statistica frasi
+            const frasiElement = document.getElementById('frasiGenerate');
+            if (frasiElement && stats.stats_stili) {
+                const stiliInfo = Object.entries(stats.stats_stili)
+                    .map(([stile, count]) => `${stile}: ${count}`)
+                    .join(', ');
+                
+                frasiElement.parentElement.title = 
+                    `Frasi per stile: ${stiliInfo}\n` +
+                    `Articoli attivi: ${stats.total_articoli_con_frasi}\n` +
+                    `Algoritmo ottimizzato attivo`;
+            }
+        }
+
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const startValue = parseInt(element.textContent) || 0;
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateCounter(currentTime) {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+                element.textContent = currentValue;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+
+            requestAnimationFrame(updateCounter);
+        }
+
+        // Generazione frase con modal professionale
+        async function generaFrase(id, card) {
+            // Modal professionale per selezione stile
+            const { value: stile } = await Swal.fire({
+                title: 'Seleziona lo Stile della Frase',
+                html: `
+                    <div class="mb-3">
+                        <p class="text-muted mb-0">Scegli il tono più adatto per il tuo messaggio promozionale</p>
+                    </div>
+                    <div class="style-selector-grid">
+                        <div class="style-option" data-style="elegante">
+                            <h6>Elegante</h6>
+                            <div class="description">Tono raffinato e sofisticato per una comunicazione di classe</div>
+                        </div>
+                        <div class="style-option" data-style="emotivo">
+                            <h6>Emotivo</h6>
+                            <div class="description">Linguaggio coinvolgente che tocca le emozioni del cliente</div>
+                        </div>
+                        <div class="style-option" data-style="amichevole">
+                            <h6>Amichevole</h6>
+                            <div class="description">Tono colloquiale e caloroso per un approccio personale</div>
+                        </div>
+                        <div class="style-option" data-style="professionale">
+                            <h6>Professionale</h6>
+                            <div class="description">Linguaggio tecnico e formale per clientela esperta</div>
+                        </div>
+                        <div class="style-option" data-style="esclusivo">
+                            <h6>Esclusivo</h6>
+                            <div class="description">Tono luxury per una clientela VIP e selezionata</div>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Genera Frase',
+                cancelButtonText: 'Annulla',
+                confirmButtonColor: '#3498db',
+                cancelButtonColor: '#6c757d',
+                customClass: {
+                    popup: 'swal-wide'
+                },
+                didOpen: () => {
+                    // Setup selezione stili
+                    const options = document.querySelectorAll('.style-option');
+                    let selectedStyle = 'elegante'; // Default
+                    
+                    // Preseleziona elegante
+                    options[0].classList.add('selected');
+                    
+                    options.forEach(option => {
+                        option.addEventListener('click', () => {
+                            options.forEach(opt => opt.classList.remove('selected'));
+                            option.classList.add('selected');
+                            selectedStyle = option.dataset.style;
+                        });
+                    });
+                },
+                preConfirm: () => {
+                    const selected = document.querySelector('.style-option.selected');
+                    return selected ? selected.dataset.style : 'elegante';
+                }
+            });
+            
+            if (!stile) return; // User cancelled
+            
+            const btn = card.querySelector('.genera-frase-btn');
+            const originalContent = showLoading(btn, 'Generando...');
+            
+            try {
+                const response = await fetch(`/api/genera-frase/${id}?stile=${stile}`);
+                if (!response.ok) throw new Error('Errore nella generazione della frase');
+                
+                const data = await response.json();
+                
+                const fraseContainer = card.querySelector('.frase-generata');
+                fraseContainer.classList.remove('d-none');
+                fraseContainer.classList.add('animate__animated', 'animate__fadeIn');
+                
+                // Aggiorna contenuto
+                const fraseContent = fraseContainer.querySelector('p');
+                fraseContent.textContent = data.frase;
+                
+                // Aggiungi badge stile
+                let styleBadge = fraseContainer.querySelector('.style-badge');
+                if (!styleBadge) {
+                    styleBadge = document.createElement('span');
+                    styleBadge.className = 'badge style-badge';
+                    fraseContainer.querySelector('.d-flex').prepend(styleBadge);
+                }
+                
+                styleBadge.textContent = stile.charAt(0).toUpperCase() + stile.slice(1);
+                styleBadge.className = `badge style-badge bg-gradient-${stile}`;
+                
+                // Incrementa contatore locale e aggiorna
+                frasiGenerateCount++;
+                updateStats(articoliGlobal);
+                
+                showAlert(`Frase generata con stile ${stile}`, 'success', 3000);
+            } catch (error) {
+                showAlert('Errore nella generazione della frase', 'danger');
+            } finally {
+                hideLoading(btn, originalContent);
+            }
+        }
+
         // Validazione in tempo reale
         function setupFormValidation() {
             const form = document.getElementById('articoloForm');
@@ -825,11 +1043,10 @@
             });
         }
 
-        // Gestione form migliorata
+        // Gestione form
         document.getElementById('articoloForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Validazione
             const form = e.target;
             const requiredFields = form.querySelectorAll('[required]');
             let isValid = true;
@@ -841,7 +1058,7 @@
             });
             
             if (!isValid) {
-                showAlert('Compila tutti i campi obbligatori!', 'danger');
+                showAlert('Compila tutti i campi obbligatori', 'danger');
                 return;
             }
 
@@ -876,7 +1093,7 @@
                     });
                     
                     if (response.ok) {
-                        showAlert('Articolo modificato con successo!', 'success');
+                        showAlert('Articolo modificato con successo', 'success');
                         resetForm();
                         loadArticoli();
                     } else {
@@ -889,7 +1106,7 @@
                     });
                     
                     if (response.ok) {
-                        showAlert('Articolo creato con successo!', 'success');
+                        showAlert('Articolo creato con successo', 'success');
                         resetForm();
                         loadArticoli();
                     } else {
@@ -909,7 +1126,6 @@
             form.reset();
             form.removeAttribute('data-edit-id');
             
-            // Reset validation
             form.querySelectorAll('.is-valid, .is-invalid').forEach(field => {
                 field.classList.remove('is-valid', 'is-invalid');
             });
@@ -917,17 +1133,14 @@
                 feedback.textContent = '';
             });
             
-            // Reset preview
             document.getElementById('previewContainer').classList.add('d-none');
-            
-            // Reset titles
             document.getElementById('formTitle').textContent = 'Nuovo Articolo';
             document.getElementById('submitText').textContent = 'Salva Articolo';
         }
 
         document.getElementById('resetBtn').addEventListener('click', resetForm);
 
-        // Caricamento articoli con animazioni
+        // Caricamento articoli
         async function loadArticoli() {
             try {
                 const response = await fetch('/api/articoli');
@@ -945,81 +1158,13 @@
                     document.getElementById('searchContainer').style.display = 'block';
                 }
                 
-                mostraArticoli([]); // Nasconde articoli finché non si seleziona un brand
+                mostraArticoli([]);
             } catch (error) {
                 showAlert('Errore nel caricamento degli articoli', 'danger');
             }
         }
 
-        // Aggiorna statistiche con chiamata alle nuove API
-        async function updateStats(articoli) {
-            const totalArticoli = articoli.length;
-            const totalBrands = [...new Set(articoli.map(a => a.brand))].length;
-            const articoliVintage = articoli.filter(a => a.vintage).length;
-            
-            // Chiama API per statistiche frasi avanzate
-            try {
-                const response = await fetch('/api/statistiche-frasi');
-                if (response.ok) {
-                    const statsFrasi = await response.json();
-                    frasiGenerateCount = statsFrasi.total_frasi_generate;
-                    
-                    // Mostra statistiche avanzate se disponibili
-                    if (statsFrasi.total_frasi_generate > 0) {
-                        showAdvancedFraseStats(statsFrasi);
-                    }
-                } else {
-                    // Fallback alle statistiche locali
-                    frasiGenerateCount = 0;
-                }
-            } catch (error) {
-                console.log('Statistiche frasi non disponibili, uso fallback');
-                frasiGenerateCount = 0;
-            }
-            
-            // Animazione contatori
-            animateCounter('totalArticoli', totalArticoli);
-            animateCounter('totalBrands', totalBrands);
-            animateCounter('frasiGenerate', frasiGenerateCount);
-            animateCounter('articoliVintage', articoliVintage);
-        }
-
-        function showAdvancedFraseStats(stats) {
-            // Aggiungi tooltip avanzato alla statistica frasi
-            const frasiElement = document.getElementById('frasiGenerate');
-            if (frasiElement && stats.stats_stili) {
-                const stiliInfo = Object.entries(stats.stats_stili)
-                    .map(([stile, count]) => `${stile}: ${count}`)
-                    .join(', ');
-                
-                frasiElement.parentElement.title = 
-                    `Frasi per stile: ${stiliInfo}\n` +
-                    `Articoli attivi: ${stats.total_articoli_con_frasi}\n` +
-                    `Algoritmo ottimizzato attivo 🚀`;
-            }
-        }
-
-        function animateCounter(elementId, targetValue) {
-            const element = document.getElementById(elementId);
-            const startValue = parseInt(element.textContent) || 0;
-            const duration = 1000;
-            const startTime = performance.now();
-
-            function updateCounter(currentTime) {
-                const elapsedTime = currentTime - startTime;
-                const progress = Math.min(elapsedTime / duration, 1);
-                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
-                element.textContent = currentValue;
-
-                if (progress < 1) {
-                    requestAnimationFrame(updateCounter);
-                }
-            }
-
-            requestAnimationFrame(updateCounter);
-        }
-
-        // Mostra brand con animazioni
+        // Mostra brand
         function mostraBrand(articoli) {
             const brandSection = document.getElementById('brandSection');
             brandSection.innerHTML = '';
@@ -1031,7 +1176,7 @@
             
             const title = document.createElement('h4');
             title.className = 'mb-4 text-primary';
-            title.innerHTML = '<i class="fas fa-tags"></i> Seleziona un Brand';
+            title.textContent = 'Seleziona un Brand';
             brandSection.appendChild(title);
             
             brands.forEach((brand, index) => {
@@ -1051,7 +1196,7 @@
             });
         }
 
-        // Mostra articoli con animazioni
+        // Mostra articoli
         function mostraArticoli(articoli) {
             const container = document.getElementById('articoliList');
             container.innerHTML = '';
@@ -1076,7 +1221,6 @@
                     const template = document.getElementById('articoloTemplate');
                     const clone = template.content.cloneNode(true);
                     
-                    // Popola i dati
                     const card = clone.querySelector('.card');
                     card.dataset.id = articolo.id;
                     
@@ -1096,7 +1240,6 @@
                     if (articolo.rarita) detailsHtml += `<span class="badge bg-danger me-1">${articolo.rarita}</span>`;
                     details.innerHTML = detailsHtml;
                     
-                    // Badge vintage
                     if (articolo.vintage) {
                         clone.querySelector('.vintage-badge').classList.remove('d-none');
                     }
@@ -1121,7 +1264,7 @@
             });
         }
 
-        // Setup ricerca e filtri
+        // Setup ricerca
         function setupSearch(articoli) {
             const searchInput = document.getElementById('searchInput');
             const sortSelect = document.getElementById('sortSelect');
@@ -1132,7 +1275,6 @@
                 const searchTerm = searchInput.value.toLowerCase();
                 const sortBy = sortSelect.value;
                 
-                // Filtra
                 filteredArticoli = articoli.filter(articolo => 
                     articolo.nome.toLowerCase().includes(searchTerm) ||
                     articolo.brand.toLowerCase().includes(searchTerm) ||
@@ -1141,7 +1283,6 @@
                     articolo.keywords.some(k => k.toLowerCase().includes(searchTerm))
                 );
                 
-                // Ordina
                 if (sortBy === 'nome') {
                     filteredArticoli.sort((a, b) => a.nome.localeCompare(b.nome));
                 } else if (sortBy === 'brand') {
@@ -1167,206 +1308,7 @@
             brandSelezionato = null;
         });
 
-        // Generazione frase con indicatori di miglioramento
-        async function generaFrase(id, card) {
-            // Mostra modal per selezione stile con indicatori di novità
-            const { value: stile } = await Swal.fire({
-                title: '🎨 Scegli lo Stile della Frase',
-                html: `
-                    <div class="row g-3 style-selector">
-                        <div class="col-12 mb-3">
-                            <div class="alert alert-info">
-                                <i class="fas fa-rocket"></i> <strong>Algoritmo Ottimizzato!</strong><br>
-                                Sistema anti-ripetizione, analisi semantica avanzata e scoring intelligente dei template
-                            </div>
-                            <p class="text-muted">Personalizza il tono della tua frase promozionale:</p>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="style-option" data-style="elegante">
-                                <div class="style-icon">✨</div>
-                                <h6>Elegante</h6>
-                                <small>Tono raffinato e sofisticato</small>
-                                <div class="enhancement-badge">🔥 Migliorato</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="style-option" data-style="emotivo">
-                                <div class="style-icon">💖</div>
-                                <h6>Emotivo</h6>
-                                <small>Linguaggio che coinvolge emotivamente</small>
-                                <div class="enhancement-badge">🔥 Migliorato</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="style-option" data-style="amichevole">
-                                <div class="style-icon">😊</div>
-                                <h6>Amichevole</h6>
-                                <small>Tono colloquiale e caloroso</small>
-                                <div class="enhancement-badge">🔥 Migliorato</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="style-option" data-style="professionale">
-                                <div class="style-icon">📋</div>
-                                <h6>Professionale</h6>
-                                <small>Linguaggio tecnico e formale</small>
-                                <div class="enhancement-badge">🔥 Migliorato</div>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="style-option" data-style="esclusivo">
-                                <div class="style-icon">👑</div>
-                                <h6>Esclusivo</h6>
-                                <small>Tono luxury per clientela VIP</small>
-                                <div class="enhancement-badge">🔥 Migliorato</div>
-                            </div>
-                        </div>
-                    </div>
-                    <style>
-                        .style-selector { font-family: inherit; }
-                        .style-option {
-                            border: 2px solid #e9ecef;
-                            border-radius: 12px;
-                            padding: 15px;
-                            text-align: center;
-                            cursor: pointer;
-                            transition: all 0.3s ease;
-                            background: #f8f9fa;
-                            position: relative;
-                        }
-                        .style-option:hover {
-                            border-color: var(--accent-color);
-                            background: #fff;
-                            transform: translateY(-2px);
-                            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                        }
-                        .style-option.selected {
-                            border-color: var(--accent-color);
-                            background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
-                            color: white;
-                        }
-                        .style-icon {
-                            font-size: 24px;
-                            margin-bottom: 8px;
-                        }
-                        .style-option h6 {
-                            margin-bottom: 4px;
-                            font-weight: 600;
-                        }
-                        .style-option small {
-                            opacity: 0.8;
-                        }
-                        .enhancement-badge {
-                            position: absolute;
-                            top: -8px;
-                            right: -8px;
-                            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
-                            color: white;
-                            padding: 4px 8px;
-                            border-radius: 12px;
-                            font-size: 0.7em;
-                            font-weight: bold;
-                            animation: pulse 2s infinite;
-                        }
-                        @keyframes pulse {
-                            0% { transform: scale(1); }
-                            50% { transform: scale(1.05); }
-                            100% { transform: scale(1); }
-                        }
-                        .alert-info {
-                            background: linear-gradient(135deg, #3498db, #2980b9);
-                            color: white;
-                            border: none;
-                            border-radius: 10px;
-                        }
-                    </style>
-                `,
-                showCancelButton: true,
-                confirmButtonText: '🚀 Genera Frase Ottimizzata',
-                cancelButtonText: 'Annulla',
-                confirmButtonColor: 'var(--accent-color)',
-                cancelButtonColor: '#6c757d',
-                customClass: {
-                    popup: 'style-selector-modal'
-                },
-                didOpen: () => {
-                    // Setup selezione stili
-                    const options = document.querySelectorAll('.style-option');
-                    let selectedStyle = 'elegante'; // Default
-                    
-                    // Preseleziona elegante
-                    options[0].classList.add('selected');
-                    
-                    options.forEach(option => {
-                        option.addEventListener('click', () => {
-                            options.forEach(opt => opt.classList.remove('selected'));
-                            option.classList.add('selected');
-                            selectedStyle = option.dataset.style;
-                        });
-                    });
-                    
-                    // Store selection for retrieval
-                    Swal.getPopup().dataset.selectedStyle = selectedStyle;
-                },
-                preConfirm: () => {
-                    const selected = document.querySelector('.style-option.selected');
-                    return selected ? selected.dataset.style : 'elegante';
-                }
-            });
-            
-            if (!stile) return; // User cancelled
-            
-            const btn = card.querySelector('.genera-frase-btn');
-            const originalContent = showLoading(btn, 'Generando con IA...');
-            
-            try {
-                const response = await fetch(`/api/genera-frase/${id}?stile=${stile}`);
-                if (!response.ok) throw new Error('Errore nella generazione della frase');
-                
-                const data = await response.json();
-                
-                const fraseContainer = card.querySelector('.frase-generata');
-                fraseContainer.classList.remove('d-none');
-                fraseContainer.classList.add('animate__animated', 'animate__fadeIn');
-                
-                // Aggiorna contenuto con stile e indicatori di miglioramento
-                const fraseContent = fraseContainer.querySelector('p');
-                fraseContent.textContent = data.frase;
-                
-                // Aggiungi badge stile se non esiste
-                let styleBadge = fraseContainer.querySelector('.style-badge');
-                if (!styleBadge) {
-                    styleBadge = document.createElement('span');
-                    styleBadge.className = 'badge style-badge';
-                    fraseContainer.querySelector('.d-flex').prepend(styleBadge);
-                }
-                
-                // Update badge style con indicatore di ottimizzazione
-                const styleIcons = {
-                    'elegante': '✨',
-                    'emotivo': '💖',
-                    'amichevole': '😊',
-                    'professionale': '📋',
-                    'esclusivo': '👑'
-                };
-                
-                styleBadge.textContent = `${styleIcons[stile]} ${stile.charAt(0).toUpperCase() + stile.slice(1)} 🚀`;
-                styleBadge.className = `badge style-badge bg-gradient-${stile}`;
-                styleBadge.title = 'Generato con algoritmo ottimizzato - Sistema anti-ripetizione attivo';
-                
-                // Incrementa contatore locale e aggiorna
-                frasiGenerateCount++;
-                updateStats(articoliGlobal);
-                
-                showAlert(`Frase ottimizzata generata con stile ${stile}! 🚀`, 'success', 3000);
-            } catch (error) {
-                showAlert('Errore nella generazione della frase', 'danger');
-            } finally {
-                hideLoading(btn, originalContent);
-            }
-        }
-
-        // Copia frase migliorata
+        // Copia frase
         async function copyFrase(card) {
             const frase = card.querySelector('.frase-generata p').textContent;
             const btn = card.querySelector('.copy-btn');
@@ -1374,7 +1316,7 @@
             try {
                 await navigator.clipboard.writeText(frase);
                 const originalContent = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check"></i> Copiato!';
+                btn.innerHTML = '<i class="fas fa-check"></i> Copiato';
                 btn.classList.remove('btn-outline-success');
                 btn.classList.add('btn-success');
                 
@@ -1384,13 +1326,13 @@
                     btn.classList.remove('btn-success');
                 }, 2000);
                 
-                showAlert('Frase copiata negli appunti!', 'success', 2000);
+                showAlert('Frase copiata negli appunti', 'success', 2000);
             } catch (error) {
                 showAlert('Errore nella copia della frase', 'danger');
             }
         }
 
-        // Modifica articolo migliorata
+        // Modifica articolo
         function editArticolo(articolo) {
             document.getElementById('nome').value = articolo.nome;
             document.getElementById('brand').value = articolo.brand;
@@ -1406,29 +1348,24 @@
             const form = document.getElementById('articoloForm');
             form.dataset.editId = articolo.id;
             
-            // Aggiorna titoli
             document.getElementById('formTitle').textContent = 'Modifica Articolo';
             document.getElementById('submitText').textContent = 'Aggiorna Articolo';
             
-            // Scroll smooth al form
             form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
             showAlert('Modalità modifica attivata', 'info', 2000);
         }
 
-        // Elimina articolo con conferma migliorata
+        // Elimina articolo
         async function deleteArticolo(id) {
             const result = await Swal.fire({
-                title: 'Sei sicuro?',
-                text: 'Questa azione non può essere annullata!',
+                title: 'Conferma eliminazione',
+                text: 'Questa azione non può essere annullata',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#e74c3c',
                 cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sì, elimina!',
-                cancelButtonText: 'Annulla',
-                backdrop: true,
-                allowOutsideClick: false
+                confirmButtonText: 'Elimina',
+                cancelButtonText: 'Annulla'
             });
 
             if (!result.isConfirmed) return;
@@ -1439,10 +1376,9 @@
                 });
                 
                 if (response.ok) {
-                    showAlert('Articolo eliminato con successo!', 'success');
+                    showAlert('Articolo eliminato con successo', 'success');
                     loadArticoli();
                     
-                    // Se non ci sono più articoli per questo brand, torna ai brand
                     const articoliBrand = articoliGlobal.filter(a => a.brand === brandSelezionato && a.id != id);
                     if (articoliBrand.length === 0 && brandSelezionato) {
                         setTimeout(() => {
@@ -1481,7 +1417,6 @@
             setupScrollToTop();
             loadArticoli();
             
-            // Preload SweetAlert2 per le conferme
             if (typeof Swal === 'undefined') {
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
@@ -1490,8 +1425,9 @@
         });
     </script>
 
-    <!-- SweetAlert2 per conferme migliori -->
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 
