@@ -419,7 +419,7 @@ def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_cl
         f"Intramontabile e raffinat{('a' if genere == 'f' else 'o')}: {art_det} {nome_semplificato} {desc_materiali}, {desc_rarita}, bellissim{('a' if genere == 'f' else 'o')}.",
         f"Eleganza discreta e fascino vintage: {art_det} {nome_semplificato} {desc_materiali} è perfett{('a' if genere == 'f' else 'o')} per ogni occasione.",
         f"{desc_rarita.capitalize()}, elegante e {desc_condizioni}: quest{('a' if genere == 'f' else 'o')} {nome_semplificato} è un investimento di stile.",
-        f"Finiture {desc_materiali}: {art_det} {nome_semplificato} è {art_indet} pezzo da vera intenditrice.",
+        f"Finiture {desc_materiali}: {art_det} {nome_semplificato} è un pezzo da vera intenditrice.",
         f"Un pezzo cult {desc_target}: {nome_semplificato} {desc_materiali}, {desc_condizioni}.",
         f"Quest{('a' if genere == 'f' else 'o')} {nome_semplificato} ha tutto: eleganza, storia e rarità. {desc_condizioni.capitalize()}.",
         f"{art_indet.capitalize()} che non passa inosservat{('a' if genere == 'f' else 'o')}: {nome_semplificato} {desc_materiali}, {desc_rarita}.",
