@@ -7,16 +7,30 @@ import re
 
 app = Flask(__name__)
 
-# Configurazione database: PostgreSQL se disponibile, altrimenti SQLite
+# Configurazione database: Supabase PostgreSQL con SSL
 DATABASE_URL = os.environ.get('DATABASE_URL')
 if DATABASE_URL:
-    # Render/Heroku fornisce DATABASE_URL per PostgreSQL
+    # Supabase richiede SSL - aggiungiamo sslmode se mancante
+    if 'supabase.co' in DATABASE_URL and 'sslmode' not in DATABASE_URL:
+        DATABASE_URL += '?sslmode=require'
+    
+    # Ensure postgresql:// format
     if DATABASE_URL.startswith('postgres://'):
         DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_pre_ping': True,  # Verifica connessioni prima dell'uso
+        'pool_recycle': 300,    # Ricrea connessioni ogni 5 minuti
+        'connect_args': {
+            'sslmode': 'require'  # SSL richiesto per Supabase
+        }
+    }
+    print(f"🔗 Connesso a Supabase PostgreSQL")
 else:
     # Fallback a SQLite per sviluppo locale
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gestionale.db'
+    print(f"🔗 Usando SQLite locale per sviluppo")
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
