@@ -335,38 +335,20 @@ def genera_frase_stile_professionale(brand: str, nome: str, colore: str, materia
 FRASE_MEMORY_CACHE = {}
 SEMANTIC_VARIATIONS_CACHE = {}
 
-def genera_frase_personalizzata(brand: str, nome: str, colore: str, materiale: str, 
-                               keywords_classificate: Dict, condizioni: str, rarita: str, 
-                               vintage: bool, target: str, termini_commerciali: List[str], 
-                               stile: str = 'elegante') -> str:
-    """Sistema avanzato di generazione frasi con ottimizzazioni avanzate
-    
-    Ottimizzazioni implementate:
-    - Sistema di memoria per evitare ripetizioni
-    - Variazione semantica intelligente
-    - Scoring dei template
-    - Analisi contestuale migliorata
-    - Generazione dinamica di aggettivi
-    
-    Stili disponibili:
-    - elegante: Tono raffinato e sofisticato
-    - emotivo: Linguaggio che coinvolge emotivamente
-    - amichevole: Tono colloquiale e caloroso
-    - professionale: Linguaggio tecnico e formale
-    - esclusivo: Tono luxury per clientela VIP
-    """
-    
-    # Cache key per memoria frasi
-    cache_key = f"{brand}_{nome}_{colore}_{materiale}_{stile}"
+def genera_frase_personalizzata_ottimizzata(brand: str, nome: str, colore: str, materiale: str, 
+                                          keywords_classificate: Dict, condizioni: str, rarita: str, 
+                                          vintage: bool, target: str, termini_commerciali: List[str], 
+                                          stile: str = 'elegante') -> str:
+    """Sistema ottimizzato di generazione frasi con memoria anti-ripetizione e scoring avanzato"""
     
     # Cache per tipo e genere
     tipo_articolo = get_tipo_articolo_cached(nome)
     genere = get_genere_cached(tipo_articolo)
     
-    # Analisi contestuale avanzata delle keywords
+    # Analisi contestuale avanzata
     keywords_analizzate = _analisi_contestuale_keywords(keywords_classificate, tipo_articolo, brand)
     
-    # Costruzione componenti ottimizzati con variazioni semantiche
+    # Costruzione componenti ottimizzati
     nome_completo = _costruisci_nome_avanzato_con_variazioni(nome, brand, tipo_articolo, stile)
     desc_materiali = _costruisci_descrizione_materiali_avanzata_ottimizzata(
         materiale, colore, keywords_analizzate, genere, stile, tipo_articolo
@@ -375,7 +357,7 @@ def genera_frase_personalizzata(brand: str, nome: str, colore: str, materiale: s
     desc_rarita = _costruisci_descrizione_rarita_avanzata(rarita, genere, stile)
     desc_target = _costruisci_descrizione_target_avanzata(target, stile)
     
-    # Sistema di generazione dinamica aggettivi brand
+    # Aggettivi brand dinamici
     aggettivo_brand = _genera_aggettivo_dinamico_brand(brand, genere, stile, keywords_analizzate)
     
     # Articoli grammaticali
@@ -383,32 +365,43 @@ def genera_frase_personalizzata(brand: str, nome: str, colore: str, materiale: s
     art_indet = _get_articolo_indeterminativo(genere, tipo_articolo)
     
     # Template con scoring avanzato
-    templates = _get_templates_con_scoring(
+    templates_con_score = _get_templates_con_scoring(
         stile, nome_completo, desc_materiali, desc_condizioni, desc_rarita,
         desc_target, aggettivo_brand, art_det, art_indet, genere, vintage,
         keywords_analizzate, tipo_articolo
     )
     
-    # Selezione template con sistema anti-ripetizione
+    # Cache key per memoria anti-ripetizione
+    cache_key = f"{brand}_{nome}_{colore or 'none'}_{materiale or 'none'}_{stile}"
+    
+    # Selezione template con memoria
     frase_principale = _seleziona_template_con_memoria(
-        templates, nome_completo, brand, stile, cache_key
+        templates_con_score, nome_completo, brand, stile, cache_key
     )
     
     # Call to action con variazioni
-    call_to_action = _genera_call_to_action_con_variazioni(
-        termini_commerciali, stile, cache_key
-    )
+    call_to_action = _genera_call_to_action_con_variazioni(termini_commerciali, stile, cache_key)
     
-    # Memorizza frase generata
+    # Pulizia finale
+    frase_completa = f"{frase_principale}\n{call_to_action}"
+    frase_finale = _pulizia_finale_frase(frase_completa)
+    
+    # **AGGIORNAMENTO CACHE PER STATISTICHE**
     if cache_key not in FRASE_MEMORY_CACHE:
         FRASE_MEMORY_CACHE[cache_key] = []
-    FRASE_MEMORY_CACHE[cache_key].append(frase_principale)
+    FRASE_MEMORY_CACHE[cache_key].append(frase_finale)
     
     # Mantieni solo le ultime 10 frasi per articolo
     if len(FRASE_MEMORY_CACHE[cache_key]) > 10:
         FRASE_MEMORY_CACHE[cache_key] = FRASE_MEMORY_CACHE[cache_key][-10:]
     
-    return f"{frase_principale}\n{call_to_action}"
+    # Auto-pulizia cache se diventa troppo grande
+    if len(FRASE_MEMORY_CACHE) > 1000:
+        keys_to_remove = list(FRASE_MEMORY_CACHE.keys())[:-500]  # Mantieni solo ultimi 500
+        for key in keys_to_remove:
+            del FRASE_MEMORY_CACHE[key]
+    
+    return frase_finale
 
 def _analisi_contestuale_keywords(keywords_classificate: Dict, tipo_articolo: str, brand: str) -> Dict:
     """Analisi contestuale avanzata delle keywords con sinonimi e contesti"""
@@ -767,19 +760,11 @@ def _pulizia_finale_frase(frase: str) -> str:
     
     return frase_pulita.strip()
 
-# Funzione per pulire cache periodicamente (opzionale)
 def pulisci_cache_frasi():
-    """Pulisce la cache delle frasi per evitare accumulo eccessivo"""
-    global FRASE_MEMORY_CACHE, SEMANTIC_VARIATIONS_CACHE
-    
-    # Mantieni solo le ultime 5 frasi per articolo
-    for key in FRASE_MEMORY_CACHE:
-        if len(FRASE_MEMORY_CACHE[key]) > 5:
-            FRASE_MEMORY_CACHE[key] = FRASE_MEMORY_CACHE[key][-5:]
-    
-    # Pulisci cache variazioni semantiche se troppo grande
-    if len(SEMANTIC_VARIATIONS_CACHE) > 1000:
-        SEMANTIC_VARIATIONS_CACHE.clear()
+    """Pulisce la cache delle frasi per liberare memoria"""
+    global FRASE_MEMORY_CACHE
+    FRASE_MEMORY_CACHE.clear()
+    logger.info("Cache frasi pulita - memoria liberata")
 
 # ===============================
 # MANTIENI COMPATIBILITÀ BACKWARD
@@ -789,47 +774,11 @@ def genera_frase_personalizzata(brand: str, nome: str, colore: str, materiale: s
                                keywords_classificate: Dict, condizioni: str, rarita: str, 
                                vintage: bool, target: str, termini_commerciali: List[str], 
                                stile: str = 'elegante') -> str:
-    """Sistema avanzato di generazione frasi con stili personalizzabili
-    
-    Stili disponibili:
-    - elegante: Tono raffinato e sofisticato
-    - emotivo: Linguaggio che coinvolge emotivamente
-    - amichevole: Tono colloquiale e caloroso
-    - professionale: Linguaggio tecnico e formale
-    - esclusivo: Tono luxury per clientela VIP
-    """
-    
-    # Cache per tipo e genere
-    tipo_articolo = get_tipo_articolo_cached(nome)
-    genere = get_genere_cached(tipo_articolo)
-    
-    # Costruzione componenti ottimizzati
-    nome_completo = _costruisci_nome_avanzato(nome, brand, tipo_articolo)
-    desc_materiali = _costruisci_descrizione_materiali_avanzata(materiale, colore, keywords_classificate, genere, stile)
-    desc_condizioni = _costruisci_descrizione_condizioni_avanzata(condizioni, genere, stile)
-    desc_rarita = _costruisci_descrizione_rarita_avanzata(rarita, genere, stile)
-    desc_target = _costruisci_descrizione_target_avanzata(target, stile)
-    
-    # Aggettivi brand per stile
-    aggettivo_brand = _get_aggettivo_brand_per_stile(brand, genere, stile)
-    
-    # Articoli grammaticali
-    art_det = _get_articolo_determinativo(genere, tipo_articolo)
-    art_indet = _get_articolo_indeterminativo(genere, tipo_articolo)
-    
-    # Template per stile specifico
-    templates = _get_templates_per_stile(
-        stile, nome_completo, desc_materiali, desc_condizioni, desc_rarita,
-        desc_target, aggettivo_brand, art_det, art_indet, genere, vintage
+    """Alias per compatibilità che punta alla versione ottimizzata"""
+    return genera_frase_personalizzata_ottimizzata(
+        brand, nome, colore, materiale, keywords_classificate, condizioni, 
+        rarita, vintage, target, termini_commerciali, stile
     )
-    
-    # Selezione template intelligente
-    frase_principale = _seleziona_template_intelligente(templates, nome_completo, brand, stile)
-    
-    # Call to action per stile
-    call_to_action = _genera_call_to_action_per_stile(termini_commerciali, stile)
-    
-    return f"{frase_principale}\n{call_to_action}"
 
 def _costruisci_nome_avanzato(nome: str, brand: str, tipo_articolo: str) -> str:
     """Costruzione nome più intelligente e raffinata"""
@@ -994,43 +943,44 @@ def _costruisci_descrizione_target_avanzata(target: str, stile: str) -> str:
     
     target_map = {
         'elegante': {
-            'Intenditrici': 'per raffinate intenditrici',
-            'Collezionisti': 'per esigenti collezionisti', 
-            'Amanti del vintage': 'per chi apprezza il vintage autentico',
-            'Appassionati di lusso': 'per cultori del lusso',
-            'Chi ama distinguersi': 'per personalità distintive'
+            'Intenditrici': ['per raffinati palati femminili', 'per conoscitrici di stile'],
+            'Collezionisti': ['per prestigiosi collezionisti', 'per appassionati di rarità'],
+            'Amanti del vintage': ['per cultori del vintage autentico', 'per chi apprezza la storia'],
+            'Appassionati di lusso': ['per veri amanti del lusso', 'per intenditori di eccellenza'],
+            'Chi ama distinguersi': ['per personalità distintive', 'per chi non accetta compromessi']
         },
         'emotivo': {
-            'Intenditrici': 'per anime sensibili e raffinate',
-            'Collezionisti': 'per cuori che sanno riconoscere la bellezza', 
-            'Amanti del vintage': 'per chi ama le storie d\'altri tempi',
-            'Appassionati di lusso': 'per chi vive di emozioni esclusive',
-            'Chi ama distinguersi': 'per spiriti liberi e unici'
+            'Intenditrici': ['per cuori che sanno riconoscere la bellezza', 'per anime raffinate'],
+            'Collezionisti': ['per chi colleziona emozioni', 'per chi ama i tesori rari'],
+            'Amanti del vintage': ['per chi si innamora delle storie del passato', 'per romantici del vintage'],
+            'Appassionati di lusso': ['per chi vive il lusso con il cuore', 'per spiriti che sognano in grande'],
+            'Chi ama distinguersi': ['per chi vuole brillare di luce propria', 'per personalità uniche']
         },
         'amichevole': {
-            'Intenditrici': 'perfetto per te che sai cosa vuoi!',
-            'Collezionisti': 'ideale per la tua collezione', 
-            'Amanti del vintage': 'se ami il vintage, questo è per te',
-            'Appassionati di lusso': 'per chi non scende a compromessi',
-            'Chi ama distinguersi': 'per chi vuole essere unico'
+            'Intenditrici': ['perfetto per te che sai cosa vuoi', 'ideale per il tuo stile'],
+            'Collezionisti': ['una chicca per la tua collezione', 'che amerai aggiungere alla tua raccolta'],
+            'Amanti del vintage': ['che ti farà innamorare del passato', 'perfetto per il tuo guardaroba vintage'],
+            'Appassionati di lusso': ['per coccolarti con stile', 'che ti farà sentire speciale'],
+            'Chi ama distinguersi': ['per essere sempre al top', 'che ti renderà unica']
         },
         'professionale': {
-            'Intenditrici': 'destinato a clientela esperta',
-            'Collezionisti': 'indicato per collezionisti qualificati', 
-            'Amanti del vintage': 'specifico per appassionati di vintage',
-            'Appassionati di lusso': 'riservato ad acquirenti di lusso',
-            'Chi ama distinguersi': 'per clientela distintiva'
+            'Intenditrici': ['riservato a esperte del settore', 'per competenti valutazioni'],
+            'Collezionisti': ['destinato a collezioni specializzate', 'per portfolio di valore'],
+            'Amanti del vintage': ['catalogato per esperti vintage', 'per archivi storici'],
+            'Appassionati di lusso': ['selezionato per clientela qualificata', 'per investimenti di prestigio'],
+            'Chi ama distinguersi': ['riservato a segmenti premium', 'per positioning esclusivo']
         },
         'esclusivo': {
-            'Intenditrici': 'riservato alle più raffinate conoscitrici',
-            'Collezionisti': 'esclusivo per collezionisti di alto livello', 
-            'Amanti del vintage': 'per autentici cultori del vintage',
-            'Appassionati di lusso': 'per l\'élite del lusso',
-            'Chi ama distinguersi': 'per personalità di spicco'
+            'Intenditrici': ['riservato alle più esigenti', 'per élite femminile'],
+            'Collezionisti': ['per collezioni di altissimo livello', 'riservato ai grandi collezionisti'],
+            'Amanti del vintage': ['per i più raffinati cultori vintage', 'esclusivo per veri intenditori'],
+            'Appassionati di lusso': ['per i vertici del lusso mondiale', 'riservato alla clientela VIP'],
+            'Chi ama distinguersi': ['per personalità di spicco', 'riservato a chi comanda le tendenze']
         }
     }
     
-    return target_map.get(stile, target_map['elegante']).get(target, '')
+    options = target_map.get(stile, target_map['elegante']).get(target, [])
+    return random.choice(options) if options else ""
 
 def _get_aggettivo_brand_per_stile(brand: str, genere: str, stile: str) -> str:
     """Aggettivi brand personalizzati per stile"""
@@ -1273,46 +1223,6 @@ def _get_articolo_indeterminativo(genere: str, tipo: str) -> str:
     else:
         return 'un' if tipo not in ['pantaloni'] else 'dei'
 
-# Mantieni le funzioni originali per backward compatibility
-def _costruisci_nome_corretto(nome: str, brand: str, tipo_articolo: str) -> str:
-    """Wrapper per compatibilità"""
-    return _costruisci_nome_avanzato(nome, brand, tipo_articolo)
-
-def _costruisci_descrizione_materiali(materiale: str, colore: str, keywords_classificate: Dict, genere: str) -> str:
-    """Wrapper per compatibilità"""
-    return _costruisci_descrizione_materiali_avanzata(materiale, colore, keywords_classificate, genere, 'elegante')
-
-def _costruisci_descrizione_condizioni(condizioni: str, genere: str) -> str:
-    """Wrapper per compatibilità"""
-    return _costruisci_descrizione_condizioni_avanzata(condizioni, genere, 'elegante')
-
-def _costruisci_descrizione_rarita(rarita: str, genere: str) -> str:
-    """Wrapper per compatibilità"""
-    return _costruisci_descrizione_rarita_avanzata(rarita, genere, 'elegante')
-
-def _costruisci_descrizione_target(target: str) -> str:
-    """Wrapper per compatibilità"""
-    return _costruisci_descrizione_target_avanzata(target, 'elegante')
-
-def _get_aggettivo_brand(brand: str, genere: str) -> str:
-    """Wrapper per compatibilità"""
-    return _get_aggettivo_brand_per_stile(brand, genere, 'elegante')
-
-def _get_templates_frasi(nome_completo: str, desc_materiali: str, desc_condizioni: str, 
-                        desc_rarita: str, desc_target: str, aggettivo_brand: str,
-                        art_det: str, art_indet: str, genere: str) -> List[str]:
-    """Wrapper per compatibilità"""
-    return _get_templates_per_stile('elegante', nome_completo, desc_materiali, desc_condizioni, 
-                                  desc_rarita, desc_target, aggettivo_brand, art_det, art_indet, genere, False)
-
-def _seleziona_template_valido(templates: List[str], nome_completo: str, brand: str) -> str:
-    """Wrapper per compatibilità"""
-    return _seleziona_template_intelligente(templates, nome_completo, brand, 'elegante')
-
-def _genera_call_to_action(termini_commerciali: List[str]) -> str:
-    """Wrapper per compatibilità"""
-    return _genera_call_to_action_per_stile(termini_commerciali, 'elegante')
-
 # ===============================
 # ROUTES OTTIMIZZATE
 # ===============================
@@ -1529,7 +1439,7 @@ def genera_frase(id):
         keywords_classificate = classifica_keywords_cached(keywords_str) if keywords_str else {}
         
         # Genera la frase con lo stile selezionato
-        frase = genera_frase_personalizzata(
+        frase = genera_frase_personalizzata_ottimizzata(
             articolo.brand, articolo.nome, colore, materiale, keywords_classificate,
             condizioni, rarita, articolo.vintage, target, termini_commerciali, stile
         )
