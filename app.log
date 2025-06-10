@@ -265,3 +265,33 @@
 2025-06-10 17:10:29,931 - __main__ - INFO - Frase generata per articolo 1 con stile 'elegante'
 2025-06-10 17:10:29,932 - __main__ - INFO - GET /api/genera-frase/1 - 0.001s
 2025-06-10 17:10:29,932 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:10:29] "GET /api/genera-frase/1?stile=elegante HTTP/1.1" 200 -
+2025-06-10 17:12:08,182 - __main__ - INFO - GET / - 0.000s
+2025-06-10 17:12:08,183 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:12:08] "GET / HTTP/1.1" 200 -
+2025-06-10 17:12:08,501 - __main__ - INFO - GET /api/articoli - 0.001s
+2025-06-10 17:12:08,501 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:12:08] "GET /api/articoli HTTP/1.1" 200 -
+2025-06-10 17:12:08,516 - __main__ - INFO - GET /api/statistiche-frasi - 0.000s
+2025-06-10 17:12:08,516 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:12:08] "GET /api/statistiche-frasi HTTP/1.1" 200 -
+2025-06-10 17:16:11,402 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-10 17:16:11,525 - werkzeug - INFO -  * Restarting with stat
+2025-06-10 17:16:12,312 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-10 17:16:12,352 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-10 17:16:12,358 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-10 17:16:12,438 - werkzeug - WARNING -  * Debugger is active!
+2025-06-10 17:16:12,471 - werkzeug - INFO -  * Debugger PIN: 141-811-908
+2025-06-10 17:16:27,664 - __main__ - ERROR - Errore nella generazione frase per articolo 1: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-06-10 17:16:27,664 - __main__ - ERROR - Errore in genera_frase: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-06-10 17:16:27,665 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:16:27] "[35m[1mGET /api/genera-frase/1?stile=amichevole HTTP/1.1[0m" 500 -
+2025-06-10 17:16:33,515 - __main__ - INFO - GET /api/articoli - 0.003s
+2025-06-10 17:16:33,515 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:16:33] "GET /api/articoli HTTP/1.1" 200 -
+2025-06-10 17:16:41,967 - __main__ - INFO - Articolo creato: 1 - Borsa Chanel Classica
+2025-06-10 17:16:41,967 - __main__ - INFO - POST /api/articoli - 0.008s
+2025-06-10 17:16:41,967 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:16:41] "[35m[1mPOST /api/articoli HTTP/1.1[0m" 201 -
+2025-06-10 17:16:48,504 - __main__ - INFO - Frase generata per articolo 1 con stile 'amichevole'
+2025-06-10 17:16:48,504 - __main__ - INFO - GET /api/genera-frase/1 - 0.002s
+2025-06-10 17:16:48,505 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:16:48] "GET /api/genera-frase/1?stile=amichevole HTTP/1.1" 200 -
+2025-06-10 17:16:59,384 - __main__ - INFO - Frase generata per articolo 1 con stile 'professionale'
+2025-06-10 17:16:59,384 - __main__ - INFO - GET /api/genera-frase/1 - 0.002s
+2025-06-10 17:16:59,384 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:16:59] "GET /api/genera-frase/1?stile=professionale HTTP/1.1" 200 -
+2025-06-10 17:17:05,658 - __main__ - INFO - Frase generata per articolo 1 con stile 'elegante'
+2025-06-10 17:17:05,658 - __main__ - INFO - GET /api/genera-frase/1 - 0.002s
+2025-06-10 17:17:05,659 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:17:05] "GET /api/genera-frase/1?stile=elegante HTTP/1.1" 200 -

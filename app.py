@@ -219,22 +219,38 @@ def riconosci_tipo_articolo(nome: str) -> str:
     """Riconosce il tipo di articolo dal nome"""
     nome_lower = nome.lower()
     
-    # Mappatura ottimizzata
+    # Mappatura ottimizzata con più varianti
     tipo_mapping = {
-        'borsa': ['borsa', 'borse', 'bag', 'clutch', 'pochette', 'zaino', 'trolley', 'valigia'],
-        'scarpe': ['scarpa', 'scarpe', 'sandalo', 'sandali', 'boot', 'stivale', 'sneaker', 'decollete', 'pump'],
-        'vestito': ['vestito', 'abito', 'dress', 'gonna', 'skirt'],
-        'top': ['camicia', 'shirt', 'blusa', 'top', 'maglia', 't-shirt', 'polo'],
-        'pantaloni': ['pantalone', 'pantaloni', 'jeans', 'short', 'bermuda'],
-        'giacca': ['giacca', 'blazer', 'coat', 'cappotto', 'giubbotto', 'parka'],
-        'accessorio': ['accessorio', 'accessori', 'cintura', 'belt', 'sciarpa', 'foulard', 'cappello']
+        'borsa': ['borsa', 'borse', 'bag', 'clutch', 'pochette', 'zaino', 'trolley', 'valigia', 'handbag', 'bauletto', 'tracolla', 'shopping'],
+        'scarpe': ['scarpa', 'scarpe', 'sandalo', 'sandali', 'boot', 'stivale', 'stivali', 'sneaker', 'decollete', 'pump', 'mocassino', 'ballerina', 'ciabatta'],
+        'vestito': ['vestito', 'abito', 'dress', 'gonna', 'skirt', 'tuta', 'jumpsuit'],
+        'top': ['camicia', 'shirt', 'blusa', 'top', 'maglia', 't-shirt', 'polo', 'cardigan', 'maglione', 'felpa'],
+        'pantaloni': ['pantalone', 'pantaloni', 'jeans', 'short', 'bermuda', 'leggings', 'jogger'],
+        'giacca': ['giacca', 'blazer', 'coat', 'cappotto', 'giubbotto', 'parka', 'trench', 'mantello'],
+        'accessorio': ['accessorio', 'accessori', 'cintura', 'belt', 'sciarpa', 'foulard', 'cappello', 'guanto', 'orologio', 'gioiello', 'collana', 'bracciale', 'anello']
     }
     
     for tipo, keywords in tipo_mapping.items():
         if any(keyword in nome_lower for keyword in keywords):
             return tipo
     
-    return 'generico'
+    # **FALLBACK INTELLIGENTE** - Se non trova corrispondenze, cerca parole chiave nel brand/context
+    # Molti articoli di lusso hanno nomi specifici senza la parola tipo
+    brand_context = {
+        'chanel': 'borsa',  # Chanel è famosa per borse
+        'hermès': 'borsa',  # Hermès principalmente borse
+        'hermes': 'borsa',
+        'louis vuitton': 'borsa',  # LV principalmente borse
+        'gucci': 'borsa',   # Gucci principalmente borse
+        'prada': 'borsa',   # Prada principalmente borse
+    }
+    
+    for brand, tipo_default in brand_context.items():
+        if brand in nome_lower:
+            return tipo_default
+    
+    # Se proprio non riesce a identificare, usa "borsa" come default più probabile per articoli di lusso
+    return 'borsa'
 
 @lru_cache(maxsize=512)
 def classifica_keywords_cached(keywords_str: str) -> Dict[str, List[str]]:
@@ -299,24 +315,53 @@ def concordanza_aggettivo(aggettivo: str, genere: str) -> str:
     if not aggettivo:
         return aggettivo
         
-    # Mappatura ottimizzata
+    # **MAPPATURA ESTESA** - Aggiunti tutti gli aggettivi mancanti
     concordanze = {
         'nero': {'m': 'nero', 'f': 'nera'},
         'bianco': {'m': 'bianco', 'f': 'bianca'},
         'rosso': {'m': 'rosso', 'f': 'rossa'},
         'grigio': {'m': 'grigio', 'f': 'grigia'},
         'giallo': {'m': 'giallo', 'f': 'gialla'},
+        'verde': {'m': 'verde', 'f': 'verde'},  # invariabile
+        'blu': {'m': 'blu', 'f': 'blu'},  # invariabile
+        'rosa': {'m': 'rosa', 'f': 'rosa'},  # invariabile
+        'marrone': {'m': 'marrone', 'f': 'marrone'},  # invariabile
         'raro': {'m': 'raro', 'f': 'rara'},
         'nuovo': {'m': 'nuovo', 'f': 'nuova'},
         'usato': {'m': 'usato', 'f': 'usata'},
         'perfetto': {'m': 'perfetto', 'f': 'perfetta'},
         'iconico': {'m': 'iconico', 'f': 'iconica'},
         'esclusivo': {'m': 'esclusivo', 'f': 'esclusiva'},
+        'stupendo': {'m': 'stupendo', 'f': 'stupenda'},  # **AGGIUNTO**
+        'bello': {'m': 'bello', 'f': 'bella'},
+        'magnifico': {'m': 'magnifico', 'f': 'magnifica'},
+        'meraviglioso': {'m': 'meraviglioso', 'f': 'meravigliosa'},
+        'splendido': {'m': 'splendido', 'f': 'splendida'},
+        'fantastico': {'m': 'fantastico', 'f': 'fantastica'},
+        'straordinario': {'m': 'straordinario', 'f': 'straordinaria'},  # **AGGIUNTO**
+        'elegante': {'m': 'elegante', 'f': 'elegante'},  # invariabile
+        'raffinato': {'m': 'raffinato', 'f': 'raffinata'},
+        'classico': {'m': 'classico', 'f': 'classica'},
+        'moderno': {'m': 'moderno', 'f': 'moderna'},
+        'vintage': {'m': 'vintage', 'f': 'vintage'},  # invariabile
+        'introvabile': {'m': 'introvabile', 'f': 'introvabile'},  # invariabile
+        'ricercato': {'m': 'ricercato', 'f': 'ricercata'},
+        'pregiato': {'m': 'pregiato', 'f': 'pregiata'},
+        'realizzato': {'m': 'realizzato', 'f': 'realizzata'},  # **AGGIUNTO**
+        'classificato': {'m': 'classificato', 'f': 'classificata'},  # **AGGIUNTO**
+        'conservato': {'m': 'conservato', 'f': 'conservata'},
+        'tenuto': {'m': 'tenuto', 'f': 'tenuta'},  # **AGGIUNTO**
     }
     
     aggettivo_lower = aggettivo.lower()
     if aggettivo_lower in concordanze:
         return concordanze[aggettivo_lower].get(genere, aggettivo)
+    
+    # **REGOLE AUTOMATICHE** per aggettivi non in lista
+    if aggettivo_lower.endswith('o') and genere == 'f':
+        return aggettivo_lower[:-1] + 'a'
+    elif aggettivo_lower.endswith('a') and genere == 'm':
+        return aggettivo_lower[:-1] + 'o'
     
     return aggettivo
 
