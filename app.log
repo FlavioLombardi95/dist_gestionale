@@ -295,3 +295,59 @@
 2025-06-10 17:17:05,658 - __main__ - INFO - Frase generata per articolo 1 con stile 'elegante'
 2025-06-10 17:17:05,658 - __main__ - INFO - GET /api/genera-frase/1 - 0.002s
 2025-06-10 17:17:05,659 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:17:05] "GET /api/genera-frase/1?stile=elegante HTTP/1.1" 200 -
+2025-06-10 17:18:44,597 - __main__ - INFO - GET /api/statistiche-frasi - 0.000s
+2025-06-10 17:18:44,599 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:18:44] "GET /api/statistiche-frasi HTTP/1.1" 200 -
+2025-06-10 17:19:30,566 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-10 17:19:30,708 - werkzeug - INFO -  * Restarting with stat
+2025-06-10 17:19:31,419 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-10 17:19:31,463 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-10 17:19:31,468 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-10 17:19:31,541 - werkzeug - WARNING -  * Debugger is active!
+2025-06-10 17:19:31,554 - werkzeug - INFO -  * Debugger PIN: 141-811-908
+2025-06-10 17:19:33,584 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-10 17:19:33,706 - werkzeug - INFO -  * Restarting with stat
+2025-06-10 17:19:34,208 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-10 17:19:34,241 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-10 17:19:34,247 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-10 17:19:34,296 - werkzeug - WARNING -  * Debugger is active!
+2025-06-10 17:19:34,308 - werkzeug - INFO -  * Debugger PIN: 141-811-908
+2025-06-10 17:19:37,849 - __main__ - INFO - GET /api/statistiche-frasi - 0.000s
+2025-06-10 17:19:37,850 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:19:37] "GET /api/statistiche-frasi HTTP/1.1" 200 -
+2025-06-10 17:19:46,428 - __main__ - INFO - Articolo creato: 1 - Borsa Chanel Classica
+2025-06-10 17:19:46,429 - __main__ - INFO - POST /api/articoli - 0.014s
+2025-06-10 17:19:46,429 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:19:46] "[35m[1mPOST /api/articoli HTTP/1.1[0m" 201 -
+2025-06-10 17:19:56,668 - __main__ - INFO - Frase generata per articolo 1 con stile 'elegante'
+2025-06-10 17:19:56,668 - __main__ - INFO - GET /api/genera-frase/1 - 0.004s
+2025-06-10 17:19:56,669 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:19:56] "GET /api/genera-frase/1?stile=elegante HTTP/1.1" 200 -
+2025-06-10 17:19:56,687 - __main__ - INFO - Frase generata per articolo 1 con stile 'amichevole'
+2025-06-10 17:19:56,687 - __main__ - INFO - GET /api/genera-frase/1 - 0.002s
+2025-06-10 17:19:56,688 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:19:56] "GET /api/genera-frase/1?stile=amichevole HTTP/1.1" 200 -
+2025-06-10 17:19:56,707 - __main__ - INFO - Frase generata per articolo 1 con stile 'professionale'
+2025-06-10 17:19:56,708 - __main__ - INFO - GET /api/genera-frase/1 - 0.001s
+2025-06-10 17:19:56,708 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:19:56] "GET /api/genera-frase/1?stile=professionale HTTP/1.1" 200 -
+2025-06-10 17:20:03,303 - __main__ - INFO - GET /api/statistiche-frasi - 0.000s
+2025-06-10 17:20:03,304 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:20:03] "GET /api/statistiche-frasi HTTP/1.1" 200 -
+2025-06-10 17:20:31,914 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-10 17:20:32,029 - werkzeug - INFO -  * Restarting with stat
+2025-06-10 17:20:33,067 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-10 17:20:33,131 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-10 17:20:33,136 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-10 17:20:33,197 - werkzeug - WARNING -  * Debugger is active!
+2025-06-10 17:20:33,210 - werkzeug - INFO -  * Debugger PIN: 141-811-908
+2025-06-10 17:20:55,431 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-10 17:20:55,541 - werkzeug - INFO -  * Restarting with stat
+2025-06-10 17:20:56,303 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-10 17:20:56,343 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-10 17:20:56,348 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-10 17:20:56,476 - werkzeug - WARNING -  * Debugger is active!
+2025-06-10 17:20:56,530 - werkzeug - INFO -  * Debugger PIN: 141-811-908
+2025-06-10 17:20:59,585 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-10 17:20:59,692 - werkzeug - INFO -  * Restarting with stat
+2025-06-10 17:21:00,210 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-10 17:21:00,241 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-10 17:21:00,246 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-10 17:21:00,296 - werkzeug - WARNING -  * Debugger is active!
+2025-06-10 17:21:00,308 - werkzeug - INFO -  * Debugger PIN: 141-811-908
+2025-06-10 17:21:05,531 - __main__ - ERROR - Errore nella generazione frase per articolo 1: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-06-10 17:21:05,531 - __main__ - ERROR - Errore in genera_frase: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2025-06-10 17:21:05,532 - werkzeug - INFO - 127.0.0.1 - - [10/Jun/2025 17:21:05] "[35m[1mGET /api/genera-frase/1?stile=professionale HTTP/1.1[0m" 500 -

@@ -351,6 +351,7 @@ def concordanza_aggettivo(aggettivo: str, genere: str) -> str:
         'classificato': {'m': 'classificato', 'f': 'classificata'},  # **AGGIUNTO**
         'conservato': {'m': 'conservato', 'f': 'conservata'},
         'tenuto': {'m': 'tenuto', 'f': 'tenuta'},  # **AGGIUNTO**
+        'garantito': {'m': 'garantito', 'f': 'garantita'},  # **AGGIUNTO**
     }
     
     aggettivo_lower = aggettivo.lower()
@@ -1123,7 +1124,7 @@ def _get_templates_per_stile(stile: str, nome_completo: str, desc_materiali: str
         'professionale': [
             f"Articolo di qualità: {nome_completo} {desc_materiali}, {desc_condizioni}, con certificazione di autenticità.",
             f"Specifiche tecniche: {art_det} {nome_completo} {desc_materiali} è {desc_condizioni} e {desc_rarita}.",
-            f"Prodotto {aggettivo_brand}: {nome_completo} {desc_materiali}, classificat{suffisso} {desc_condizioni}.",
+            f"Articolo {aggettivo_brand}: {nome_completo} {desc_materiali}, classificat{suffisso} {desc_condizioni}.",
             f"Dettagli del prodotto: quest{suffisso} {nome_completo} {desc_materiali} presenta ottime caratteristiche.",
             f"Articolo da collezione: {art_det} {nome_completo} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
             f"Scheda prodotto: {nome_completo} {desc_materiali}, {desc_condizioni}, {desc_target}.",
@@ -1552,26 +1553,39 @@ def get_statistiche_frasi():
                     stile = parts[-1]
                     stats_stili[stile] = stats_stili.get(stile, 0) + len(FRASE_MEMORY_CACHE[cache_key])
         
-        # Articoli più attivi (con più frasi generate)
-        articoli_attivi = []
+        # **PARSING CORRETTO CACHE KEY** - Articoli più attivi (con più frasi generate)
+        articoli_attivi = {}  # Uso dict per raggruppare
+        
         for cache_key, frasi in FRASE_MEMORY_CACHE.items():
             if '_' in cache_key:
                 parts = cache_key.split('_')
-                if len(parts) >= 2:
-                    nome_articolo = f"{parts[0]} {parts[1]}"
-                    articoli_attivi.append({
-                        'nome': nome_articolo,
-                        'frasi_generate': len(frasi)
-                    })
+                if len(parts) >= 5:  # brand_nome_colore_materiale_stile
+                    brand = parts[0]
+                    # Il nome può contenere spazi, quindi ricostruisco tutto tranne brand, colore, materiale, stile
+                    # Format: brand_nome_colore_materiale_stile
+                    # Prendo tutto dal secondo elemento fino al penultimo-2 (escludo colore, materiale, stile)
+                    nome_parts = parts[1:-3]  # Escludo brand (0), colore (-3), materiale (-2), stile (-1)
+                    nome = ' '.join(nome_parts) if nome_parts else 'Articolo sconosciuto'
+                    
+                    # Creo identificatore unico per articolo
+                    articolo_id = f"{brand} - {nome}"
+                    
+                    if articolo_id not in articoli_attivi:
+                        articoli_attivi[articolo_id] = 0
+                    articoli_attivi[articolo_id] += len(frasi)
         
-        # Ordina per numero di frasi
-        articoli_attivi.sort(key=lambda x: x['frasi_generate'], reverse=True)
+        # Converto in lista e ordino
+        articoli_lista = [
+            {'nome': nome, 'frasi_generate': count} 
+            for nome, count in articoli_attivi.items()
+        ]
+        articoli_lista.sort(key=lambda x: x['frasi_generate'], reverse=True)
         
         return jsonify({
             'total_articoli_con_frasi': total_articoli_con_frasi,
             'total_frasi_generate': total_frasi_generate,
             'stats_stili': stats_stili,
-            'articoli_piu_attivi': articoli_attivi[:10],  # Top 10
+            'articoli_piu_attivi': articoli_lista[:10],  # Top 10
             'dimensione_cache': len(FRASE_MEMORY_CACHE)
         })
         
