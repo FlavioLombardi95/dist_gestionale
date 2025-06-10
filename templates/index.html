@@ -171,8 +171,6 @@
             formData.append('nome', document.getElementById('nome').value);
             formData.append('brand', document.getElementById('brand').value);
             formData.append('keywords', document.getElementById('keywords').value);
-            formData.append('colore', document.getElementById('colore').value);
-            formData.append('materiale', document.getElementById('materiale').value);
             
             const immagine = document.getElementById('immagine').files[0];
             if (immagine) {
@@ -180,17 +178,41 @@
             }
 
             try {
-                const response = await fetch('/api/articoli', {
-                    method: 'POST',
-                    body: formData
-                });
+                const form = e.target;
+                const editId = form.dataset.editId;
                 
-                if (response.ok) {
-                    showAlert('Articolo creato con successo!');
-                    e.target.reset();
-                    loadArticoli();
+                let response;
+                if (editId) {
+                    // Modifica articolo esistente
+                    response = await fetch(`/api/articoli/${editId}`, {
+                        method: 'PUT',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        showAlert('Articolo modificato con successo!');
+                        form.removeAttribute('data-edit-id');
+                        document.querySelector('.card-title').textContent = 'Nuovo Articolo';
+                        document.querySelector('button[type="submit"]').textContent = 'Salva';
+                        e.target.reset();
+                        loadArticoli();
+                    } else {
+                        throw new Error('Errore nella modifica dell\'articolo');
+                    }
                 } else {
-                    throw new Error('Errore nella creazione dell\'articolo');
+                    // Crea nuovo articolo
+                    response = await fetch('/api/articoli', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        showAlert('Articolo creato con successo!');
+                        e.target.reset();
+                        loadArticoli();
+                    } else {
+                        throw new Error('Errore nella creazione dell\'articolo');
+                    }
                 }
             } catch (error) {
                 showAlert(error.message, 'danger');
@@ -299,11 +321,15 @@
         function editArticolo(articolo) {
             document.getElementById('nome').value = articolo.nome;
             document.getElementById('brand').value = articolo.brand;
-            document.getElementById('colore').value = articolo.colore || '';
-            document.getElementById('materiale').value = articolo.materiale || '';
             document.getElementById('keywords').value = articolo.keywords.join(', ');
+            
             const form = document.getElementById('articoloForm');
             form.dataset.editId = articolo.id;
+            
+            // Aggiorna titolo e pulsante per indicare la modalità modifica
+            document.querySelector('.card-title').textContent = 'Modifica Articolo';
+            document.querySelector('button[type="submit"]').textContent = 'Aggiorna';
+            
             form.scrollIntoView({ behavior: 'smooth' });
         }
 
