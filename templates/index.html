@@ -109,6 +109,45 @@
                         <input type="text" class="form-control" id="keywords" placeholder="Es: tracolla, borchie, vintage...">
                     </div>
                     <div class="mb-3">
+                        <label for="condizioni" class="form-label">Condizioni</label>
+                        <select class="form-select" id="condizioni" required>
+                            <option value="">Seleziona condizioni</option>
+                            <option value="Eccellenti">Eccellenti</option>
+                            <option value="Ottime">Ottime</option>
+                            <option value="Buone">Buone</option>
+                            <option value="Discrete">Discrete</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rarita" class="form-label">Rarità</label>
+                        <select class="form-select" id="rarita" required>
+                            <option value="">Seleziona rarità</option>
+                            <option value="Comune">Comune</option>
+                            <option value="Raro">Raro</option>
+                            <option value="Molto Raro">Molto Raro</option>
+                            <option value="Introvabile">Introvabile</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="vintage">
+                            <label class="form-check-label" for="vintage">
+                                Articolo Vintage
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="target" class="form-label">Target di riferimento</label>
+                        <select class="form-select" id="target">
+                            <option value="">Seleziona target (opzionale)</option>
+                            <option value="Intenditrici">Intenditrici</option>
+                            <option value="Collezionisti">Collezionisti</option>
+                            <option value="Amanti del vintage">Amanti del vintage</option>
+                            <option value="Appassionati di lusso">Appassionati di lusso</option>
+                            <option value="Chi ama distinguersi">Chi ama distinguersi</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label for="termini_commerciali" class="form-label">Termini commerciali (opzionali)</label>
                         <input type="text" class="form-control" id="termini_commerciali" placeholder="Es: offerta scontata, occasione rara, promozione limitata...">
                         <div class="form-text">Termini per personalizzare la parte promozionale della frase</div>
@@ -178,6 +217,10 @@
             formData.append('colore', document.getElementById('colore').value);
             formData.append('materiale', document.getElementById('materiale').value);
             formData.append('keywords', document.getElementById('keywords').value);
+            formData.append('condizioni', document.getElementById('condizioni').value);
+            formData.append('rarita', document.getElementById('rarita').value);
+            formData.append('vintage', document.getElementById('vintage').checked ? 'true' : 'false');
+            formData.append('target', document.getElementById('target').value);
             formData.append('termini_commerciali', document.getElementById('termini_commerciali').value);
             
             const immagine = document.getElementById('immagine').files[0];
@@ -332,6 +375,10 @@
             document.getElementById('colore').value = articolo.colore || '';
             document.getElementById('materiale').value = articolo.materiale || '';
             document.getElementById('keywords').value = articolo.keywords.join(', ');
+            document.getElementById('condizioni').value = articolo.condizioni || '';
+            document.getElementById('rarita').value = articolo.rarita || '';
+            document.getElementById('vintage').checked = articolo.vintage || false;
+            document.getElementById('target').value = articolo.target || '';
             document.getElementById('termini_commerciali').value = articolo.termini_commerciali.join(', ');
             
             const form = document.getElementById('articoloForm');
