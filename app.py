@@ -292,37 +292,35 @@ def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_cl
         else:
             return 'un' if tipo not in ['pantaloni'] else 'dei'
     
-    # Nome pulito senza ripetizioni di brand e tipo articolo
+    # Costruzione nome grammaticalmente corretto in italiano
+    # Formato: [tipo_articolo] [brand] [resto_nome] (es: "borsa Dior Trotter Boston")
+    
+    # Pulisci il nome da brand e tipo di articolo
     nome_pulito = nome.replace(brand, '').strip()
     
-    # Evita ripetizione del tipo articolo se già presente nel nome
-    nome_lower = nome_pulito.lower()
-    tipo_presente = False
-    
-    # Controlla se il tipo articolo è già presente
+    # Rimuovi eventuali occorrenze del tipo articolo dal nome
     varianti_tipo = [
         tipo_articolo.lower(),
         tipo_articolo.lower() + 's',
-        tipo_articolo.lower() + 'e'
+        tipo_articolo.lower() + 'e',
+        tipo_articolo.capitalize(),
+        tipo_articolo.upper()
     ]
     
     for variante in varianti_tipo:
-        if variante in nome_lower:
-            tipo_presente = True
-            break
-    
-    # Se il tipo è presente, usa solo il nome pulito, altrimenti aggiungi il tipo
-    if tipo_presente:
-        nome_semplificato = nome_pulito
-    else:
-        nome_semplificato = f"{tipo_articolo.capitalize()} {nome_pulito}".strip()
+        nome_pulito = nome_pulito.replace(variante, '').strip()
     
     # Pulisci spazi multipli e caratteri indesiderati
-    nome_semplificato = re.sub(r'\s+', ' ', nome_semplificato).strip()
+    nome_pulito = re.sub(r'\s+', ' ', nome_pulito).strip()
     
-    # Se il nome risulta vuoto o molto corto, usa il nome originale
-    if len(nome_semplificato.strip()) < 3:
-        nome_semplificato = nome
+    # Costruisci il nome finale nel formato corretto italiano
+    if nome_pulito:
+        nome_completo_corretto = f"{tipo_articolo.lower()} {brand} {nome_pulito}".strip()
+    else:
+        nome_completo_corretto = f"{tipo_articolo.lower()} {brand}".strip()
+    
+    # Usa nome_completo_corretto nei template
+    nome_semplificato = nome_completo_corretto
     
     # Costruisci descrizione materiali con concordanza corretta
     desc_materiali = ""
@@ -405,29 +403,30 @@ def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_cl
         desc_target = target_map.get(target, '')
     
     # Template delle frasi con grammatica corretta
+    # Nota: nome_semplificato ora contiene già il formato corretto "tipo brand resto"
     art_det = articolo_determinativo(genere, tipo_articolo)
     art_indet = articolo_indeterminativo(genere, tipo_articolo)
     
     templates = [
-        f"Eleganza senza tempo firmata {brand}: quest{('a' if genere == 'f' else 'o')} {nome_semplificato} {desc_materiali} è un tesoro da collezione, {desc_condizioni}.",
-        f"{aggettivo_brand.capitalize()} e {concordanza_aggettivo('iconico', genere)}, {art_det} {brand} {nome_semplificato} {desc_materiali} è perfett{('a' if genere == 'f' else 'o')} per chi cerca stile e unicità.",
-        f"{art_indet.capitalize()} {nome_semplificato} {desc_rarita} e affascinante {desc_materiali}, firmat{('a' if genere == 'f' else 'o')} {brand}: {desc_condizioni}, pront{('a' if genere == 'f' else 'o')} per una nuova storia.",
-        f"{art_det.capitalize()} mitic{('a' if genere == 'f' else 'o')} {brand} {nome_semplificato}: {desc_materiali}, {desc_condizioni}. Un classico che non tramonta.",
-        f"Un tocco di classe firmato {brand}: {nome_semplificato} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
-        f"Perfett{('a' if genere == 'f' else 'o')} {desc_target}: {brand} {nome_semplificato} {desc_materiali}, {desc_condizioni}.",
-        f"Stile {brand.lower()} in chiave vintage: {nome_semplificato} {desc_materiali} {desc_condizioni}. Un vero pezzo {desc_rarita}.",
-        f"Vintage di lusso? Quest{('a' if genere == 'f' else 'o')} {brand} {nome_semplificato} {desc_materiali} fa al caso tuo. {desc_condizioni.capitalize()}.",
-        f"Intramontabile e raffinat{('a' if genere == 'f' else 'o')}: {art_det} {brand} {nome_semplificato} {desc_materiali}, {desc_rarita}, bellissim{('a' if genere == 'f' else 'o')}.",
-        f"Eleganza discreta e fascino vintage: {art_det} {brand} {nome_semplificato} {desc_materiali} è perfett{('a' if genere == 'f' else 'o')} per ogni occasione.",
-        f"{desc_rarita.capitalize()}, elegante e {desc_condizioni}: quest{('a' if genere == 'f' else 'o')} {brand} {nome_semplificato} è un investimento di stile.",
-        f"Finiture {desc_materiali} e firma {brand}: {art_det} {nome_semplificato} è {art_indet} {tipo_articolo} da vera intenditrice.",
-        f"Un pezzo cult {desc_target}: {brand} {nome_semplificato} {desc_materiali}, {desc_condizioni}.",
-        f"Quest{('a' if genere == 'f' else 'o')} {brand} {nome_semplificato} ha tutto: eleganza, storia e rarità. {desc_condizioni.capitalize()}.",
-        f"{art_indet.capitalize()} {brand} che non passa inoservat{('a' if genere == 'f' else 'o')}: {nome_semplificato} {desc_materiali}, {desc_rarita}.",
-        f"Perfett{('a' if genere == 'f' else 'o')} {desc_target} del fascino discreto: {brand} {nome_semplificato} vintage, {desc_condizioni}.",
-        f"Collezionabile e chic: {brand} {nome_semplificato} {desc_materiali}, {desc_condizioni}, un classico senza tempo.",
-        f"{tipo_articolo.capitalize()} {brand} {nome_semplificato} {desc_materiali}: {desc_rarita} in queste condizioni.",
-        f"Semplicemente {concordanza_aggettivo('iconico', genere)}: {brand} {nome_semplificato} {desc_materiali}, perfett{('a' if genere == 'f' else 'o')} {desc_target}."
+        f"Eleganza senza tempo: quest{('a' if genere == 'f' else 'o')} {nome_semplificato} {desc_materiali} è un tesoro da collezione, {desc_condizioni}.",
+        f"{aggettivo_brand.capitalize()} e {concordanza_aggettivo('iconico', genere)}, {art_det} {nome_semplificato} {desc_materiali} è perfett{('a' if genere == 'f' else 'o')} per chi cerca stile e unicità.",
+        f"{art_indet.capitalize()} {nome_semplificato} {desc_rarita} e affascinante {desc_materiali}: {desc_condizioni}, pront{('a' if genere == 'f' else 'o')} per una nuova storia.",
+        f"{art_det.capitalize()} mitic{('a' if genere == 'f' else 'o')} {nome_semplificato}: {desc_materiali}, {desc_condizioni}. Un classico che non tramonta.",
+        f"Un tocco di classe: {nome_semplificato} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
+        f"Perfett{('a' if genere == 'f' else 'o')} {desc_target}: {nome_semplificato} {desc_materiali}, {desc_condizioni}.",
+        f"Stile vintage: {nome_semplificato} {desc_materiali} {desc_condizioni}. Un vero pezzo {desc_rarita}.",
+        f"Vintage di lusso? Quest{('a' if genere == 'f' else 'o')} {nome_semplificato} {desc_materiali} fa al caso tuo. {desc_condizioni.capitalize()}.",
+        f"Intramontabile e raffinat{('a' if genere == 'f' else 'o')}: {art_det} {nome_semplificato} {desc_materiali}, {desc_rarita}, bellissim{('a' if genere == 'f' else 'o')}.",
+        f"Eleganza discreta e fascino vintage: {art_det} {nome_semplificato} {desc_materiali} è perfett{('a' if genere == 'f' else 'o')} per ogni occasione.",
+        f"{desc_rarita.capitalize()}, elegante e {desc_condizioni}: quest{('a' if genere == 'f' else 'o')} {nome_semplificato} è un investimento di stile.",
+        f"Finiture {desc_materiali}: {art_det} {nome_semplificato} è {art_indet} pezzo da vera intenditrice.",
+        f"Un pezzo cult {desc_target}: {nome_semplificato} {desc_materiali}, {desc_condizioni}.",
+        f"Quest{('a' if genere == 'f' else 'o')} {nome_semplificato} ha tutto: eleganza, storia e rarità. {desc_condizioni.capitalize()}.",
+        f"{art_indet.capitalize()} che non passa inosservat{('a' if genere == 'f' else 'o')}: {nome_semplificato} {desc_materiali}, {desc_rarita}.",
+        f"Perfett{('a' if genere == 'f' else 'o')} {desc_target} del fascino discreto: {nome_semplificato} vintage, {desc_condizioni}.",
+        f"Collezionabile e chic: {nome_semplificato} {desc_materiali}, {desc_condizioni}, un classico senza tempo.",
+        f"{nome_semplificato.capitalize()} {desc_materiali}: {desc_rarita} in queste condizioni.",
+        f"Semplicemente {concordanza_aggettivo('iconico', genere)}: {nome_semplificato} {desc_materiali}, perfett{('a' if genere == 'f' else 'o')} {desc_target}."
     ]
     
     # Pulisci e filtra template
