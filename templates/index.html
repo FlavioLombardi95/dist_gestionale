@@ -373,6 +373,53 @@
             from { transform: translateX(-100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
+
+        /* Badge stili generazione frasi */
+        .style-badge {
+            font-size: 0.8em;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-right: 10px;
+            border: 2px solid transparent;
+        }
+
+        .bg-gradient-elegante {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .bg-gradient-emotivo {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .bg-gradient-amichevole {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .bg-gradient-professionale {
+            background: linear-gradient(135deg, #43e97b, #38f9d7);
+            color: #2c3e50;
+        }
+
+        .bg-gradient-esclusivo {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            color: #2c3e50;
+        }
+
+        /* Style selector modal enhancements */
+        .style-selector-modal .swal2-popup {
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .style-selector-modal .swal2-title {
+            color: var(--primary-color);
+        }
+
+        /* Miglioramenti generali */
     </style>
 </head>
 <body>
@@ -904,17 +951,52 @@
             }
         }
 
-        // Aggiorna statistiche
-        function updateStats(articoli) {
+        // Aggiorna statistiche con chiamata alle nuove API
+        async function updateStats(articoli) {
             const totalArticoli = articoli.length;
             const totalBrands = [...new Set(articoli.map(a => a.brand))].length;
             const articoliVintage = articoli.filter(a => a.vintage).length;
+            
+            // Chiama API per statistiche frasi avanzate
+            try {
+                const response = await fetch('/api/statistiche-frasi');
+                if (response.ok) {
+                    const statsFrasi = await response.json();
+                    frasiGenerateCount = statsFrasi.total_frasi_generate;
+                    
+                    // Mostra statistiche avanzate se disponibili
+                    if (statsFrasi.total_frasi_generate > 0) {
+                        showAdvancedFraseStats(statsFrasi);
+                    }
+                } else {
+                    // Fallback alle statistiche locali
+                    frasiGenerateCount = 0;
+                }
+            } catch (error) {
+                console.log('Statistiche frasi non disponibili, uso fallback');
+                frasiGenerateCount = 0;
+            }
             
             // Animazione contatori
             animateCounter('totalArticoli', totalArticoli);
             animateCounter('totalBrands', totalBrands);
             animateCounter('frasiGenerate', frasiGenerateCount);
             animateCounter('articoliVintage', articoliVintage);
+        }
+
+        function showAdvancedFraseStats(stats) {
+            // Aggiungi tooltip avanzato alla statistica frasi
+            const frasiElement = document.getElementById('frasiGenerate');
+            if (frasiElement && stats.stats_stili) {
+                const stiliInfo = Object.entries(stats.stats_stili)
+                    .map(([stile, count]) => `${stile}: ${count}`)
+                    .join(', ');
+                
+                frasiElement.parentElement.title = 
+                    `Frasi per stile: ${stiliInfo}\n` +
+                    `Articoli attivi: ${stats.total_articoli_con_frasi}\n` +
+                    `Algoritmo ottimizzato attivo 🚀`;
+            }
         }
 
         function animateCounter(elementId, targetValue) {
@@ -1085,13 +1167,160 @@
             brandSelezionato = null;
         });
 
-        // Generazione frase con loading
+        // Generazione frase con indicatori di miglioramento
         async function generaFrase(id, card) {
+            // Mostra modal per selezione stile con indicatori di novità
+            const { value: stile } = await Swal.fire({
+                title: '🎨 Scegli lo Stile della Frase',
+                html: `
+                    <div class="row g-3 style-selector">
+                        <div class="col-12 mb-3">
+                            <div class="alert alert-info">
+                                <i class="fas fa-rocket"></i> <strong>Algoritmo Ottimizzato!</strong><br>
+                                Sistema anti-ripetizione, analisi semantica avanzata e scoring intelligente dei template
+                            </div>
+                            <p class="text-muted">Personalizza il tono della tua frase promozionale:</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="style-option" data-style="elegante">
+                                <div class="style-icon">✨</div>
+                                <h6>Elegante</h6>
+                                <small>Tono raffinato e sofisticato</small>
+                                <div class="enhancement-badge">🔥 Migliorato</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="style-option" data-style="emotivo">
+                                <div class="style-icon">💖</div>
+                                <h6>Emotivo</h6>
+                                <small>Linguaggio che coinvolge emotivamente</small>
+                                <div class="enhancement-badge">🔥 Migliorato</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="style-option" data-style="amichevole">
+                                <div class="style-icon">😊</div>
+                                <h6>Amichevole</h6>
+                                <small>Tono colloquiale e caloroso</small>
+                                <div class="enhancement-badge">🔥 Migliorato</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="style-option" data-style="professionale">
+                                <div class="style-icon">📋</div>
+                                <h6>Professionale</h6>
+                                <small>Linguaggio tecnico e formale</small>
+                                <div class="enhancement-badge">🔥 Migliorato</div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="style-option" data-style="esclusivo">
+                                <div class="style-icon">👑</div>
+                                <h6>Esclusivo</h6>
+                                <small>Tono luxury per clientela VIP</small>
+                                <div class="enhancement-badge">🔥 Migliorato</div>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                        .style-selector { font-family: inherit; }
+                        .style-option {
+                            border: 2px solid #e9ecef;
+                            border-radius: 12px;
+                            padding: 15px;
+                            text-align: center;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            background: #f8f9fa;
+                            position: relative;
+                        }
+                        .style-option:hover {
+                            border-color: var(--accent-color);
+                            background: #fff;
+                            transform: translateY(-2px);
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        }
+                        .style-option.selected {
+                            border-color: var(--accent-color);
+                            background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+                            color: white;
+                        }
+                        .style-icon {
+                            font-size: 24px;
+                            margin-bottom: 8px;
+                        }
+                        .style-option h6 {
+                            margin-bottom: 4px;
+                            font-weight: 600;
+                        }
+                        .style-option small {
+                            opacity: 0.8;
+                        }
+                        .enhancement-badge {
+                            position: absolute;
+                            top: -8px;
+                            right: -8px;
+                            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+                            color: white;
+                            padding: 4px 8px;
+                            border-radius: 12px;
+                            font-size: 0.7em;
+                            font-weight: bold;
+                            animation: pulse 2s infinite;
+                        }
+                        @keyframes pulse {
+                            0% { transform: scale(1); }
+                            50% { transform: scale(1.05); }
+                            100% { transform: scale(1); }
+                        }
+                        .alert-info {
+                            background: linear-gradient(135deg, #3498db, #2980b9);
+                            color: white;
+                            border: none;
+                            border-radius: 10px;
+                        }
+                    </style>
+                `,
+                showCancelButton: true,
+                confirmButtonText: '🚀 Genera Frase Ottimizzata',
+                cancelButtonText: 'Annulla',
+                confirmButtonColor: 'var(--accent-color)',
+                cancelButtonColor: '#6c757d',
+                customClass: {
+                    popup: 'style-selector-modal'
+                },
+                didOpen: () => {
+                    // Setup selezione stili
+                    const options = document.querySelectorAll('.style-option');
+                    let selectedStyle = 'elegante'; // Default
+                    
+                    // Preseleziona elegante
+                    options[0].classList.add('selected');
+                    
+                    options.forEach(option => {
+                        option.addEventListener('click', () => {
+                            options.forEach(opt => opt.classList.remove('selected'));
+                            option.classList.add('selected');
+                            selectedStyle = option.dataset.style;
+                        });
+                    });
+                    
+                    // Store selection for retrieval
+                    Swal.getPopup().dataset.selectedStyle = selectedStyle;
+                },
+                preConfirm: () => {
+                    const selected = document.querySelector('.style-option.selected');
+                    return selected ? selected.dataset.style : 'elegante';
+                }
+            });
+            
+            if (!stile) return; // User cancelled
+            
             const btn = card.querySelector('.genera-frase-btn');
-            const originalContent = showLoading(btn, 'Generando...');
+            const originalContent = showLoading(btn, 'Generando con IA...');
             
             try {
-                const response = await fetch(`/api/genera-frase/${id}`);
+                const response = await fetch(`/api/genera-frase/${id}?stile=${stile}`);
                 if (!response.ok) throw new Error('Errore nella generazione della frase');
                 
                 const data = await response.json();
@@ -1099,12 +1328,37 @@
                 const fraseContainer = card.querySelector('.frase-generata');
                 fraseContainer.classList.remove('d-none');
                 fraseContainer.classList.add('animate__animated', 'animate__fadeIn');
-                fraseContainer.querySelector('p').textContent = data.frase;
                 
+                // Aggiorna contenuto con stile e indicatori di miglioramento
+                const fraseContent = fraseContainer.querySelector('p');
+                fraseContent.textContent = data.frase;
+                
+                // Aggiungi badge stile se non esiste
+                let styleBadge = fraseContainer.querySelector('.style-badge');
+                if (!styleBadge) {
+                    styleBadge = document.createElement('span');
+                    styleBadge.className = 'badge style-badge';
+                    fraseContainer.querySelector('.d-flex').prepend(styleBadge);
+                }
+                
+                // Update badge style con indicatore di ottimizzazione
+                const styleIcons = {
+                    'elegante': '✨',
+                    'emotivo': '💖',
+                    'amichevole': '😊',
+                    'professionale': '📋',
+                    'esclusivo': '👑'
+                };
+                
+                styleBadge.textContent = `${styleIcons[stile]} ${stile.charAt(0).toUpperCase() + stile.slice(1)} 🚀`;
+                styleBadge.className = `badge style-badge bg-gradient-${stile}`;
+                styleBadge.title = 'Generato con algoritmo ottimizzato - Sistema anti-ripetizione attivo';
+                
+                // Incrementa contatore locale e aggiorna
                 frasiGenerateCount++;
                 updateStats(articoliGlobal);
                 
-                showAlert('Frase generata con successo!', 'success', 2000);
+                showAlert(`Frase ottimizzata generata con stile ${stile}! 🚀`, 'success', 3000);
             } catch (error) {
                 showAlert('Errore nella generazione della frase', 'danger');
             } finally {

@@ -323,153 +323,941 @@ def concordanza_aggettivo(aggettivo: str, genere: str) -> str:
 def genera_frase_stile_professionale(brand: str, nome: str, colore: str, materiale: str, 
                                    keywords_classificate: Dict, condizioni: str, rarita: str, 
                                    vintage: bool, target: str, termini_commerciali: List[str]) -> str:
-    """Genera frasi professionali ottimizzate"""
+    """Genera frasi professionali ottimizzate - wrapper per il nuovo sistema"""
+    return genera_frase_personalizzata(brand, nome, colore, materiale, keywords_classificate,
+                                     condizioni, rarita, vintage, target, termini_commerciali, 'elegante')
+
+# ===============================
+# SISTEMA GENERAZIONE FRASI MULTI-STILE AVANZATO CON OTTIMIZZAZIONI
+# ===============================
+
+# Cache per memorizzare frasi generate ed evitare ripetizioni
+FRASE_MEMORY_CACHE = {}
+SEMANTIC_VARIATIONS_CACHE = {}
+
+def genera_frase_personalizzata(brand: str, nome: str, colore: str, materiale: str, 
+                               keywords_classificate: Dict, condizioni: str, rarita: str, 
+                               vintage: bool, target: str, termini_commerciali: List[str], 
+                               stile: str = 'elegante') -> str:
+    """Sistema avanzato di generazione frasi con ottimizzazioni avanzate
+    
+    Ottimizzazioni implementate:
+    - Sistema di memoria per evitare ripetizioni
+    - Variazione semantica intelligente
+    - Scoring dei template
+    - Analisi contestuale migliorata
+    - Generazione dinamica di aggettivi
+    
+    Stili disponibili:
+    - elegante: Tono raffinato e sofisticato
+    - emotivo: Linguaggio che coinvolge emotivamente
+    - amichevole: Tono colloquiale e caloroso
+    - professionale: Linguaggio tecnico e formale
+    - esclusivo: Tono luxury per clientela VIP
+    """
+    
+    # Cache key per memoria frasi
+    cache_key = f"{brand}_{nome}_{colore}_{materiale}_{stile}"
     
     # Cache per tipo e genere
     tipo_articolo = get_tipo_articolo_cached(nome)
     genere = get_genere_cached(tipo_articolo)
     
-    # Costruzione nome ottimizzata
-    nome_completo_corretto = _costruisci_nome_corretto(nome, brand, tipo_articolo)
+    # Analisi contestuale avanzata delle keywords
+    keywords_analizzate = _analisi_contestuale_keywords(keywords_classificate, tipo_articolo, brand)
     
-    # Descrizioni ottimizzate
-    desc_materiali = _costruisci_descrizione_materiali(materiale, colore, keywords_classificate, genere)
-    desc_condizioni = _costruisci_descrizione_condizioni(condizioni, genere)
-    desc_rarita = _costruisci_descrizione_rarita(rarita, genere)
-    desc_target = _costruisci_descrizione_target(target)
+    # Costruzione componenti ottimizzati con variazioni semantiche
+    nome_completo = _costruisci_nome_avanzato_con_variazioni(nome, brand, tipo_articolo, stile)
+    desc_materiali = _costruisci_descrizione_materiali_avanzata_ottimizzata(
+        materiale, colore, keywords_analizzate, genere, stile, tipo_articolo
+    )
+    desc_condizioni = _costruisci_descrizione_condizioni_avanzata(condizioni, genere, stile)
+    desc_rarita = _costruisci_descrizione_rarita_avanzata(rarita, genere, stile)
+    desc_target = _costruisci_descrizione_target_avanzata(target, stile)
     
-    # Aggettivo brand
-    aggettivo_brand = _get_aggettivo_brand(brand, genere)
+    # Sistema di generazione dinamica aggettivi brand
+    aggettivo_brand = _genera_aggettivo_dinamico_brand(brand, genere, stile, keywords_analizzate)
     
-    # Articoli
+    # Articoli grammaticali
     art_det = _get_articolo_determinativo(genere, tipo_articolo)
     art_indet = _get_articolo_indeterminativo(genere, tipo_articolo)
     
-    # Template ottimizzati
-    templates = _get_templates_frasi(
-        nome_completo_corretto, desc_materiali, desc_condizioni, desc_rarita,
-        desc_target, aggettivo_brand, art_det, art_indet, genere
+    # Template con scoring avanzato
+    templates = _get_templates_con_scoring(
+        stile, nome_completo, desc_materiali, desc_condizioni, desc_rarita,
+        desc_target, aggettivo_brand, art_det, art_indet, genere, vintage,
+        keywords_analizzate, tipo_articolo
     )
     
-    # Selezione template valido
-    frase_descrittiva = _seleziona_template_valido(templates, nome_completo_corretto, brand)
+    # Selezione template con sistema anti-ripetizione
+    frase_principale = _seleziona_template_con_memoria(
+        templates, nome_completo, brand, stile, cache_key
+    )
     
-    # Call to action
-    call_to_action = _genera_call_to_action(termini_commerciali)
+    # Call to action con variazioni
+    call_to_action = _genera_call_to_action_con_variazioni(
+        termini_commerciali, stile, cache_key
+    )
     
-    return f"{frase_descrittiva}\n{call_to_action}"
+    # Memorizza frase generata
+    if cache_key not in FRASE_MEMORY_CACHE:
+        FRASE_MEMORY_CACHE[cache_key] = []
+    FRASE_MEMORY_CACHE[cache_key].append(frase_principale)
+    
+    # Mantieni solo le ultime 10 frasi per articolo
+    if len(FRASE_MEMORY_CACHE[cache_key]) > 10:
+        FRASE_MEMORY_CACHE[cache_key] = FRASE_MEMORY_CACHE[cache_key][-10:]
+    
+    return f"{frase_principale}\n{call_to_action}"
 
-def _costruisci_nome_corretto(nome: str, brand: str, tipo_articolo: str) -> str:
-    """Costruisce il nome grammaticalmente corretto"""
+def _analisi_contestuale_keywords(keywords_classificate: Dict, tipo_articolo: str, brand: str) -> Dict:
+    """Analisi contestuale avanzata delle keywords con sinonimi e contesti"""
+    
+    # Espansione semantica per categoria
+    espansioni_semantiche = {
+        'colori': {
+            'nero': ['elegante', 'raffinato', 'classico', 'sofisticato'],
+            'bianco': ['puro', 'essenziale', 'minimalista', 'pulito'],
+            'rosso': ['passionale', 'vivace', 'energico', 'accattivante'],
+            'oro': ['prezioso', 'lussuoso', 'esclusivo', 'regale'],
+            'argento': ['moderno', 'contemporaneo', 'chic', 'elegante']
+        },
+        'materiali': {
+            'pelle': ['pregiata', 'morbida', 'resistente', 'naturale'],
+            'seta': ['setosa', 'fluida', 'preziosa', 'delicata'],
+            'cashmere': ['soffice', 'calda', 'lussuosa', 'pregiata'],
+            'cotone': ['naturale', 'traspirante', 'confortevole', 'versatile']
+        },
+        'stili': {
+            'vintage': ['autentico', 'storico', 'caratteristico', 'unico'],
+            'moderno': ['contemporaneo', 'attuale', 'innovativo', 'trendy'],
+            'classico': ['intramontabile', 'elegante', 'raffinato', 'senza tempo']
+        }
+    }
+    
+    # Contesti specifici per brand
+    contesti_brand = {
+        'Chanel': ['iconico', 'intramontabile', 'parigino', 'couture'],
+        'Hermès': ['artigianale', 'esclusivo', 'leggendario', 'prezioso'],
+        'Louis Vuitton': ['viaggiatore', 'distintivo', 'prestigioso', 'raffinato'],
+        'Gucci': ['italiano', 'creativo', 'audace', 'innovativo'],
+        'Prada': ['minimale', 'sofisticato', 'moderno', 'intellettuale']
+    }
+    
+    # Contesti per tipo articolo
+    contesti_tipo = {
+        'borsa': ['funzionale', 'elegante', 'pratica', 'versatile'],
+        'scarpe': ['confortevoli', 'stilose', 'raffinate', 'distintive'],
+        'vestito': ['femminile', 'elegante', 'sofisticato', 'chic'],
+        'accessorio': ['distintivo', 'caratteristico', 'personale', 'unico']
+    }
+    
+    # Arricchisci le keywords con contesti
+    keywords_analizzate = keywords_classificate.copy()
+    
+    # Aggiungi contesti semantici
+    keywords_analizzate['contesti_semantici'] = []
+    keywords_analizzate['brand_context'] = contesti_brand.get(brand, [])
+    keywords_analizzate['tipo_context'] = contesti_tipo.get(tipo_articolo, [])
+    
+    # Espandi le keywords esistenti
+    for categoria, keywords in keywords_classificate.items():
+        if categoria in espansioni_semantiche:
+            for keyword in keywords:
+                if keyword in espansioni_semantiche[categoria]:
+                    keywords_analizzate['contesti_semantici'].extend(
+                        espansioni_semantiche[categoria][keyword]
+                    )
+    
+    # Rimuovi duplicati
+    keywords_analizzate['contesti_semantici'] = list(set(keywords_analizzate['contesti_semantici']))
+    
+    return keywords_analizzate
+
+def _costruisci_nome_avanzato_con_variazioni(nome: str, brand: str, tipo_articolo: str, stile: str) -> str:
+    """Costruzione nome con variazioni semantiche per stile"""
+    nome_base = _costruisci_nome_avanzato(nome, brand, tipo_articolo)
+    
+    # Variazioni per stile
+    if stile == 'emotivo':
+        prefissi_emotivi = ['meraviglioso', 'stupendo', 'magnifico', 'splendido']
+        if random.random() < 0.3:  # 30% di probabilità
+            return f"{random.choice(prefissi_emotivi)} {nome_base}"
+    
+    elif stile == 'esclusivo':
+        prefissi_esclusivi = ['prestigioso', 'esclusivo', 'ricercato', 'selezionato']
+        if random.random() < 0.4:  # 40% di probabilità
+            return f"{random.choice(prefissi_esclusivi)} {nome_base}"
+    
+    return nome_base
+
+def _costruisci_descrizione_materiali_avanzata_ottimizzata(
+    materiale: str, colore: str, keywords_analizzate: Dict, genere: str, 
+    stile: str, tipo_articolo: str
+) -> str:
+    """Descrizione materiali ottimizzata con contesti semantici"""
+    
+    if not materiale and not colore:
+        # Usa contesti semantici se disponibili
+        contesti = keywords_analizzate.get('contesti_semantici', [])
+        if contesti and random.random() < 0.3:
+            return f"dal carattere {random.choice(contesti)}"
+        return ""
+    
+    # Descrizione base
+    desc_base = _costruisci_descrizione_materiali_avanzata(
+        materiale, colore, keywords_analizzate, genere, stile
+    )
+    
+    # Arricchimento con contesti
+    contesti_brand = keywords_analizzate.get('brand_context', [])
+    contesti_tipo = keywords_analizzate.get('tipo_context', [])
+    
+    # Aggiungi contesto brand se appropriato
+    if contesti_brand and random.random() < 0.25 and stile in ['elegante', 'esclusivo']:
+        contesto = random.choice(contesti_brand)
+        if desc_base:
+            desc_base += f", dal design {contesto}"
+        else:
+            desc_base = f"dal design {contesto}"
+    
+    # Aggiungi contesto tipo se appropriato
+    elif contesti_tipo and random.random() < 0.2:
+        contesto = random.choice(contesti_tipo)
+        if desc_base:
+            desc_base += f" e {contesto}"
+        else:
+            desc_base = f"dal carattere {contesto}"
+    
+    return desc_base
+
+def _genera_aggettivo_dinamico_brand(brand: str, genere: str, stile: str, keywords_analizzate: Dict) -> str:
+    """Generazione dinamica di aggettivi brand basata su contesto"""
+    
+    # Aggettivi base per stile
+    aggettivo_base = _get_aggettivo_brand_per_stile(brand, genere, stile)
+    
+    # Probabilità di variazione basata su keywords
+    contesti_semantici = keywords_analizzate.get('contesti_semantici', [])
+    brand_context = keywords_analizzate.get('brand_context', [])
+    
+    # Usa contesti per variazioni creative
+    if contesti_semantici and random.random() < 0.3:
+        contesto = random.choice(contesti_semantici)
+        # Combina aggettivo base con contesto
+        combinazioni = [
+            f"{aggettivo_base} e {contesto}",
+            f"{contesto} e {aggettivo_base}",
+            contesto if random.random() < 0.5 else aggettivo_base
+        ]
+        return random.choice(combinazioni)
+    
+    return aggettivo_base
+
+def _get_templates_con_scoring(stile: str, nome_completo: str, desc_materiali: str, 
+                              desc_condizioni: str, desc_rarita: str, desc_target: str, 
+                              aggettivo_brand: str, art_det: str, art_indet: str, 
+                              genere: str, vintage: bool, keywords_analizzate: Dict,
+                              tipo_articolo: str) -> List[Dict]:
+    """Template con sistema di scoring avanzato"""
+    
+    # Template base
+    templates_base = _get_templates_per_stile(
+        stile, nome_completo, desc_materiali, desc_condizioni, desc_rarita,
+        desc_target, aggettivo_brand, art_det, art_indet, genere, vintage
+    )
+    
+    # Sistema di scoring
+    templates_con_score = []
+    
+    for template in templates_base:
+        score = _calcola_score_template(
+            template, keywords_analizzate, stile, tipo_articolo, vintage
+        )
+        templates_con_score.append({
+            'template': template,
+            'score': score
+        })
+    
+    # Ordina per score (migliori prima)
+    templates_con_score.sort(key=lambda x: x['score'], reverse=True)
+    
+    return templates_con_score
+
+def _calcola_score_template(template: str, keywords_analizzate: Dict, stile: str, 
+                           tipo_articolo: str, vintage: bool) -> float:
+    """Calcola score di qualità per un template"""
+    score = 1.0
+    
+    # Bonus per lunghezza ottimale (80-200 caratteri)
+    lunghezza = len(template)
+    if 80 <= lunghezza <= 200:
+        score += 0.3
+    elif lunghezza < 50:
+        score -= 0.2
+    elif lunghezza > 250:
+        score -= 0.1
+    
+    # Bonus per presenza di keywords rilevanti
+    contesti_semantici = keywords_analizzate.get('contesti_semantici', [])
+    brand_context = keywords_analizzate.get('brand_context', [])
+    
+    for contesto in contesti_semantici[:3]:  # Primi 3 contesti più rilevanti
+        if contesto.lower() in template.lower():
+            score += 0.15
+    
+    for contesto in brand_context[:2]:  # Primi 2 contesti brand
+        if contesto.lower() in template.lower():
+            score += 0.1
+    
+    # Bonus per coerenza con stile
+    parole_stile = {
+        'elegante': ['raffinato', 'elegante', 'classe', 'sofisticato'],
+        'emotivo': ['cuore', 'sogno', 'emozione', 'fascino'],
+        'amichevole': ['bello', 'fantastico', 'perfetto', 'speciale'],
+        'professionale': ['qualità', 'certificato', 'specifiche', 'articolo'],
+        'esclusivo': ['esclusivo', 'privilegio', 'lusso', 'élite']
+    }
+    
+    parole_stile_corrente = parole_stile.get(stile, [])
+    for parola in parole_stile_corrente:
+        if parola.lower() in template.lower():
+            score += 0.1
+    
+    # Bonus per menzione vintage se appropriato
+    if vintage and 'vintage' in template.lower():
+        score += 0.2
+    
+    # Penalità per ripetizioni eccessive di parole
+    parole = template.lower().split()
+    parole_uniche = set(parole)
+    if len(parole) > 0:
+        rapporto_unicità = len(parole_uniche) / len(parole)
+        if rapporto_unicità < 0.7:
+            score -= 0.15
+    
+    return max(score, 0.1)  # Score minimo
+
+def _seleziona_template_con_memoria(templates_con_score: List[Dict], nome_completo: str, 
+                                   brand: str, stile: str, cache_key: str) -> str:
+    """Selezione template con sistema anti-ripetizione"""
+    
+    # Frasi già generate per questo articolo
+    frasi_precedenti = FRASE_MEMORY_CACHE.get(cache_key, [])
+    
+    # Filtra template già usati (controllo similarità)
+    templates_disponibili = []
+    
+    for template_data in templates_con_score:
+        template = template_data['template']
+        
+        # Controlla similarità con frasi precedenti
+        is_troppo_simile = False
+        for frase_precedente in frasi_precedenti:
+            similarità = _calcola_similarita_frasi(template, frase_precedente)
+            if similarità > 0.7:  # Soglia di similarità
+                is_troppo_simile = True
+                break
+        
+        if not is_troppo_simile:
+            templates_disponibili.append(template_data)
+    
+    # Se tutti i template sono troppo simili, usa comunque i migliori
+    if not templates_disponibili:
+        templates_disponibili = templates_con_score[:3]
+    
+    # Selezione pesata sui migliori template
+    if len(templates_disponibili) >= 3:
+        # 60% probabilità per il migliore, 30% per il secondo, 10% per il terzo
+        pesi = [0.6, 0.3, 0.1]
+        templates_pesati = templates_disponibili[:3]
+    else:
+        # Distribuzione uniforme
+        pesi = [1.0 / len(templates_disponibili)] * len(templates_disponibili)
+        templates_pesati = templates_disponibili
+    
+    # Selezione pesata
+    template_selezionato = random.choices(templates_pesati, weights=pesi)[0]
+    
+    # Pulizia finale
+    frase_pulita = _pulizia_finale_frase(template_selezionato['template'])
+    
+    # Fallback se pulizia fallisce
+    if not frase_pulita or len(frase_pulita) < 20:
+        fallbacks = {
+            'elegante': f"Raffinato {nome_completo}, un classico dell'eleganza.",
+            'emotivo': f"Un {nome_completo} che conquista il cuore.",
+            'amichevole': f"Bellissimo {nome_completo}, perfetto per te!",
+            'professionale': f"Articolo {nome_completo} di qualità certificata.",
+            'esclusivo': f"Esclusivo {nome_completo} per pochi eletti."
+        }
+        return fallbacks.get(stile, f"Elegante {nome_completo} {brand}.")
+    
+    return frase_pulita
+
+def _calcola_similarita_frasi(frase1: str, frase2: str) -> float:
+    """Calcola similarità tra due frasi (semplice confronto parole)"""
+    if not frase1 or not frase2:
+        return 0.0
+    
+    # Tokenizzazione semplice
+    parole1 = set(frase1.lower().split())
+    parole2 = set(frase2.lower().split())
+    
+    # Jaccard similarity
+    intersezione = len(parole1.intersection(parole2))
+    unione = len(parole1.union(parole2))
+    
+    return intersezione / unione if unione > 0 else 0.0
+
+def _genera_call_to_action_con_variazioni(termini_commerciali: List[str], stile: str, cache_key: str) -> str:
+    """Call to action con sistema di variazioni"""
+    
+    # Call to action base
+    call_actions_base = _genera_call_to_action_per_stile(termini_commerciali, stile)
+    
+    # Sistema di variazioni temporali
+    variazioni_temporali = [
+        "Controlla subito", "Dai un'occhiata ora", "Verifica immediatamente",
+        "Non perdere tempo", "Affrettati a vedere", "Scopri subito"
+    ]
+    
+    # Variazioni per urgenza
+    variazioni_urgenza = [
+        "questa occasione unica", "questa opportunità esclusiva", 
+        "questa proposta speciale", "questo affare irripetibile",
+        "questa offerta limitata"
+    ]
+    
+    # Probabilità di variazione basata su cache
+    if cache_key in FRASE_MEMORY_CACHE and len(FRASE_MEMORY_CACHE[cache_key]) > 2:
+        # Articolo con molte frasi generate -> più variazioni
+        if random.random() < 0.4:
+            variazione_temporale = random.choice(variazioni_temporali)
+            variazione_urgenza = random.choice(variazioni_urgenza)
+            return f"{variazione_temporale} {variazione_urgenza} nel tuo account!"
+    
+    return call_actions_base
+
+def _pulizia_finale_frase(frase: str) -> str:
+    """Pulizia finale ottimizzata della frase"""
+    if not frase:
+        return ""
+    
+    # Pulizia avanzata
+    frase_pulita = re.sub(r'\s+', ' ', frase)
+    frase_pulita = frase_pulita.replace(' ,', ',').replace('  ', ' ').strip()
+    frase_pulita = frase_pulita.replace(': ,', ':').replace(', ,', ',').replace(' :', ':')
+    frase_pulita = frase_pulita.replace('.,', '.').replace(',.', '.').replace('..', '.')
+    frase_pulita = frase_pulita.replace('  ', ' ').replace(' .', '.')
+    
+    # Rimuovi pattern problematici
+    pattern_problematici = [
+        r'\b(\w+)\s+\1\b',  # Parole duplicate
+        r'\s+([,.;:])',      # Spazi prima punteggiatura
+        r'([,.;:])\s*([,.;:])',  # Punteggiatura doppia
+    ]
+    
+    for pattern in pattern_problematici:
+        frase_pulita = re.sub(pattern, r'\1', frase_pulita)
+    
+    # Capitalizzazione corretta
+    if frase_pulita:
+        frase_pulita = frase_pulita[0].upper() + frase_pulita[1:] if len(frase_pulita) > 1 else frase_pulita.upper()
+    
+    return frase_pulita.strip()
+
+# Funzione per pulire cache periodicamente (opzionale)
+def pulisci_cache_frasi():
+    """Pulisce la cache delle frasi per evitare accumulo eccessivo"""
+    global FRASE_MEMORY_CACHE, SEMANTIC_VARIATIONS_CACHE
+    
+    # Mantieni solo le ultime 5 frasi per articolo
+    for key in FRASE_MEMORY_CACHE:
+        if len(FRASE_MEMORY_CACHE[key]) > 5:
+            FRASE_MEMORY_CACHE[key] = FRASE_MEMORY_CACHE[key][-5:]
+    
+    # Pulisci cache variazioni semantiche se troppo grande
+    if len(SEMANTIC_VARIATIONS_CACHE) > 1000:
+        SEMANTIC_VARIATIONS_CACHE.clear()
+
+# ===============================
+# MANTIENI COMPATIBILITÀ BACKWARD
+# ===============================
+
+def genera_frase_personalizzata(brand: str, nome: str, colore: str, materiale: str, 
+                               keywords_classificate: Dict, condizioni: str, rarita: str, 
+                               vintage: bool, target: str, termini_commerciali: List[str], 
+                               stile: str = 'elegante') -> str:
+    """Sistema avanzato di generazione frasi con stili personalizzabili
+    
+    Stili disponibili:
+    - elegante: Tono raffinato e sofisticato
+    - emotivo: Linguaggio che coinvolge emotivamente
+    - amichevole: Tono colloquiale e caloroso
+    - professionale: Linguaggio tecnico e formale
+    - esclusivo: Tono luxury per clientela VIP
+    """
+    
+    # Cache per tipo e genere
+    tipo_articolo = get_tipo_articolo_cached(nome)
+    genere = get_genere_cached(tipo_articolo)
+    
+    # Costruzione componenti ottimizzati
+    nome_completo = _costruisci_nome_avanzato(nome, brand, tipo_articolo)
+    desc_materiali = _costruisci_descrizione_materiali_avanzata(materiale, colore, keywords_classificate, genere, stile)
+    desc_condizioni = _costruisci_descrizione_condizioni_avanzata(condizioni, genere, stile)
+    desc_rarita = _costruisci_descrizione_rarita_avanzata(rarita, genere, stile)
+    desc_target = _costruisci_descrizione_target_avanzata(target, stile)
+    
+    # Aggettivi brand per stile
+    aggettivo_brand = _get_aggettivo_brand_per_stile(brand, genere, stile)
+    
+    # Articoli grammaticali
+    art_det = _get_articolo_determinativo(genere, tipo_articolo)
+    art_indet = _get_articolo_indeterminativo(genere, tipo_articolo)
+    
+    # Template per stile specifico
+    templates = _get_templates_per_stile(
+        stile, nome_completo, desc_materiali, desc_condizioni, desc_rarita,
+        desc_target, aggettivo_brand, art_det, art_indet, genere, vintage
+    )
+    
+    # Selezione template intelligente
+    frase_principale = _seleziona_template_intelligente(templates, nome_completo, brand, stile)
+    
+    # Call to action per stile
+    call_to_action = _genera_call_to_action_per_stile(termini_commerciali, stile)
+    
+    return f"{frase_principale}\n{call_to_action}"
+
+def _costruisci_nome_avanzato(nome: str, brand: str, tipo_articolo: str) -> str:
+    """Costruzione nome più intelligente e raffinata"""
     nome_pulito = nome.replace(brand, '').strip()
     
-    # Rimuovi varianti del tipo articolo
+    # Rimuovi varianti più sofisticate
     varianti_tipo = [
         tipo_articolo.lower(), tipo_articolo.lower() + 's', tipo_articolo.lower() + 'e',
-        tipo_articolo.capitalize(), tipo_articolo.upper()
+        tipo_articolo.lower() + 'i', tipo_articolo.capitalize(), tipo_articolo.upper(),
+        f"{tipo_articolo.lower()}:", f"{tipo_articolo.lower()}-"
     ]
     
     for variante in varianti_tipo:
-        nome_pulito = nome_pulito.replace(variante, '').strip()
+        nome_pulito = re.sub(rf'\b{re.escape(variante)}\b', '', nome_pulito, flags=re.IGNORECASE)
     
+    # Pulizia avanzata
     nome_pulito = re.sub(r'\s+', ' ', nome_pulito).strip()
+    nome_pulito = re.sub(r'^[-\s:]+|[-\s:]+$', '', nome_pulito)
     
-    if nome_pulito:
+    # Costruzione intelligente
+    if nome_pulito and nome_pulito.lower() not in [brand.lower(), tipo_articolo.lower()]:
+        if len(nome_pulito.split()) == 1 and len(nome_pulito) < 4:
+            return f"{tipo_articolo.lower()} {brand}"
         return f"{tipo_articolo.lower()} {brand} {nome_pulito}".strip()
     else:
         return f"{tipo_articolo.lower()} {brand}".strip()
 
-def _costruisci_descrizione_materiali(materiale: str, colore: str, keywords_classificate: Dict, genere: str) -> str:
-    """Costruisce la descrizione dei materiali"""
+def _costruisci_descrizione_materiali_avanzata(materiale: str, colore: str, keywords_classificate: Dict, genere: str, stile: str) -> str:
+    """Descrizione materiali adattata allo stile"""
     if not materiale and not colore:
         return ""
     
+    # Estrai dettagli aggiuntivi
+    dettagli_extra = keywords_classificate.get('materiali', [])
+    
     if materiale and colore:
         colore_concordato = concordanza_aggettivo(colore, genere)
-        if 'pelle' in materiale.lower():
-            altri_materiali = [mat for mat in keywords_classificate.get('materiali', []) if mat != materiale.lower()]
-            if altri_materiali:
-                return f"in {altri_materiali[0]} e pelle {colore_concordato}"
-            return f"in pelle {colore_concordato}"
-        return f"in {materiale.lower()} {colore_concordato}"
+        
+        if stile == 'elegante':
+            if 'pelle' in materiale.lower():
+                return f"in pregiata pelle {colore_concordato}"
+            return f"in raffinato {materiale.lower()} {colore_concordato}"
+        
+        elif stile == 'emotivo':
+            if 'pelle' in materiale.lower():
+                return f"dalla morbida pelle {colore_concordato}"
+            return f"dal magnifico {materiale.lower()} {colore_concordato}"
+        
+        elif stile == 'amichevole':
+            return f"in {materiale.lower()} {colore_concordato} stupend{concordanza_aggettivo('stupendo', genere)[-1]}"
+        
+        elif stile == 'professionale':
+            return f"realizzat{concordanza_aggettivo('realizzato', genere)[-1]} in {materiale.lower()} {colore_concordato}"
+        
+        elif stile == 'esclusivo':
+            if dettagli_extra:
+                return f"in esclusivo {materiale.lower()} {colore_concordato} con {dettagli_extra[0]}"
+            return f"in esclusivo {materiale.lower()} {colore_concordato}"
+    
     elif materiale:
-        return f"in {materiale.lower()}"
-    else:
+        if stile == 'elegante':
+            return f"in pregiato {materiale.lower()}"
+        elif stile == 'emotivo':
+            return f"dal bellissimo {materiale.lower()}"
+        elif stile == 'esclusivo':
+            return f"in esclusivo {materiale.lower()}"
+        else:
+            return f"in {materiale.lower()}"
+    
+    elif colore:
         colore_concordato = concordanza_aggettivo(colore, genere)
-        return f"color {colore_concordato}"
+        if stile == 'emotivo':
+            return f"dal color {colore_concordato} che cattura l'occhio"
+        else:
+            return f"color {colore_concordato}"
+    
+    return ""
 
-def _costruisci_descrizione_condizioni(condizioni: str, genere: str) -> str:
-    """Costruisce la descrizione delle condizioni"""
+def _costruisci_descrizione_condizioni_avanzata(condizioni: str, genere: str, stile: str) -> str:
+    """Descrizione condizioni personalizzata per stile"""
     if not condizioni:
         return ""
     
     suffisso = 'a' if genere == 'f' else 'o'
     
     condizioni_map = {
-        'Eccellenti': [
-            "in condizioni eccellenti",
-            "in perfette condizioni", 
-            f"mantenut{suffisso} perfettamente"
-        ],
-        'Ottime': [
-            "in ottime condizioni",
-            f"ben conservat{suffisso}",
-            f"tenut{suffisso} benissimo"
-        ],
-        'Buone': [
-            "in buone condizioni",
-            f"ben tenut{suffisso}"
-        ],
-        'Discrete': [
-            "in discrete condizioni",
-            f"usat{suffisso} ma funzionale"
-        ]
+        'elegante': {
+            'Eccellenti': [f"in condizioni eccellenti", f"perfettamente conservat{suffisso}", f"impeccabile"],
+            'Ottime': [f"in ottime condizioni", f"splendidamente conservat{suffisso}"],
+            'Buone': [f"in buone condizioni", f"ben conservat{suffisso}"],
+            'Discrete': [f"in discrete condizioni", f"con segni di vissuto"]
+        },
+        'emotivo': {
+            'Eccellenti': [f"in condizioni da sogno", f"perfett{suffisso} come il primo giorno", f"che ti farà innamorare"],
+            'Ottime': [f"bellissim{suffisso} e ben conservat{suffisso}", f"che conquista al primo sguardo"],
+            'Buone': [f"con tutto il suo fascino intatto", f"ricch{suffisso} di personalità"],
+            'Discrete': [f"con il fascino dell'autenticità", f"pien{suffisso} di storia"]
+        },
+        'amichevole': {
+            'Eccellenti': [f"praticamente come nuov{suffisso}!", f"in condizioni fantastiche"],
+            'Ottime': [f"davvero ben tenut{suffisso}", f"in gran bella forma"],
+            'Buone': [f"ancora molto bell{suffisso}", f"con tanto da dare"],
+            'Discrete': [f"con qualche segno del tempo", f"ma ancora molto valid{suffisso}"]
+        },
+        'professionale': {
+            'Eccellenti': [f"classificat{suffisso} in condizioni eccellenti", f"con grado di conservazione A+"],
+            'Ottime': [f"in ottime condizioni generali", f"ben mantenut{suffisso}"],
+            'Buone': [f"in buone condizioni d'uso", f"funzionalmente perfett{suffisso}"],
+            'Discrete': [f"in condizioni discrete", f"con normali segni d'uso"]
+        },
+        'esclusivo': {
+            'Eccellenti': [f"in stato di conservazione museale", f"di rara perfezione"],
+            'Ottime': [f"di eccezionale fattura e conservazione", f"dal fascino immutato"],
+            'Buone': [f"dal carattere distintivo preservato", f"con nobili segni del tempo"],
+            'Discrete': [f"con il fascino dell'autenticità", f"testimone di storie vissute"]
+        }
     }
     
-    return random.choice(condizioni_map.get(condizioni, ['in buone condizioni']))
+    options = condizioni_map.get(stile, condizioni_map['elegante']).get(condizioni, [f"in {condizioni.lower()} condizioni"])
+    return random.choice(options)
 
-def _costruisci_descrizione_rarita(rarita: str, genere: str) -> str:
-    """Costruisce la descrizione della rarità"""
+def _costruisci_descrizione_rarita_avanzata(rarita: str, genere: str, stile: str) -> str:
+    """Descrizione rarità personalizzata per stile"""
     if not rarita or rarita == 'Comune':
         return ""
     
     rarita_map = {
-        'Introvabile': [concordanza_aggettivo('introvabile', genere)],
-        'Molto Raro': [concordanza_aggettivo('raro', genere), f"molto {concordanza_aggettivo('raro', genere)}"],
-        'Raro': [concordanza_aggettivo('raro', genere)]
+        'elegante': {
+            'Introvabile': [concordanza_aggettivo('introvabile', genere), f"di rara bellezza"],
+            'Molto Raro': [f"molto {concordanza_aggettivo('raro', genere)}", f"di eccezionale rarità"],
+            'Raro': [concordanza_aggettivo('raro', genere), f"difficile da trovare"]
+        },
+        'emotivo': {
+            'Introvabile': [f"un vero tesoro nascosto", f"quasi impossibile da trovare"],
+            'Molto Raro': [f"un pezzo che fa battere il cuore", f"di una rarità che emoziona"],
+            'Raro': [f"speciale e ricercato", f"che sa come conquistare"]
+        },
+        'amichevole': {
+            'Introvabile': [f"una vera chicca!", f"praticamente impossibile da scovare"],
+            'Molto Raro': [f"super raro e ricercato", f"che non si trova facilmente"],
+            'Raro': [f"abbastanza raro", f"non comune da trovare"]
+        },
+        'professionale': {
+            'Introvabile': [f"classificat{concordanza_aggettivo('classificato', genere)[-1]} come introvabile", f"di altissima rarità"],
+            'Molto Raro': [f"ad alta rarità sul mercato", f"molto {concordanza_aggettivo('ricercato', genere)}"],
+            'Raro': [f"{concordanza_aggettivo('ricercato', genere)} dai collezionisti", concordanza_aggettivo('raro', genere)]
+        },
+        'esclusivo': {
+            'Introvabile': [f"di leggendaria rarità", f"dal valore inestimabile"],
+            'Molto Raro': [f"di esclusiva rarità", f"per pochissimi eletti"],
+            'Raro': [f"di selezionata rarità", f"per veri intenditori"]
+        }
     }
     
-    options = rarita_map.get(rarita, [])
+    options = rarita_map.get(stile, rarita_map['elegante']).get(rarita, [])
     return random.choice(options) if options else ""
 
-def _costruisci_descrizione_target(target: str) -> str:
-    """Costruisce la descrizione del target"""
+def _costruisci_descrizione_target_avanzata(target: str, stile: str) -> str:
+    """Descrizione target personalizzata per stile"""
     if not target:
         return ""
     
     target_map = {
-        'Intenditrici': 'per intenditrici',
-        'Collezionisti': 'per veri collezionisti', 
-        'Amanti del vintage': 'per chi ama il vintage autentico',
-        'Appassionati di lusso': 'per appassionati di lusso',
-        'Chi ama distinguersi': 'per chi ama distinguersi'
+        'elegante': {
+            'Intenditrici': 'per raffinate intenditrici',
+            'Collezionisti': 'per esigenti collezionisti', 
+            'Amanti del vintage': 'per chi apprezza il vintage autentico',
+            'Appassionati di lusso': 'per cultori del lusso',
+            'Chi ama distinguersi': 'per personalità distintive'
+        },
+        'emotivo': {
+            'Intenditrici': 'per anime sensibili e raffinate',
+            'Collezionisti': 'per cuori che sanno riconoscere la bellezza', 
+            'Amanti del vintage': 'per chi ama le storie d\'altri tempi',
+            'Appassionati di lusso': 'per chi vive di emozioni esclusive',
+            'Chi ama distinguersi': 'per spiriti liberi e unici'
+        },
+        'amichevole': {
+            'Intenditrici': 'perfetto per te che sai cosa vuoi!',
+            'Collezionisti': 'ideale per la tua collezione', 
+            'Amanti del vintage': 'se ami il vintage, questo è per te',
+            'Appassionati di lusso': 'per chi non scende a compromessi',
+            'Chi ama distinguersi': 'per chi vuole essere unico'
+        },
+        'professionale': {
+            'Intenditrici': 'destinato a clientela esperta',
+            'Collezionisti': 'indicato per collezionisti qualificati', 
+            'Amanti del vintage': 'specifico per appassionati di vintage',
+            'Appassionati di lusso': 'riservato ad acquirenti di lusso',
+            'Chi ama distinguersi': 'per clientela distintiva'
+        },
+        'esclusivo': {
+            'Intenditrici': 'riservato alle più raffinate conoscitrici',
+            'Collezionisti': 'esclusivo per collezionisti di alto livello', 
+            'Amanti del vintage': 'per autentici cultori del vintage',
+            'Appassionati di lusso': 'per l\'élite del lusso',
+            'Chi ama distinguersi': 'per personalità di spicco'
+        }
     }
     
-    return target_map.get(target, '')
+    return target_map.get(stile, target_map['elegante']).get(target, '')
 
-def _get_aggettivo_brand(brand: str, genere: str) -> str:
-    """Ottiene l'aggettivo concordato per il brand"""
-    aggettivi_brand = {
-        'Dior': ['iconica', 'mitica', 'leggendaria', 'raffinata'],
-        'Chanel': ['intramontabile', 'classica', 'elegante', 'iconica'],
-        'Louis Vuitton': ['iconica', 'elegante', 'prestigiosa'],
-        'Hermès': ['leggendaria', 'esclusiva', 'prestigiosa'],
-        'Gucci': ['distintiva', 'elegante', 'iconica'],
-        'Prada': ['sofisticata', 'elegante', 'moderna']
+def _get_aggettivo_brand_per_stile(brand: str, genere: str, stile: str) -> str:
+    """Aggettivi brand personalizzati per stile"""
+    
+    brand_stili = {
+        'elegante': {
+            'Dior': ['iconica', 'raffinata', 'leggendaria', 'distintiva'],
+            'Chanel': ['intramontabile', 'classica', 'elegante', 'senza tempo'],
+            'Louis Vuitton': ['prestigiosa', 'elegante', 'iconica', 'raffinata'],
+            'Hermès': ['leggendaria', 'esclusiva', 'prestigiosa', 'sublime'],
+            'Gucci': ['distintiva', 'elegante', 'iconica', 'sofisticata'],
+            'Prada': ['sofisticata', 'elegante', 'moderna', 'raffinata']
+        },
+        'emotivo': {
+            'Dior': ['che fa sognare', 'dal fascino irresistibile', 'che emoziona', 'magnetica'],
+            'Chanel': ['dal fascino eterno', 'che conquista il cuore', 'indimenticabile', 'ammaliante'],
+            'Louis Vuitton': ['che fa innamorare', 'dal fascino regale', 'che incanta', 'seducente'],
+            'Hermès': ['da sogno', 'che toglie il fiato', 'celestiale', 'mozzafiato'],
+            'Gucci': ['che cattura l\'anima', 'affascinante', 'che strega', 'irresistibile'],
+            'Prada': ['che stupisce', 'coinvolgente', 'che colpisce', 'travolgente']
+        },
+        'amichevole': {
+            'Dior': ['fantastica', 'meravigliosa', 'stupenda', 'eccezionale'],
+            'Chanel': ['bellissima', 'favolosa', 'grandiosa', 'splendida'],
+            'Louis Vuitton': ['fantastica', 'incredibile', 'straordinaria', 'magnifica'],
+            'Hermès': ['pazzesca', 'incredibile', 'super', 'favolosa'],
+            'Gucci': ['stupenda', 'fantastica', 'bellissima', 'grandiosa'],
+            'Prada': ['figata', 'bellissima', 'cool', 'fantastica']
+        },
+        'professionale': {
+            'Dior': ['riconosciuta', 'certificata', 'autentica', 'originale'],
+            'Chanel': ['documentata', 'verificata', 'garantita', 'accertata'],
+            'Louis Vuitton': ['autenticata', 'certificata', 'originale', 'garantita'],
+            'Hermès': ['verificata', 'autentica', 'documentata', 'certificata'],
+            'Gucci': ['originale', 'autentica', 'verificata', 'garantita'],
+            'Prada': ['certificata', 'autentica', 'originale', 'documentata']
+        },
+        'esclusivo': {
+            'Dior': ['di suprema eleganza', 'regale', 'maestosa', 'principesca'],
+            'Chanel': ['di rara perfezione', 'aristocratica', 'nobile', 'sublime'],
+            'Louis Vuitton': ['di lusso assoluto', 'imperiale', 'regale', 'magnifica'],
+            'Hermès': ['di eccellenza suprema', 'leggendaria', 'mitica', 'divina'],
+            'Gucci': ['di straordinaria classe', 'principesca', 'nobile', 'magnifica'],
+            'Prada': ['di raffinatezza suprema', 'aristocratica', 'sublime', 'regale']
+        }
     }
     
-    aggettivo_base = random.choice(aggettivi_brand.get(brand, ['elegante', 'raffinata']))
+    stile_aggettivi = brand_stili.get(stile, brand_stili['elegante'])
+    aggettivi = stile_aggettivi.get(brand, ['elegante', 'raffinata', 'bella', 'pregiata'])
+    aggettivo_base = random.choice(aggettivi)
+    
     return concordanza_aggettivo(aggettivo_base, genere)
+
+def _get_templates_per_stile(stile: str, nome_completo: str, desc_materiali: str, desc_condizioni: str, 
+                            desc_rarita: str, desc_target: str, aggettivo_brand: str,
+                            art_det: str, art_indet: str, genere: str, vintage: bool) -> List[str]:
+    """Template specifici per ogni stile"""
+    
+    suffisso = 'a' if genere == 'f' else 'o'
+    
+    templates_per_stile = {
+        'elegante': [
+            f"Raffinatezza senza tempo: quest{suffisso} {nome_completo} {desc_materiali} rappresenta l'eccellenza, {desc_condizioni}.",
+            f"{aggettivo_brand.capitalize()} e {concordanza_aggettivo('senza tempo', genere)}, {art_det} {nome_completo} {desc_materiali} è l'incarnazione dell'eleganza.",
+            f"{art_indet.capitalize()} {nome_completo} {desc_rarita} {desc_materiali}: {desc_condizioni}, un classico dell'eleganza.",
+            f"Eleganza pura: {nome_completo} {desc_materiali}, {desc_condizioni}. Un capolavoro di stile.",
+            f"L'essenza del lusso: quest{suffisso} {nome_completo} {desc_materiali} è {desc_rarita} e {desc_condizioni}.",
+            f"Perfett{suffisso} {desc_target}: {nome_completo} {desc_materiali}, raffinat{suffisso} e {desc_condizioni}.",
+            f"Intramontabile eleganza: {art_det} {nome_completo} {desc_materiali}, {desc_rarita}, è {desc_condizioni}.",
+            f"Classe innata: quest{suffisso} {nome_completo} {desc_materiali} incarna la perfezione, {desc_condizioni}."
+        ],
+        
+        'emotivo': [
+            f"Un incontro che toglie il fiato: quest{suffisso} magnific{suffisso} {nome_completo} {desc_materiali} {desc_condizioni}.",
+            f"Il tuo cuore batterà forte: {art_det} {nome_completo} {desc_materiali} è {aggettivo_brand} e {desc_condizioni}.",
+            f"Amore a prima vista: {nome_completo} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
+            f"Un sogno che diventa realtà: quest{suffisso} {nome_completo} {desc_materiali} ti farà innamorare.",
+            f"L'emozione di possedere un tesoro: {art_det} {nome_completo} {desc_materiali}, {desc_condizioni}.",
+            f"Per chi sa riconoscere la bellezza: {nome_completo} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
+            f"Un pezzo che racconta storie: {art_det} {nome_completo} {desc_materiali} {desc_condizioni}.",
+            f"Il fascino che conquista: quest{suffisso} {nome_completo} {desc_materiali} è davvero {desc_rarita}."
+        ],
+        
+        'amichevole': [
+            f"Che bellezza! Quest{suffisso} {nome_completo} {desc_materiali} è proprio {desc_condizioni}.",
+            f"Ti piacerà sicuramente: {art_det} {nome_completo} {desc_materiali} è {aggettivo_brand} e {desc_condizioni}!",
+            f"Dai un'occhiata a quest{suffisso}: {nome_completo} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
+            f"Perfett{suffisso} per te: {art_det} {nome_completo} {desc_materiali} è proprio quello che cercavi!",
+            f"Una vera scoperta: quest{suffisso} {nome_completo} {desc_materiali} {desc_condizioni}.",
+            f"Te ne innamorerai: {nome_completo} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
+            f"Un affare da non perdere: {art_det} {nome_completo} {desc_materiali}, {desc_condizioni}!",
+            f"Guarda che meraviglia: quest{suffisso} {nome_completo} {desc_materiali} è davvero speciale."
+        ],
+        
+        'professionale': [
+            f"Articolo di qualità: {nome_completo} {desc_materiali}, {desc_condizioni}, con certificazione di autenticità.",
+            f"Specifiche tecniche: {art_det} {nome_completo} {desc_materiali} è {desc_condizioni} e {desc_rarita}.",
+            f"Prodotto {aggettivo_brand}: {nome_completo} {desc_materiali}, classificat{suffisso} {desc_condizioni}.",
+            f"Dettagli del prodotto: quest{suffisso} {nome_completo} {desc_materiali} presenta ottime caratteristiche.",
+            f"Articolo da collezione: {art_det} {nome_completo} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
+            f"Scheda prodotto: {nome_completo} {desc_materiali}, {desc_condizioni}, {desc_target}.",
+            f"Caratteristiche principali: {art_det} {nome_completo} {desc_materiali} è {desc_condizioni}.",
+            f"Valutazione: quest{suffisso} {nome_completo} {desc_materiali} è classificat{suffisso} come {desc_rarita}."
+        ],
+        
+        'esclusivo': [
+            f"Per pochi eletti: quest{suffisso} {nome_completo} {desc_materiali} è di rara magnificenza, {desc_condizioni}.",
+            f"Lusso supremo: {art_det} {nome_completo} {desc_materiali} rappresenta l'apice dell'eccellenza.",
+            f"Esclusività assoluta: {nome_completo} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
+            f"Privilegio riservato: quest{suffisso} {nome_completo} {desc_materiali} è per {desc_target}.",
+            f"Rarità di classe: {art_det} {nome_completo} {desc_materiali}, {desc_condizioni}, è {desc_rarita}.",
+            f"Eccellenza riservata: {nome_completo} {desc_materiali}, {aggettivo_brand} e {desc_condizioni}.",
+            f"Status symbol: quest{suffisso} {nome_completo} {desc_materiali} definisce l'esclusività.",
+            f"Per connoisseur: {art_det} {nome_completo} {desc_materiali} è {desc_rarita} e {desc_condizioni}."
+        ]
+    }
+    
+    return templates_per_stile.get(stile, templates_per_stile['elegante'])
+
+def _seleziona_template_intelligente(templates: List[str], nome_completo: str, brand: str, stile: str) -> str:
+    """Selezione intelligente del template con controlli qualità avanzati"""
+    templates_validi = []
+    
+    for template in templates:
+        # Pulizia avanzata
+        frase_pulita = re.sub(r'\s+', ' ', template)
+        frase_pulita = frase_pulita.replace(' ,', ',').replace('  ', ' ').strip()
+        frase_pulita = frase_pulita.replace(': ,', ':').replace(', ,', ',').replace(' :', ':')
+        frase_pulita = frase_pulita.replace('.,', '.').replace(',.', '.').replace('..', '.')
+        frase_pulita = frase_pulita.replace('  ', ' ').replace(' .', '.')
+        
+        # Controlli qualità
+        problemi = [
+            ': ,', ': .', ' :', 'None', ', .', ' ,', '  ', 
+            'e e ', 'il il ', 'la la ', 'un un ', 'una una ',
+            f'{brand} {brand}', 'è è', 'in in'
+        ]
+        
+        # Verifica lunghezza minima e massima
+        if len(frase_pulita) < 20 or len(frase_pulita) > 300:
+            continue
+            
+        # Verifica assenza di problemi
+        if not any(problema in frase_pulita for problema in problemi):
+            # Verifica coerenza grammaticale base
+            if frase_pulita.count('.') <= 2 and frase_pulita.count(',') <= 5:
+                templates_validi.append(frase_pulita)
+    
+    # Fallback intelligente per stile
+    if not templates_validi:
+        fallbacks = {
+            'elegante': f"Raffinato {nome_completo}, un classico dell'eleganza.",
+            'emotivo': f"Un {nome_completo} che conquista il cuore.",
+            'amichevole': f"Bellissimo {nome_completo}, perfetto per te!",
+            'professionale': f"Articolo {nome_completo} di qualità certificata.",
+            'esclusivo': f"Esclusivo {nome_completo} per pochi eletti."
+        }
+        return fallbacks.get(stile, f"Elegante {nome_completo} {brand}.")
+    
+    return random.choice(templates_validi)
+
+def _genera_call_to_action_per_stile(termini_commerciali: List[str], stile: str) -> str:
+    """Call to action personalizzate per stile"""
+    
+    call_to_actions_per_stile = {
+        'elegante': [
+            "Ti aspetta un'offerta raffinata nella tua area riservata.",
+            "Abbiamo preparato per te una proposta esclusiva: controlla subito.",
+            "Una sorpresa elegante ti attende tra i tuoi messaggi privati.",
+            "La tua offerta personalizzata è pronta: dai un'occhiata.",
+            "Ti abbiamo riservato condizioni vantaggiose in esclusiva."
+        ],
+        
+        'emotivo': [
+            "Il tuo cuore batterà forte per l'offerta che ti abbiamo inviato!",
+            "Una sorpresa meravigliosa ti aspetta: controlla i tuoi messaggi.",
+            "Abbiamo pensato a te con un'offerta speciale che ti emozionerà.",
+            "Ti farà sorridere l'offerta personalizzata che troverai nel tuo account.",
+            "Una bella sorpresa ti aspetta: l'abbiamo appena inviata!"
+        ],
+        
+        'amichevole': [
+            "Hey, controlla i tuoi messaggi: c'è una super offerta per te!",
+            "Ti abbiamo fatto un prezzo speciale, vai a vedere!",
+            "Psst... c'è uno sconto extra solo per te, dai un'occhiata!",
+            "Buone notizie: ti abbiamo riservato un'offerta fantastica!",
+            "Corri a controllare: c'è una sorpresa che ti piacerà!"
+        ],
+        
+        'professionale': [
+            "Consultare l'area personale per visualizzare l'offerta dedicata.",
+            "Proposta commerciale personalizzata disponibile nel proprio account.",
+            "Offerta riservata attiva: verificare i messaggi ricevuti.",
+            "Condizioni agevolate applicate: consultare i dettagli nell'area privata.",
+            "Proposta esclusiva elaborata: disponibile per la valutazione."
+        ],
+        
+        'esclusivo': [
+            "Un privilegio riservato a lei: l'offerta esclusiva è nel suo account privato.",
+            "L'abbiamo selezionata per un'opportunità unica: controlli immediatamente.",
+            "Riservato esclusivamente: la sua offerta personalizzata l'attende.",
+            "Accesso privilegiato: la proposta esclusiva è stata attivata per lei.",
+            "Status riservato: la sua offerta di classe è pronta per la consultazione."
+        ]
+    }
+    
+    call_actions = call_to_actions_per_stile.get(stile, call_to_actions_per_stile['elegante'])
+    
+    # Aggiungi termini personalizzati se presenti
+    if termini_commerciali and stile != 'professionale':
+        for termine in termini_commerciali[:2]:  # Max 2 termini
+            if 'sconto' in termine.lower():
+                if stile == 'emotivo':
+                    call_actions.append(f"Ti emozionerà lo {termine} che ti abbiamo riservato!")
+                elif stile == 'amichevole':
+                    call_actions.append(f"Fantastico! Ti abbiamo fatto uno {termine} speciale!")
+                elif stile == 'esclusivo':
+                    call_actions.append(f"Privilegio esclusivo: le abbiamo riservato uno {termine} d'élite.")
+            elif 'offerta' in termine.lower():
+                if stile == 'emotivo':
+                    call_actions.append(f"Il tuo cuore salterà per l'{termine} che ti aspetta!")
+                elif stile == 'amichevole':
+                    call_actions.append(f"Wow! C'è un'{termine} pazzesca che ti abbiamo preparato!")
+                elif stile == 'esclusivo':
+                    call_actions.append(f"Accesso riservato: la sua {termine} esclusiva è attiva.")
+    
+    return random.choice(call_actions)
 
 def _get_articolo_determinativo(genere: str, tipo: str) -> str:
     """Ottiene l'articolo determinativo corretto"""
@@ -485,96 +1273,45 @@ def _get_articolo_indeterminativo(genere: str, tipo: str) -> str:
     else:
         return 'un' if tipo not in ['pantaloni'] else 'dei'
 
+# Mantieni le funzioni originali per backward compatibility
+def _costruisci_nome_corretto(nome: str, brand: str, tipo_articolo: str) -> str:
+    """Wrapper per compatibilità"""
+    return _costruisci_nome_avanzato(nome, brand, tipo_articolo)
+
+def _costruisci_descrizione_materiali(materiale: str, colore: str, keywords_classificate: Dict, genere: str) -> str:
+    """Wrapper per compatibilità"""
+    return _costruisci_descrizione_materiali_avanzata(materiale, colore, keywords_classificate, genere, 'elegante')
+
+def _costruisci_descrizione_condizioni(condizioni: str, genere: str) -> str:
+    """Wrapper per compatibilità"""
+    return _costruisci_descrizione_condizioni_avanzata(condizioni, genere, 'elegante')
+
+def _costruisci_descrizione_rarita(rarita: str, genere: str) -> str:
+    """Wrapper per compatibilità"""
+    return _costruisci_descrizione_rarita_avanzata(rarita, genere, 'elegante')
+
+def _costruisci_descrizione_target(target: str) -> str:
+    """Wrapper per compatibilità"""
+    return _costruisci_descrizione_target_avanzata(target, 'elegante')
+
+def _get_aggettivo_brand(brand: str, genere: str) -> str:
+    """Wrapper per compatibilità"""
+    return _get_aggettivo_brand_per_stile(brand, genere, 'elegante')
+
 def _get_templates_frasi(nome_completo: str, desc_materiali: str, desc_condizioni: str, 
                         desc_rarita: str, desc_target: str, aggettivo_brand: str,
                         art_det: str, art_indet: str, genere: str) -> List[str]:
-    """Ottiene la lista dei template per le frasi"""
-    suffisso = 'a' if genere == 'f' else 'o'
-    
-    return [
-        f"Eleganza senza tempo: quest{suffisso} {nome_completo} {desc_materiali} è un tesoro da collezione, {desc_condizioni}.",
-        f"{aggettivo_brand.capitalize()} e {concordanza_aggettivo('iconico', genere)}, {art_det} {nome_completo} {desc_materiali} è perfett{suffisso} per chi cerca stile e unicità.",
-        f"{art_indet.capitalize()} {nome_completo} {desc_rarita} e affascinante {desc_materiali}: {desc_condizioni}, pront{suffisso} per una nuova storia.",
-        f"{art_det.capitalize()} mitic{suffisso} {nome_completo}: {desc_materiali}, {desc_condizioni}. Un classico che non tramonta.",
-        f"Un tocco di classe: {nome_completo} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
-        f"Perfett{suffisso} {desc_target}: {nome_completo} {desc_materiali}, {desc_condizioni}.",
-        f"Stile vintage: {nome_completo} {desc_materiali} {desc_condizioni}. Un vero pezzo {desc_rarita}.",
-        f"Vintage di lusso? Quest{suffisso} {nome_completo} {desc_materiali} fa al caso tuo. {desc_condizioni.capitalize()}.",
-        f"Intramontabile e raffinat{suffisso}: {art_det} {nome_completo} {desc_materiali}, {desc_rarita}, bellissim{suffisso}.",
-        f"Eleganza discreta e fascino vintage: {art_det} {nome_completo} {desc_materiali} è perfett{suffisso} per ogni occasione.",
-        f"{desc_rarita.capitalize()}, elegante e {desc_condizioni}: quest{suffisso} {nome_completo} è un investimento di stile.",
-        f"Finiture {desc_materiali}: {art_det} {nome_completo} è un pezzo da vera intenditrice.",
-        f"Un pezzo cult {desc_target}: {nome_completo} {desc_materiali}, {desc_condizioni}.",
-        f"Quest{suffisso} {nome_completo} ha tutto: eleganza, storia e rarità. {desc_condizioni.capitalize()}.",
-        f"{art_indet.capitalize()} che non passa inosservat{suffisso}: {nome_completo} {desc_materiali}, {desc_rarita}.",
-        f"Perfett{suffisso} {desc_target} del fascino discreto: {nome_completo} vintage, {desc_condizioni}.",
-        f"Collezionabile e chic: {nome_completo} {desc_materiali}, {desc_condizioni}, un classico senza tempo.",
-        f"{nome_completo.capitalize()} {desc_materiali}: {desc_rarita} in queste condizioni.",
-        f"Semplicemente {concordanza_aggettivo('iconico', genere)}: {nome_completo} {desc_materiali}, perfett{suffisso} {desc_target}."
-    ]
+    """Wrapper per compatibilità"""
+    return _get_templates_per_stile('elegante', nome_completo, desc_materiali, desc_condizioni, 
+                                  desc_rarita, desc_target, aggettivo_brand, art_det, art_indet, genere, False)
 
 def _seleziona_template_valido(templates: List[str], nome_completo: str, brand: str) -> str:
-    """Seleziona un template valido e lo pulisce"""
-    templates_validi = []
-    
-    for template in templates:
-        # Pulisci la frase
-        frase_pulita = re.sub(r'\s+', ' ', template)
-        frase_pulita = frase_pulita.replace(' ,', ',').replace('  ', ' ').strip()
-        frase_pulita = frase_pulita.replace(': ,', ':').replace(', ,', ',')
-        frase_pulita = frase_pulita.replace(' :', ':').replace('.,', '.').replace(',.', '.')
-        
-        # Filtra frasi malformate
-        if not any(x in frase_pulita for x in [': ,', ': .', ' :', 'None', ', .', ' ,', '  ']):
-            templates_validi.append(frase_pulita)
-    
-    if not templates_validi:
-        return f"Elegante {nome_completo} {brand}, in ottime condizioni."
-    
-    return random.choice(templates_validi)
+    """Wrapper per compatibilità"""
+    return _seleziona_template_intelligente(templates, nome_completo, brand, 'elegante')
 
 def _genera_call_to_action(termini_commerciali: List[str]) -> str:
-    """Genera la call to action"""
-    call_to_actions = [
-        "Guarda tra i tuoi messaggi: c'è un'offerta ancora più vantaggiosa che ti abbiamo appena inviato.",
-        "Ti abbiamo riservato un'offerta esclusiva con un ribasso extra.",
-        "Dai un'occhiata alla nostra proposta scontata che ti abbiamo appena inviato.",
-        "Controlla subito la tua casella: c'è un'offerta speciale con uno sconto in più per te.",
-        "Approfitta dell'ulteriore sconto che ti abbiamo appena mandato.",
-        "Ti abbiamo appena fatto arrivare un'offerta personale con uno sconto extra.",
-        "Controlla i tuoi messaggi, ti aspetta un'ulteriore sorpresa.",
-        "Diamo valore alla tua attenzione: ti abbiamo mandato uno sconto aggiuntivo.",
-        "Guarda la proposta che ti abbiamo appena inviato, c'è un extra sconto incluso.",
-        "Ti sta aspettando un'offerta con un ulteriore ribasso, già inviata!",
-        "Dai un'occhiata all'offerta privata con sconto extra che ti abbiamo appena spedito.",
-        "Controlla i tuoi messaggi, troverai uno sconto in più dedicato solo a te.",
-        "Ti abbiamo appena inviato un'offerta speciale con un ulteriore ribasso.",
-        "Guarda subito l'offerta personale con sconto aggiuntivo che ti abbiamo mandato.",
-        "Nel tuo account c'è un ulteriore sconto riservato in esclusiva: appena inviato!",
-        "Abbiamo preparato per te un'offerta scontata ancora più conveniente.",
-        "Ti è stata inviata un'offerta con uno sconto supplementare: non lasciartela scappare.",
-        "Guarda l'offerta extra che ti abbiamo appena riservato, è valida per poco.",
-        "Abbiamo aggiunto uno sconto ulteriore per te: controlla la tua area offerte.",
-        "Abbiamo appena applicato un ulteriore sconto alla tua offerta: non perdere!"
-    ]
-    
-    # Aggiungi termini personalizzati se presenti
-    if termini_commerciali:
-        for termine in termini_commerciali:
-            if 'sconto' in termine.lower():
-                call_to_actions.extend([
-                    f"Abbiamo attivato per te uno {termine} esclusivo: controlla subito!",
-                    f"Ti abbiamo riservato uno {termine} speciale, già disponibile nel tuo account.",
-                    f"Approfitta dello {termine} che ti abbiamo appena inviato."
-                ])
-            elif 'offerta' in termine.lower():
-                call_to_actions.extend([
-                    f"Abbiamo attivato per te un'{termine} esclusiva: controlla subito!",
-                    f"Ti abbiamo riservato un'{termine} speciale, già disponibile nel tuo account.",
-                    f"Approfitta dell'{termine} che ti abbiamo appena inviato."
-                ])
-    
-    return random.choice(call_to_actions)
+    """Wrapper per compatibilità"""
+    return _genera_call_to_action_per_stile(termini_commerciali, 'elegante')
 
 # ===============================
 # ROUTES OTTIMIZZATE
@@ -766,9 +1503,17 @@ def delete_articolo(id):
 @handle_errors
 @log_request_info
 def genera_frase(id):
-    """Genera una frase professionale per l'articolo"""
+    """Genera una frase personalizzata per l'articolo con stile selezionabile"""
     try:
         articolo = Articolo.query.get_or_404(id)
+        
+        # Parametro stile dalla query string
+        stile = request.args.get('stile', 'elegante')
+        
+        # Validazione stili disponibili
+        stili_disponibili = ['elegante', 'emotivo', 'amichevole', 'professionale', 'esclusivo']
+        if stile not in stili_disponibili:
+            stile = 'elegante'
         
         # Estrai e processa i dati
         colore = articolo.colore.strip() if articolo.colore else ''
@@ -783,14 +1528,18 @@ def genera_frase(id):
         keywords_str = ','.join(keywords)
         keywords_classificate = classifica_keywords_cached(keywords_str) if keywords_str else {}
         
-        # Genera la frase
-        frase = genera_frase_stile_professionale(
+        # Genera la frase con lo stile selezionato
+        frase = genera_frase_personalizzata(
             articolo.brand, articolo.nome, colore, materiale, keywords_classificate,
-            condizioni, rarita, articolo.vintage, target, termini_commerciali
+            condizioni, rarita, articolo.vintage, target, termini_commerciali, stile
         )
         
-        logger.info(f"Frase generata per articolo {id}")
-        return jsonify({'frase': frase})
+        logger.info(f"Frase generata per articolo {id} con stile '{stile}'")
+        return jsonify({
+            'frase': frase,
+            'stile': stile,
+            'stili_disponibili': stili_disponibili
+        })
         
     except Exception as e:
         logger.error(f"Errore nella generazione frase per articolo {id}: {e}")
@@ -828,6 +1577,69 @@ def get_stats():
         
     except Exception as e:
         logger.error(f"Errore nel recupero statistiche: {e}")
+        raise
+
+@app.route('/api/statistiche-frasi', methods=['GET'])
+@handle_errors
+@log_request_info
+def get_statistiche_frasi():
+    """Ottiene statistiche sulle frasi generate"""
+    try:
+        total_articoli_con_frasi = len(FRASE_MEMORY_CACHE)
+        total_frasi_generate = sum(len(frasi) for frasi in FRASE_MEMORY_CACHE.values())
+        
+        # Statistiche per stile (dalle cache keys)
+        stats_stili = {}
+        for cache_key in FRASE_MEMORY_CACHE:
+            if '_' in cache_key:
+                parts = cache_key.split('_')
+                if len(parts) >= 5:  # brand_nome_colore_materiale_stile
+                    stile = parts[-1]
+                    stats_stili[stile] = stats_stili.get(stile, 0) + len(FRASE_MEMORY_CACHE[cache_key])
+        
+        # Articoli più attivi (con più frasi generate)
+        articoli_attivi = []
+        for cache_key, frasi in FRASE_MEMORY_CACHE.items():
+            if '_' in cache_key:
+                parts = cache_key.split('_')
+                if len(parts) >= 2:
+                    nome_articolo = f"{parts[0]} {parts[1]}"
+                    articoli_attivi.append({
+                        'nome': nome_articolo,
+                        'frasi_generate': len(frasi)
+                    })
+        
+        # Ordina per numero di frasi
+        articoli_attivi.sort(key=lambda x: x['frasi_generate'], reverse=True)
+        
+        return jsonify({
+            'total_articoli_con_frasi': total_articoli_con_frasi,
+            'total_frasi_generate': total_frasi_generate,
+            'stats_stili': stats_stili,
+            'articoli_piu_attivi': articoli_attivi[:10],  # Top 10
+            'dimensione_cache': len(FRASE_MEMORY_CACHE)
+        })
+        
+    except Exception as e:
+        logger.error(f"Errore nel recupero statistiche frasi: {e}")
+        raise
+
+@app.route('/api/pulisci-cache-frasi', methods=['POST'])
+@handle_errors
+@log_request_info
+def pulisci_cache_frasi_endpoint():
+    """Endpoint per pulire la cache delle frasi"""
+    try:
+        pulisci_cache_frasi()
+        
+        logger.info("Cache frasi pulita manualmente")
+        return jsonify({
+            'message': 'Cache delle frasi pulita con successo',
+            'nuova_dimensione_cache': len(FRASE_MEMORY_CACHE)
+        })
+        
+    except Exception as e:
+        logger.error(f"Errore nella pulizia cache frasi: {e}")
         raise
 
 # ===============================
