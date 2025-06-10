@@ -385,7 +385,7 @@ def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_cl
     art_indet = articolo_indeterminativo(genere, tipo_articolo)
     
     templates = [
-        f"Eleganza senza tempo firmata {brand}: quest{('a' if genere == 'f' else 'o')} {nome_semplificato} {desc_materiali} è {art_indet} tesoro da collezione, {desc_condizioni}.",
+        f"Eleganza senza tempo firmata {brand}: quest{('a' if genere == 'f' else 'o')} {nome_semplificato} {desc_materiali} è un tesoro da collezione, {desc_condizioni}.",
         f"{aggettivo_brand.capitalize()} e {concordanza_aggettivo('iconico', genere)}, {art_det} {brand} {nome_semplificato} {desc_materiali} è perfett{('a' if genere == 'f' else 'o')} per chi cerca stile e unicità.",
         f"{art_indet.capitalize()} {nome_semplificato} {desc_rarita} e affascinante {desc_materiali}, firmat{('a' if genere == 'f' else 'o')} {brand}: {desc_condizioni}, pront{('a' if genere == 'f' else 'o')} per una nuova storia.",
         f"{art_det.capitalize()} mitic{('a' if genere == 'f' else 'o')} {brand} {nome_semplificato}: {desc_materiali}, {desc_condizioni}. Un classico che non tramonta.",
@@ -450,7 +450,8 @@ def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_cl
     
     # Termini commerciali personalizzati
     if termini_commerciali:
-        termini_disponibili = [t.strip() for t in termini_commerciali.split(',') if t.strip()]
+        # termini_commerciali è già una lista, non serve split
+        termini_disponibili = [t.strip() for t in termini_commerciali if t.strip()]
         if termini_disponibili:
             termine = random.choice(termini_disponibili)
             call_to_actions.extend([
