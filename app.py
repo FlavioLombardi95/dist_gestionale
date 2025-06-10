@@ -100,6 +100,10 @@ def create_articolo():
     else:
         filename = None
 
+    # Converti vintage da stringa a boolean
+    vintage_value = data.get('vintage', 'false').lower()
+    vintage_bool = vintage_value in ['true', '1', 'on', 'yes']
+
     articolo = Articolo(
         nome=data['nome'],
         brand=data['brand'],
@@ -110,7 +114,7 @@ def create_articolo():
         termini_commerciali=data.get('termini_commerciali', '').strip(),
         condizioni=data.get('condizioni', '').strip(),
         rarita=data.get('rarita', '').strip(),
-        vintage=data.get('vintage', False),
+        vintage=vintage_bool,
         target=data.get('target', '').strip()
     )
     
@@ -132,7 +136,12 @@ def update_articolo(id):
     articolo.termini_commerciali = data.get('termini_commerciali', '').strip()
     articolo.condizioni = data.get('condizioni', '').strip()
     articolo.rarita = data.get('rarita', '').strip()
-    articolo.vintage = data.get('vintage', False)
+    
+    # Converti vintage da stringa a boolean
+    vintage_value = data.get('vintage', 'false').lower()
+    vintage_bool = vintage_value in ['true', '1', 'on', 'yes']
+    articolo.vintage = vintage_bool
+    
     articolo.target = data.get('target', '').strip()
     
     file = request.files.get('immagine')
