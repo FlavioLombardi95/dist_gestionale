@@ -292,13 +292,37 @@ def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_cl
         else:
             return 'un' if tipo not in ['pantaloni'] else 'dei'
     
-    # Nome pulito senza ripetizioni di brand
+    # Nome pulito senza ripetizioni di brand e tipo articolo
     nome_pulito = nome.replace(brand, '').strip()
-    # Evita ripetizione del tipo articolo se già presente
-    if tipo_articolo.lower() in nome_pulito.lower():
+    
+    # Evita ripetizione del tipo articolo se già presente nel nome
+    nome_lower = nome_pulito.lower()
+    tipo_presente = False
+    
+    # Controlla se il tipo articolo è già presente
+    varianti_tipo = [
+        tipo_articolo.lower(),
+        tipo_articolo.lower() + 's',
+        tipo_articolo.lower() + 'e'
+    ]
+    
+    for variante in varianti_tipo:
+        if variante in nome_lower:
+            tipo_presente = True
+            break
+    
+    # Se il tipo è presente, usa solo il nome pulito, altrimenti aggiungi il tipo
+    if tipo_presente:
         nome_semplificato = nome_pulito
     else:
-        nome_semplificato = f"{tipo_articolo} {nome_pulito}".strip()
+        nome_semplificato = f"{tipo_articolo.capitalize()} {nome_pulito}".strip()
+    
+    # Pulisci spazi multipli e caratteri indesiderati
+    nome_semplificato = re.sub(r'\s+', ' ', nome_semplificato).strip()
+    
+    # Se il nome risulta vuoto o molto corto, usa il nome originale
+    if len(nome_semplificato.strip()) < 3:
+        nome_semplificato = nome
     
     # Costruisci descrizione materiali con concordanza corretta
     desc_materiali = ""
@@ -454,11 +478,27 @@ def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_cl
         termini_disponibili = [t.strip() for t in termini_commerciali if t.strip()]
         if termini_disponibili:
             termine = random.choice(termini_disponibili)
-            call_to_actions.extend([
-                f"Abbiamo attivato per te una {termine} esclusiva: controlla subito!",
-                f"Ti abbiamo riservato una {termine} speciale, già disponibile nel tuo account.",
-                f"Approfitta della {termine} che ti abbiamo appena inviato."
-            ])
+            
+            # Concordanza termini commerciali (sconto=maschile, offerta=femminile)
+            if 'sconto' in termine.lower():
+                call_to_actions.extend([
+                    f"Abbiamo attivato per te uno {termine} esclusivo: controlla subito!",
+                    f"Ti abbiamo riservato uno {termine} speciale, già disponibile nel tuo account.",
+                    f"Approfitta dello {termine} che ti abbiamo appena inviato."
+                ])
+            elif 'offerta' in termine.lower():
+                call_to_actions.extend([
+                    f"Abbiamo attivato per te un'{termine} esclusiva: controlla subito!",
+                    f"Ti abbiamo riservato un'{termine} speciale, già disponibile nel tuo account.",
+                    f"Approfitta dell'{termine} che ti abbiamo appena inviato."
+                ])
+            else:
+                # Default neutro
+                call_to_actions.extend([
+                    f"Abbiamo attivato per te una {termine} esclusiva: controlla subito!",
+                    f"Ti abbiamo riservato una {termine} speciale, già disponibile nel tuo account.",
+                    f"Approfitta della {termine} che ti abbiamo appena inviato."
+                ])
     
     call_to_action = random.choice(call_to_actions)
     
@@ -501,4 +541,4 @@ def genera_frase(id):
     return jsonify({'frase': frase})
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True, port=8000) 
