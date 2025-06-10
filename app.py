@@ -18,10 +18,11 @@ class Articolo(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     brand = db.Column(db.String(100), nullable=False)
     immagine = db.Column(db.String(200))
-    keywords = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     colore = db.Column(db.String(50))
-    materiale = db.Column(db.String(50))
+    materiale = db.Column(db.String(100))
+    keywords = db.Column(db.Text)
+    termini_commerciali = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
         return {
@@ -29,9 +30,10 @@ class Articolo(db.Model):
             'nome': self.nome,
             'brand': self.brand,
             'immagine': self.immagine,
-            'colore': self.colore,
-            'materiale': self.materiale,
-            'keywords': self.keywords.split(',') if self.keywords else []
+            'colore': self.colore or '',
+            'materiale': self.materiale or '',
+            'keywords': self.keywords.split(',') if self.keywords else [],
+            'termini_commerciali': self.termini_commerciali.split(',') if self.termini_commerciali else []
         }
 
 with app.app_context():
@@ -62,9 +64,10 @@ def create_articolo():
         nome=data['nome'],
         brand=data['brand'],
         immagine=filename,
-        colore=data.get('colore', ''),
-        materiale=data.get('materiale', ''),
-        keywords=data['keywords']
+        colore=data.get('colore', '').strip(),
+        materiale=data.get('materiale', '').strip(),
+        keywords=data.get('keywords', '').strip(),
+        termini_commerciali=data.get('termini_commerciali', '').strip()
     )
     
     db.session.add(articolo)
@@ -79,9 +82,10 @@ def update_articolo(id):
     
     articolo.nome = data['nome']
     articolo.brand = data['brand']
-    articolo.colore = data.get('colore', '')
-    articolo.materiale = data.get('materiale', '')
-    articolo.keywords = data['keywords']
+    articolo.colore = data.get('colore', '').strip()
+    articolo.materiale = data.get('materiale', '').strip()
+    articolo.keywords = data.get('keywords', '').strip()
+    articolo.termini_commerciali = data.get('termini_commerciali', '').strip()
     
     file = request.files.get('immagine')
     if file:
@@ -175,13 +179,13 @@ def riconosci_tipo_articolo(nome):
     else:
         return 'generico'
 
-def crea_descrizione_semantica(tipo_articolo, keywords_classificate, brand):
-    """Crea una descrizione semantica basata sul tipo di articolo e keywords"""
+def crea_descrizione_semantica(tipo_articolo, colore, materiale, keywords_classificate, brand):
+    """Crea una descrizione semantica basata sul tipo di articolo e attributi"""
     
     # Template semantici per ogni tipo di articolo
     templates = {
         'borsa': {
-            'base': "Una borsa che",
+            'base': "Una borsa",
             'con_materiale': "realizzata in {materiale}",
             'con_colore': "nella raffinata tonalità {colore}",
             'con_stile': "dallo stile {stile}",
@@ -245,16 +249,14 @@ def crea_descrizione_semantica(tipo_articolo, keywords_classificate, brand):
     parti_frase = [template['base']]
     
     # Aggiungi materiale se presente
-    if keywords_classificate['materiali']:
-        materiale = random.choice(keywords_classificate['materiali'])
+    if materiale:
         parti_frase.append(template['con_materiale'].format(materiale=materiale))
     
     # Aggiungi colore se presente
-    if keywords_classificate['colori']:
-        colore = random.choice(keywords_classificate['colori'])
+    if colore:
         parti_frase.append(template['con_colore'].format(colore=colore))
     
-    # Aggiungi stile se presente
+    # Aggiungi stile se presente nelle keywords
     if keywords_classificate['stili']:
         stile = random.choice(keywords_classificate['stili'])
         parti_frase.append(template['con_stile'].format(stile=stile))
@@ -293,15 +295,45 @@ def crea_descrizione_semantica(tipo_articolo, keywords_classificate, brand):
     
     return descrizione.capitalize()
 
-def genera_frase_intelligente(brand, nome, keywords_classificate, frase_precedente=None):
+def genera_frase_commerciale(termini_commerciali):
+    """Genera una frase promozionale usando i termini commerciali"""
+    
+    # Frasi promozionali base
+    frasi_base = [
+        "Approfitta ora della nostra {termine} esclusiva: un'occasione irripetibile per aggiungere questo pezzo unico alla tua collezione!",
+        "Ti invitiamo a cogliere questa {termine} speciale con uno sconto eccezionale, disponibile solo per un periodo limitato!",
+        "Non perdere questa {termine} unica: abbiamo preparato per te una proposta che non potrai rifiutare!",
+        "Questa è l'occasione perfetta per rendere tuo questo articolo esclusivo, grazie alla nostra {termine} vantaggiosa!"
+    ]
+    
+    # Termini commerciali predefiniti
+    termini_default = [
+        'offerta', 'promozione', 'occasione', 'opportunità', 'proposta'
+    ]
+    
+    # Usa i termini dell'articolo se presenti, altrimenti quelli predefiniti
+    if termini_commerciali:
+        termini_disponibili = [t.strip() for t in termini_commerciali if t.strip()]
+        if termini_disponibili:
+            termine = random.choice(termini_disponibili)
+        else:
+            termine = random.choice(termini_default)
+    else:
+        termine = random.choice(termini_default)
+    
+    frase_base = random.choice(frasi_base)
+    return frase_base.format(termine=termine)
+
+def genera_frase_intelligente(brand, nome, colore, materiale, keywords_classificate, termini_commerciali, frase_precedente=None):
     """Genera una frase intelligente con interpretazione semantica"""
     
     # Riconosci il tipo di articolo
     tipo_articolo = riconosci_tipo_articolo(nome)
     
-    # Se non ci sono keywords, usa frasi specifiche per brand
-    tutte_keywords = sum(keywords_classificate.values(), [])
-    if not tutte_keywords:
+    # Se non ci sono informazioni utili, usa frasi specifiche per brand
+    ha_info = colore or materiale or any(keywords_classificate.values())
+    
+    if not ha_info:
         frasi_brand = [
             f"Un pezzo iconico firmato {brand} che rappresenta l'eccellenza del design italiano.",
             f"La qualità superiore di {brand} si esprime in questo articolo dal fascino intramontabile.",
@@ -311,30 +343,17 @@ def genera_frase_intelligente(brand, nome, keywords_classificate, frase_preceden
         ]
         frase_descrittiva = random.choice(frasi_brand)
     else:
-        # Crea descrizione semantica
-        frase_descrittiva = crea_descrizione_semantica(tipo_articolo, keywords_classificate, brand)
+        # Crea descrizione semantica usando tutti i dati disponibili
+        frase_descrittiva = crea_descrizione_semantica(tipo_articolo, colore, materiale, keywords_classificate, brand)
     
-    # Frase promozionale variabile
-    frasi_promozionali = [
-        "Approfitta ora della nostra offerta esclusiva: un'occasione irripetibile per aggiungere questo pezzo unico alla tua collezione!",
-        "Ti invitiamo a cogliere questa opportunità speciale con uno sconto eccezionale, disponibile solo per un periodo limitato!",
-        "Non perdere questa occasione unica: abbiamo preparato per te un'offerta speciale che non potrai rifiutare!",
-        "Questa è l'occasione perfetta per rendere tuo questo articolo esclusivo, grazie alla nostra proposta vantaggiosa!"
-    ]
-    
-    frase_promozionale = random.choice(frasi_promozionali)
+    # Genera frase promozionale con termini commerciali
+    frase_promozionale = genera_frase_commerciale(termini_commerciali)
     
     # Combina le frasi
     frase_completa = f"{frase_descrittiva} {frase_promozionale}"
     
     # Evita ripetizioni del brand
     frase_finale = evita_ripetizioni_brand(frase_completa, brand, nome)
-    
-    # Se è identica alla precedente, prova una variante
-    if frase_finale == frase_precedente and len(frasi_promozionali) > 1:
-        frase_promozionale_alt = random.choice([f for f in frasi_promozionali if f != frase_promozionale])
-        frase_finale = f"{frase_descrittiva} {frase_promozionale_alt}"
-        frase_finale = evita_ripetizioni_brand(frase_finale, brand, nome)
     
     return frase_finale
 
@@ -358,13 +377,25 @@ def evita_ripetizioni_brand(testo, brand, nome):
 @app.route('/api/genera-frase/<int:id>', methods=['GET'])
 def genera_frase(id):
     articolo = Articolo.query.get_or_404(id)
+    
+    # Estrai tutti i dati dall'articolo
+    colore = articolo.colore.strip() if articolo.colore else ''
+    materiale = articolo.materiale.strip() if articolo.materiale else ''
     keywords = articolo.keywords.split(',') if articolo.keywords else []
+    termini_commerciali = articolo.termini_commerciali.split(',') if articolo.termini_commerciali else []
     
     # Classifica le keywords
     keywords_classificate = classifica_keywords(keywords)
     
     # Genera la frase intelligente
-    frase = genera_frase_intelligente(articolo.brand, articolo.nome, keywords_classificate)
+    frase = genera_frase_intelligente(
+        articolo.brand, 
+        articolo.nome, 
+        colore, 
+        materiale, 
+        keywords_classificate, 
+        termini_commerciali
+    )
     
     return jsonify({'frase': frase})
 

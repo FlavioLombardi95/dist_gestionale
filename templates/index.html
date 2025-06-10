@@ -108,6 +108,11 @@
                         <label for="keywords" class="form-label">Altre parole chiave (separate da virgola, opzionali)</label>
                         <input type="text" class="form-control" id="keywords" placeholder="Es: tracolla, borchie, vintage...">
                     </div>
+                    <div class="mb-3">
+                        <label for="termini_commerciali" class="form-label">Termini commerciali (opzionali)</label>
+                        <input type="text" class="form-control" id="termini_commerciali" placeholder="Es: offerta scontata, occasione rara, promozione limitata...">
+                        <div class="form-text">Termini per personalizzare la parte promozionale della frase</div>
+                    </div>
                     <button type="submit" class="btn btn-primary">Salva</button>
                 </form>
             </div>
@@ -170,7 +175,10 @@
             const formData = new FormData();
             formData.append('nome', document.getElementById('nome').value);
             formData.append('brand', document.getElementById('brand').value);
+            formData.append('colore', document.getElementById('colore').value);
+            formData.append('materiale', document.getElementById('materiale').value);
             formData.append('keywords', document.getElementById('keywords').value);
+            formData.append('termini_commerciali', document.getElementById('termini_commerciali').value);
             
             const immagine = document.getElementById('immagine').files[0];
             if (immagine) {
@@ -321,7 +329,10 @@
         function editArticolo(articolo) {
             document.getElementById('nome').value = articolo.nome;
             document.getElementById('brand').value = articolo.brand;
+            document.getElementById('colore').value = articolo.colore || '';
+            document.getElementById('materiale').value = articolo.materiale || '';
             document.getElementById('keywords').value = articolo.keywords.join(', ');
+            document.getElementById('termini_commerciali').value = articolo.termini_commerciali.join(', ');
             
             const form = document.getElementById('articoloForm');
             form.dataset.editId = articolo.id;
