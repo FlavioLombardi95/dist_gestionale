@@ -231,52 +231,131 @@ def riconosci_tipo_articolo(nome):
         return 'generico'
 
 def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_classificate, condizioni, rarita, vintage, target, termini_commerciali):
-    """Genera frasi professionali nello stile degli esempi forniti"""
+    """Genera frasi professionali con grammatica italiana corretta"""
     
-    # Riconosci il tipo di articolo
+    # Riconosci il tipo di articolo e genere
     tipo_articolo = riconosci_tipo_articolo(nome)
     
-    # Costruisci descrizione materiali intelligente
+    # Definisci genere degli articoli
+    generi = {
+        'borsa': 'f',     # femminile
+        'scarpe': 'f',    # femminile plurale
+        'vestito': 'm',   # maschile
+        'top': 'm',       # maschile
+        'pantaloni': 'm', # maschile plurale
+        'giacca': 'f',    # femminile
+        'accessorio': 'm', # maschile
+        'generico': 'm'   # default maschile
+    }
+    
+    genere = generi.get(tipo_articolo, 'm')
+    
+    # Funzione per concordare aggettivi
+    def concordanza_aggettivo(aggettivo, genere_target):
+        """Converte aggettivi al genere corretto"""
+        maschili_femminili = {
+            'nero': {'m': 'nero', 'f': 'nera'},
+            'bianco': {'m': 'bianco', 'f': 'bianca'},
+            'rosso': {'m': 'rosso', 'f': 'rossa'},
+            'blu': {'m': 'blu', 'f': 'blu'},  # invariabile
+            'verde': {'m': 'verde', 'f': 'verde'},  # invariabile
+            'marrone': {'m': 'marrone', 'f': 'marrone'},  # invariabile
+            'beige': {'m': 'beige', 'f': 'beige'},  # invariabile
+            'grigio': {'m': 'grigio', 'f': 'grigia'},
+            'rosa': {'m': 'rosa', 'f': 'rosa'},  # invariabile
+            'giallo': {'m': 'giallo', 'f': 'gialla'},
+            'viola': {'m': 'viola', 'f': 'viola'},  # invariabile
+            'raro': {'m': 'raro', 'f': 'rara'},
+            'nuovo': {'m': 'nuovo', 'f': 'nuova'},
+            'usato': {'m': 'usato', 'f': 'usata'},
+            'perfetto': {'m': 'perfetto', 'f': 'perfetta'},
+            'elegante': {'m': 'elegante', 'f': 'elegante'},  # invariabile
+            'iconico': {'m': 'iconico', 'f': 'iconica'},
+            'esclusivo': {'m': 'esclusivo', 'f': 'esclusiva'},
+            'introvabile': {'m': 'introvabile', 'f': 'introvabile'}  # invariabile
+        }
+        
+        if aggettivo.lower() in maschili_femminili:
+            return maschili_femminili[aggettivo.lower()][genere_target]
+        return aggettivo  # se non trovato, restituisce così com'è
+    
+    # Articoli determinativi
+    def articolo_determinativo(genere_target, tipo):
+        if genere_target == 'f':
+            return 'la' if tipo != 'scarpe' else 'le'
+        else:
+            return 'il' if tipo not in ['pantaloni'] else 'i'
+    
+    def articolo_indeterminativo(genere_target, tipo):
+        if genere_target == 'f':
+            return 'una' if tipo != 'scarpe' else 'delle'
+        else:
+            return 'un' if tipo not in ['pantaloni'] else 'dei'
+    
+    # Nome pulito senza ripetizioni di brand
+    nome_pulito = nome.replace(brand, '').strip()
+    # Evita ripetizione del tipo articolo se già presente
+    if tipo_articolo.lower() in nome_pulito.lower():
+        nome_semplificato = nome_pulito
+    else:
+        nome_semplificato = f"{tipo_articolo} {nome_pulito}".strip()
+    
+    # Costruisci descrizione materiali con concordanza corretta
     desc_materiali = ""
     if materiale and colore:
+        colore_concordato = concordanza_aggettivo(colore, genere)
         if 'pelle' in materiale.lower() and any(mat in keywords_classificate['materiali'] for mat in ['tela', 'canvas', 'tessuto']):
-            # Combinazione intelligente come negli esempi "tela e pelle nera"
             altri_materiali = [mat for mat in keywords_classificate['materiali'] if mat != materiale.lower()]
             if altri_materiali:
-                desc_materiali = f"in {altri_materiali[0]} e {materiale.lower()} {colore.lower()}"
+                desc_materiali = f"in {altri_materiali[0]} e pelle {colore_concordato}"
             else:
-                desc_materiali = f"in {materiale.lower()} {colore.lower()}"
+                desc_materiali = f"in pelle {colore_concordato}"
         else:
-            desc_materiali = f"in {materiale.lower()} {colore.lower()}"
+            desc_materiali = f"in {materiale.lower()} {colore_concordato}"
     elif materiale:
         desc_materiali = f"in {materiale.lower()}"
     elif colore:
-        desc_materiali = f"nel colore {colore.lower()}"
+        colore_concordato = concordanza_aggettivo(colore, genere)
+        desc_materiali = f"color {colore_concordato}"
     
-    # Descrizione condizioni
+    # Descrizione condizioni con concordanza
     desc_condizioni = ""
     if condizioni:
-        condizioni_map = {
-            'Eccellenti': ['in condizioni eccellenti', 'in perfette condizioni', 'condizioni top', 'mantenuta perfettamente'],
-            'Ottime': ['in ottime condizioni', 'ben conservata', 'tenuta benissimo', 'ben mantenuta'],
-            'Buone': ['in buone condizioni', 'ben tenuta', 'conservata bene'],
-            'Discrete': ['in discrete condizioni', 'usata ma funzionale']
+        condizioni_concordate = {
+            'Eccellenti': [
+                f"in condizioni eccellenti",
+                f"in perfette condizioni", 
+                f"mantenut{('a' if genere == 'f' else 'o')} perfettamente"
+            ],
+            'Ottime': [
+                f"in ottime condizioni",
+                f"ben conservat{('a' if genere == 'f' else 'o')}",
+                f"tenut{('a' if genere == 'f' else 'o')} benissimo"
+            ],
+            'Buone': [
+                f"in buone condizioni",
+                f"ben tenut{('a' if genere == 'f' else 'o')}"
+            ],
+            'Discrete': [
+                f"in discrete condizioni",
+                f"usat{('a' if genere == 'f' else 'o')} ma funzionale"
+            ]
         }
-        desc_condizioni = random.choice(condizioni_map.get(condizioni, ['in buone condizioni']))
+        desc_condizioni = random.choice(condizioni_concordate.get(condizioni, ['in buone condizioni']))
     
-    # Descrizione rarità
+    # Descrizione rarità con concordanza
     desc_rarita = ""
     if rarita and rarita != 'Comune':
-        rarita_map = {
-            'Introvabile': ['introvabile', 'ormai introvabile', 'molto difficile da trovare'],
-            'Molto Raro': ['molto raro', 'raro', 'difficile da trovare', 'pezzo raro'],
-            'Raro': ['raro', 'modello raro']
+        rarita_concordata = {
+            'Introvabile': [concordanza_aggettivo('introvabile', genere)],
+            'Molto Raro': [concordanza_aggettivo('raro', genere), f"molto {concordanza_aggettivo('raro', genere)}"],
+            'Raro': [concordanza_aggettivo('raro', genere)]
         }
-        options = rarita_map.get(rarita, [])
+        options = rarita_concordata.get(rarita, [])
         if options:
             desc_rarita = random.choice(options)
     
-    # Aggettivi premium per brand di lusso
+    # Aggettivi premium per brand di lusso (concordati)
     aggettivi_brand = {
         'Dior': ['iconica', 'mitica', 'leggendaria', 'raffinata'],
         'Chanel': ['intramontabile', 'classica', 'elegante', 'iconica'],
@@ -286,47 +365,45 @@ def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_cl
         'Prada': ['sofisticata', 'elegante', 'moderna']
     }
     
-    aggettivo_brand = random.choice(aggettivi_brand.get(brand, ['elegante', 'raffinata']))
+    aggettivo_brand_base = random.choice(aggettivi_brand.get(brand, ['elegante', 'raffinata']))
+    aggettivo_brand = concordanza_aggettivo(aggettivo_brand_base, genere)
     
     # Target specifici
     desc_target = ""
     if target:
         target_map = {
-            'Intenditrici': 'Per intenditrici',
-            'Collezionisti': 'Per veri collezionisti', 
-            'Amanti del vintage': 'Per chi ama il vintage autentico',
-            'Appassionati di lusso': 'Per appassionati di lusso',
-            'Chi ama distinguersi': 'Per chi ama distinguersi'
+            'Intenditrici': 'per intenditrici',
+            'Collezionisti': 'per veri collezionisti', 
+            'Amanti del vintage': 'per chi ama il vintage autentico',
+            'Appassionati di lusso': 'per appassionati di lusso',
+            'Chi ama distinguersi': 'per chi ama distinguersi'
         }
         desc_target = target_map.get(target, '')
     
-    # Nome pulito senza brand
-    nome_pulito = nome.replace(brand, '').strip()
-    if not nome_pulito:
-        nome_pulito = tipo_articolo
+    # Template delle frasi con grammatica corretta
+    art_det = articolo_determinativo(genere, tipo_articolo)
+    art_indet = articolo_indeterminativo(genere, tipo_articolo)
     
-    # Template delle frasi (stile degli esempi)
     templates = [
-        f"Eleganza senza tempo firmata {brand}: questa {nome_pulito} {desc_materiali} è un tesoro da collezione, {desc_condizioni}.",
-        f"{aggettivo_brand.capitalize()} e iconica, la {brand} {nome_pulito} {desc_materiali} è perfetta per chi cerca stile e unicità.",
-        f"Una {tipo_articolo} {desc_rarita} e affascinante {desc_materiali}, firmata {brand}: {desc_condizioni}, pronta per una nuova storia.",
-        f"La mitica {brand} {nome_pulito}: {desc_materiali}, {desc_condizioni}. Un classico che non tramonta.",
-        f"Un tocco di classe firmato {brand}: {nome_pulito} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
-        f"{desc_target} di vintage e lusso: {brand} {nome_pulito} {desc_materiali}, {desc_condizioni}, {desc_rarita}.",
-        f"Stile {brand.lower()} in chiave vintage: {nome_pulito} {desc_materiali} {desc_condizioni}. Un vero pezzo {desc_rarita}.",
-        f"Un accessorio unico per chi ama distinguersi: {tipo_articolo} {brand} {nome_pulito} {desc_materiali}, {desc_condizioni} e {desc_rarita}.",
-        f"Vintage di lusso? Questa {brand} {nome_pulito} {desc_materiali} fa al caso tuo. {desc_condizioni.capitalize()}, modello {desc_rarita}.",
-        f"Intramontabile e raffinata: la {tipo_articolo} {brand} {nome_pulito} {desc_materiali}, {desc_rarita}, bellissima.",
-        f"Eleganza discreta e fascino vintage: la {brand} {nome_pulito} {desc_materiali} è perfetta per ogni occasione.",
-        f"{desc_rarita.capitalize()}, elegante e {desc_condizioni}: questa {brand} {nome_pulito} è un investimento di stile.",
-        f"Finiture {desc_materiali} e firma {brand}: la {nome_pulito} è una {tipo_articolo} da vera intenditrice.",
-        f"Un pezzo cult {desc_target.lower()}: {brand} {nome_pulito} {desc_materiali}, {desc_condizioni}.",
-        f"Questa {brand} {nome_pulito} ha tutto: eleganza, storia e rarità. {desc_condizioni.capitalize()}, pronta per te.",
-        f"Una {brand} che non passa inosservata: {nome_pulito} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
-        f"{desc_target} del fascino discreto e della classe {brand}: {nome_pulito} vintage, {desc_condizioni}.",
-        f"Collezionabile e chic: {brand} {nome_pulito} {desc_materiali}, {desc_condizioni}, un classico senza tempo.",
-        f"{tipo_articolo.capitalize()} {brand} {nome_pulito} {desc_materiali}: {desc_rarita} in queste condizioni.",
-        f"Semplicemente iconica: {brand} {nome_pulito} {desc_materiali}, perfetta {desc_target.lower()} del vintage esclusivo."
+        f"Eleganza senza tempo firmata {brand}: quest{('a' if genere == 'f' else 'o')} {nome_semplificato} {desc_materiali} è {art_indet} tesoro da collezione, {desc_condizioni}.",
+        f"{aggettivo_brand.capitalize()} e {concordanza_aggettivo('iconico', genere)}, {art_det} {brand} {nome_semplificato} {desc_materiali} è perfett{('a' if genere == 'f' else 'o')} per chi cerca stile e unicità.",
+        f"{art_indet.capitalize()} {nome_semplificato} {desc_rarita} e affascinante {desc_materiali}, firmat{('a' if genere == 'f' else 'o')} {brand}: {desc_condizioni}, pront{('a' if genere == 'f' else 'o')} per una nuova storia.",
+        f"{art_det.capitalize()} mitic{('a' if genere == 'f' else 'o')} {brand} {nome_semplificato}: {desc_materiali}, {desc_condizioni}. Un classico che non tramonta.",
+        f"Un tocco di classe firmato {brand}: {nome_semplificato} {desc_materiali}, {desc_rarita} e {desc_condizioni}.",
+        f"Perfett{('a' if genere == 'f' else 'o')} {desc_target}: {brand} {nome_semplificato} {desc_materiali}, {desc_condizioni}.",
+        f"Stile {brand.lower()} in chiave vintage: {nome_semplificato} {desc_materiali} {desc_condizioni}. Un vero pezzo {desc_rarita}.",
+        f"Vintage di lusso? Quest{('a' if genere == 'f' else 'o')} {brand} {nome_semplificato} {desc_materiali} fa al caso tuo. {desc_condizioni.capitalize()}.",
+        f"Intramontabile e raffinat{('a' if genere == 'f' else 'o')}: {art_det} {brand} {nome_semplificato} {desc_materiali}, {desc_rarita}, bellissim{('a' if genere == 'f' else 'o')}.",
+        f"Eleganza discreta e fascino vintage: {art_det} {brand} {nome_semplificato} {desc_materiali} è perfett{('a' if genere == 'f' else 'o')} per ogni occasione.",
+        f"{desc_rarita.capitalize()}, elegante e {desc_condizioni}: quest{('a' if genere == 'f' else 'o')} {brand} {nome_semplificato} è un investimento di stile.",
+        f"Finiture {desc_materiali} e firma {brand}: {art_det} {nome_semplificato} è {art_indet} {tipo_articolo} da vera intenditrice.",
+        f"Un pezzo cult {desc_target}: {brand} {nome_semplificato} {desc_materiali}, {desc_condizioni}.",
+        f"Quest{('a' if genere == 'f' else 'o')} {brand} {nome_semplificato} ha tutto: eleganza, storia e rarità. {desc_condizioni.capitalize()}.",
+        f"{art_indet.capitalize()} {brand} che non passa inoservat{('a' if genere == 'f' else 'o')}: {nome_semplificato} {desc_materiali}, {desc_rarita}.",
+        f"Perfett{('a' if genere == 'f' else 'o')} {desc_target} del fascino discreto: {brand} {nome_semplificato} vintage, {desc_condizioni}.",
+        f"Collezionabile e chic: {brand} {nome_semplificato} {desc_materiali}, {desc_condizioni}, un classico senza tempo.",
+        f"{tipo_articolo.capitalize()} {brand} {nome_semplificato} {desc_materiali}: {desc_rarita} in queste condizioni.",
+        f"Semplicemente {concordanza_aggettivo('iconico', genere)}: {brand} {nome_semplificato} {desc_materiali}, perfett{('a' if genere == 'f' else 'o')} {desc_target}."
     ]
     
     # Pulisci e filtra template
@@ -336,13 +413,14 @@ def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_cl
         frase_pulita = re.sub(r'\s+', ' ', template)
         frase_pulita = frase_pulita.replace(' ,', ',').replace('  ', ' ').strip()
         frase_pulita = frase_pulita.replace(': ,', ':').replace(', ,', ',')
+        frase_pulita = frase_pulita.replace(' :', ':').replace('.,', '.').replace(',.', '.')
         
-        # Aggiungi solo se non ha parti vuote
-        if not any(x in frase_pulita for x in [': ,', ': .', ' :', 'None', ', .']):
+        # Aggiungi solo se non ha parti vuote o malformate
+        if not any(x in frase_pulita for x in [': ,', ': .', ' :', 'None', ', .', ' ,', '  ']):
             templates_validi.append(frase_pulita)
     
     if not templates_validi:
-        frase_descrittiva = f"Elegante {tipo_articolo} {brand} {nome_pulito}, {desc_condizioni}."
+        frase_descrittiva = f"Elegante {nome_semplificato} {brand}, {desc_condizioni}."
     else:
         frase_descrittiva = random.choice(templates_validi)
     
@@ -372,7 +450,7 @@ def genera_frase_stile_professionale(brand, nome, colore, materiale, keywords_cl
     
     # Termini commerciali personalizzati
     if termini_commerciali:
-        termini_disponibili = [t.strip() for t in termini_commerciali if t.strip()]
+        termini_disponibili = [t.strip() for t in termini_commerciali.split(',') if t.strip()]
         if termini_disponibili:
             termine = random.choice(termini_disponibili)
             call_to_actions.extend([
