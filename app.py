@@ -208,26 +208,80 @@ def get_tipo_articolo_cached(nome: str) -> str:
 
 @lru_cache(maxsize=256)
 def get_genere_cached(tipo_articolo: str) -> str:
-    """Versione cached per ottenere il genere"""
-    generi = {
-        'borsa': 'f', 'scarpe': 'f', 'vestito': 'm', 'top': 'm',
-        'pantaloni': 'm', 'giacca': 'f', 'accessorio': 'm', 'generico': 'm'
+    """🎯 MAPPATURA COMPLETA prodotto-genere per concordanza perfetta"""
+    tipo_lower = tipo_articolo.lower()
+    
+    # Mappatura completa prodotti femminili
+    generi_femminili = {
+        'borsa', 'borsetta', 'pochette', 'clutch', 'tracolla', 'shopper', 'bauletto',
+        'scarpe', 'scarpa', 'decolletè', 'sneakers', 'ballerine', 'sandali', 'stivali',
+        'giacca', 'giacchin', 'blazer', 'giacchetta',
+        'camicia', 'camicetta', 'blusa', 'canotta', 'top',
+        'gonna', 'minigonna', 'gonna lunga',
+        'felpa', 'felpin', 'hoodie', 'maglia', 'maglietta', 't-shirt', 'tshirt',
+        'cintura', 'cintola',
+        'sciarpa', 'sciarpina', 'foulard', 'stola', 'pashmina',
+        'collana', 'collanina', 'catenina',
+        'valigia', 'valigetta', 'trolley',
+        'anello', 'anellino', 'fedina',
+        'spilla', 'spilletta'
     }
-    return generi.get(tipo_articolo, 'm')
+    
+    # Mappatura completa prodotti maschili  
+    generi_maschili = {
+        'orologio', 'orologin', 'cronografo', 'segnatempo', 'watch',
+        'portafoglio', 'portafogli', 'portamonete', 'wallet',
+        'cappello', 'cappellin', 'berretto', 'basco',
+        'cappotto', 'cappottin', 'paltò', 'montgomery',
+        'giubbotto', 'giubotto', 'giubbino', 'bomber',
+        'pantalone', 'pantaloni', 'jeans', 'jean',
+        'costume', 'boxer', 'slip',
+        'zaino', 'zainettin', 'marsupio',
+        'bracciale', 'braccialetto',
+        'gemello', 'gemelli', 'bottone',
+        'articolo', 'pezzo', 'capo', 'accessorio', 'vestito'
+    }
+    
+    # Controllo diretto
+    if tipo_lower in generi_femminili:
+        return 'f'
+    elif tipo_lower in generi_maschili:
+        return 'm'
+    
+    # Controllo per suffissi e pattern
+    if any(tipo_lower.endswith(suff) for suff in ['ina', 'etta']):
+        return 'f'
+    elif any(tipo_lower.endswith(suff) for suff in ['ino', 'etto', 'one']):
+        return 'm'
+    
+    # Default per parole generiche - SEMPRE maschile
+    return 'm'
 
 def riconosci_tipo_articolo(nome: str) -> str:
-    """Riconosce il tipo di articolo dal nome"""
+    """Riconosce il tipo di articolo dal nome con priorità per riconoscimento diretto"""
     nome_lower = nome.lower()
+    
+    # CONTROLLO DIRETTO per tipi principali (priorità massima)
+    if 'orologio' in nome_lower:
+        return 'orologio'
+    if 'portafoglio' in nome_lower:
+        return 'portafoglio'
+    if 'borsa' in nome_lower or 'bag' in nome_lower:
+        return 'borsa'
+    if 'scarpa' in nome_lower or 'scarpe' in nome_lower:
+        return 'scarpe'
     
     # Mappatura ottimizzata con più varianti
     tipo_mapping = {
         'borsa': ['borsa', 'borse', 'bag', 'clutch', 'pochette', 'zaino', 'trolley', 'valigia', 'handbag', 'bauletto', 'tracolla', 'shopping'],
         'scarpe': ['scarpa', 'scarpe', 'sandalo', 'sandali', 'boot', 'stivale', 'stivali', 'sneaker', 'decollete', 'pump', 'mocassino', 'ballerina', 'ciabatta'],
+        'orologio': ['orologio', 'watch', 'cronografo', 'segnatempo'],
+        'portafoglio': ['portafoglio', 'portafogli', 'wallet', 'portamonete'],
         'vestito': ['vestito', 'abito', 'dress', 'gonna', 'skirt', 'tuta', 'jumpsuit'],
         'top': ['camicia', 'shirt', 'blusa', 'top', 'maglia', 't-shirt', 'polo', 'cardigan', 'maglione', 'felpa'],
         'pantaloni': ['pantalone', 'pantaloni', 'jeans', 'short', 'bermuda', 'leggings', 'jogger'],
         'giacca': ['giacca', 'blazer', 'coat', 'cappotto', 'giubbotto', 'parka', 'trench', 'mantello'],
-        'accessorio': ['accessorio', 'accessori', 'cintura', 'belt', 'sciarpa', 'foulard', 'cappello', 'guanto', 'orologio', 'gioiello', 'collana', 'bracciale', 'anello']
+        'accessorio': ['accessorio', 'accessori', 'cintura', 'belt', 'sciarpa', 'foulard', 'cappello', 'guanto', 'gioiello', 'collana', 'bracciale', 'anello']
     }
     
     for tipo, keywords in tipo_mapping.items():
@@ -249,8 +303,12 @@ def riconosci_tipo_articolo(nome: str) -> str:
         if brand in nome_lower:
             return tipo_default
     
-    # Se proprio non riesce a identificare, usa "borsa" come default più probabile per articoli di lusso
-    return 'borsa'
+    # Controllo finale per parole che indicano tipi generici
+    if 'articolo' in nome_lower or 'pezzo' in nome_lower or 'capo' in nome_lower:
+        return 'articolo'
+    
+    # Se proprio non riesce a identificare, usa "articolo" come default neutro
+    return 'articolo'
 
 @lru_cache(maxsize=512)
 def classifica_keywords_cached(keywords_str: str) -> Dict[str, List[str]]:
@@ -565,10 +623,10 @@ def genera_messaggio_like_vestiaire(brand: str, nome: str, colore: str, material
     # 🔥 COSTRUZIONE COMPONENTI CON CONTROLLO RIPETIZIONI
     saluto = "Ciao"
     
-    # Descrizione prodotto ottimizzata
+    # Descrizione prodotto ottimizzata con tipo corretto
     desc_prodotto = _costruisci_descrizione_intelligente_vestiaire(
         brand, nome_pulito, modello, colore, materiale, condizioni, rarita, 
-        vintage, genere, parametri_rilevanti, keywords_classificate
+        vintage, genere, parametri_rilevanti, keywords_classificate, tipo_articolo
     )
     
     # Altri componenti con randomness pesata
@@ -708,13 +766,23 @@ def _seleziona_parametri_intelligenti(colore: str, materiale: str, keywords_clas
 def _costruisci_descrizione_intelligente_vestiaire(brand: str, nome_pulito: str, modello: str, 
                                                   colore: str, materiale: str, condizioni: str, 
                                                   rarita: str, vintage: bool, genere: str,
-                                                  parametri: Dict, keywords_classificate: Dict) -> str:
+                                                  parametri: Dict, keywords_classificate: Dict, 
+                                                  tipo_corretto: str = None) -> str:
     """🎯 COSTRUZIONE NATURALE della descrizione con grammatica perfetta"""
     
-    # 🏷️ IDENTIFICA TIPO ARTICOLO CORRETTO
-    if nome_pulito:
-        tipo_articolo = get_tipo_articolo_cached(nome_pulito)
+    # 🏷️ USA TIPO ARTICOLO CORRETTO PASSATO COME PARAMETRO
+    if tipo_corretto:
+        tipo_articolo = tipo_corretto
+    elif nome_pulito:
+        # Se il nome è già un tipo di articolo valido, usalo direttamente
+        nome_lower = nome_pulito.lower()
+        if nome_lower in ['articolo', 'borsa', 'scarpe', 'orologio', 'portafoglio', 'giacca', 'pantalone', 'pantaloni']:
+            tipo_articolo = nome_lower
+        else:
+            # Altrimenti riconosci il tipo dal nome completo
+            tipo_articolo = riconosci_tipo_articolo(nome_pulito)
     else:
+        # Fallback
         tipo_articolo = 'articolo'
     
     # 🎨 SELEZIONA AGGETTIVI QUALITATIVI INTELLIGENTI
@@ -755,7 +823,10 @@ def _costruisci_descrizione_intelligente_vestiaire(brand: str, nome_pulito: str,
         if 'nero' in colore_originale or 'black' in colore_originale:
             dettagli_fisici.append(random.choice(['nera', 'total black', 'in nero']))
         elif 'bianco' in colore_originale or 'white' in colore_originale:
-            dettagli_fisici.append(random.choice(['bianca', 'candida', 'in bianco']))
+            if genere == 'f':
+                dettagli_fisici.append(random.choice(['bianca', 'in bianco']))
+            else:
+                dettagli_fisici.append(random.choice(['bianco', 'in bianco']))
         elif 'rosso' in colore_originale or 'red' in colore_originale:
             dettagli_fisici.append(random.choice(['rossa', 'rosso acceso']))
         else:
@@ -778,11 +849,14 @@ def _costruisci_descrizione_intelligente_vestiaire(brand: str, nome_pulito: str,
     # 📝 COSTRUZIONE COMPLETAMENTE NATURALE
     
     # Costruisci il nome prodotto nel modo giusto
-    if modello and len(modello) > 2:
-        # Ha un modello specifico: "borsa Louis Vuitton Speedy"
+    if modello and len(modello) > 2 and modello.lower() != nome_pulito.lower():
+        # Ha un modello specifico diverso dal nome: "borsa Louis Vuitton Speedy"
         nome_prodotto_base = f"{tipo_articolo} {brand} {modello}"
+    elif nome_pulito and nome_pulito.lower() not in ['articolo', 'borsa', 'scarpe', 'orologio', 'portafoglio']:
+        # Ha un nome specifico che non è un tipo generico: "borsa Louis Vuitton Classic Flap"
+        nome_prodotto_base = f"{tipo_articolo} {brand} {nome_pulito}"
     else:
-        # Nome generico: "borsa Louis Vuitton"
+        # Nome generico: "articolo Louis Vuitton" o "borsa Louis Vuitton"
         nome_prodotto_base = f"{tipo_articolo} {brand}"
     
     # Pattern più naturali in italiano
@@ -851,37 +925,178 @@ def _costruisci_scarsita_naturale(genere: str) -> str:
     return random.choice(scarsita_patterns)
 
 def _pulisci_messaggio_vestiaire_migliorato(messaggio: str, brand: str, nome_pulito: str) -> str:
-    """🧹 PULIZIA AVANZATA del messaggio con correzioni grammaticali perfette"""
+    """🧹 PULIZIA +CONCORDANZA INTELLIGENTE brand-prodotto"""
     if not messaggio:
         return ""
     
-    # 🔍 CORREZIONI GRAMMATICALI SPECIFICHE
+    # 🎯 IDENTIFICA IL TIPO DI PRODOTTO per concordanza corretta
+    tipo_prodotto = riconosci_tipo_articolo(nome_pulito)
+    genere_prodotto = get_genere_cached(tipo_prodotto)
+    
+    # 🔍 CORREZIONI GRAMMATICALI SPECIFICHE INTELLIGENTI
     brand_lower = brand.lower()
     
-    # Pattern problematici da correggere
+    # CORREZIONI DINAMICHE basate su genere del prodotto
     patterns_problematici = [
-        # Correzioni grammaticali base
+        # CORREZIONI PRIORITARIE per apostrofi errati 
+        (r'\bun\'\s+(articolo|orologio|portafoglio)\b', r'un \1', 0),
+        (r'\bè un\'\s+(articolo|orologio|portafoglio)\b', r'è un \1', 0),
+        (r'\bè un\'\s+\w+\s+(articolo|orologio|portafoglio)\b', r'è un \2', 0),
+        (r'\bun\'\s+\w+\s+(articolo|orologio|portafoglio)\b', r'un \1', 0),
+        
+        # CORREZIONI PRIORITARIE per scarpe plurali con colori
+        (r'\bscarpe\s+\w+\s+belle\s+rosso\s+acceso\b', lambda m: m.group(0).replace('rosso acceso', 'rosse accese'), re.IGNORECASE),
+        (r'\bscarpe\s+\w+\s+belle\s+rosso\b', lambda m: m.group(0).replace('rosso', 'rosse'), re.IGNORECASE),
+        (r'\bscarpe\s+\w+.*ne abbiamo solo una\b', lambda m: m.group(0).replace('ne abbiamo solo una', 'ne abbiamo solo queste'), re.IGNORECASE),
+        
+        # CORREZIONI PRIORITARIE per scarpe con aggettivi
+        (r'\bdelle\s+(interessante|speciale|particolare)\s+scarpe\b', lambda m: f"delle scarpe {m.group(1).replace('e', 'i') if m.group(1).endswith('e') else m.group(1)+'i'}", re.IGNORECASE),
+        (r'\b(interessante|speciale|particolare)\s+scarpe\b', lambda m: f"scarpe {m.group(1).replace('e', 'i') if m.group(1).endswith('e') else m.group(1)+'i'}", re.IGNORECASE),
+        
+        # CORREZIONI PRIORITARIE verbo essere + scarpe
+        (r'\bè delle\s+\w+\s+scarpe\b', lambda m: m.group(0).replace('è delle', 'sono delle'), re.IGNORECASE),
+        (r'\bè l\'ultima disponibile.*scarpe\b', lambda m: m.group(0).replace("è l'ultima disponibile", "sono le ultime disponibili"), re.IGNORECASE), 
+        
+        # Correzioni articoli base
         (r'\buna articolo\b', 'un articolo', 0),
         (r'\bun borsa\b', 'una borsa', 0), 
         (r'\bun scarpe\b', 'delle scarpe', 0),
         (r'\buna orologio\b', 'un orologio', 0),
         (r'\buna pantaloni\b', 'dei pantaloni', 0),
+        
+        # CORREZIONI CONCORDANZA BRAND-PRODOTTO INTELLIGENTI
+        # Per prodotti femminili (borse, scarpe, giacche...)
+        (rf'\b{re.escape(brand)}\s+nera\b' if genere_prodotto == 'f' else 'SKIP', f'{brand} nera', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+rara\b' if genere_prodotto == 'f' else 'SKIP', f'{brand} rara', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+ricercata\b' if genere_prodotto == 'f' else 'SKIP', f'{brand} ricercata', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+bellissima\b' if genere_prodotto == 'f' else 'SKIP', f'{brand} bellissima', re.IGNORECASE),
+        
+        # Per prodotti maschili (articoli, orologi, portafogli...)
+        (rf'\b{re.escape(brand)}\s+nero\b' if genere_prodotto == 'm' else 'SKIP', f'{brand} nero', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+raro\b' if genere_prodotto == 'm' else 'SKIP', f'{brand} raro', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+ricercato\b' if genere_prodotto == 'm' else 'SKIP', f'{brand} ricercato', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+bellissimo\b' if genere_prodotto == 'm' else 'SKIP', f'{brand} bellissimo', re.IGNORECASE),
+        
+        # CORREZIONI PER ERRORI VISTI NEI TEST
+        (rf'\b{re.escape(brand)}\s+nera\b' if genere_prodotto == 'm' else 'SKIP', f'{brand} nero', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+rara\b' if genere_prodotto == 'm' else 'SKIP', f'{brand} raro', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+ricercata\b' if genere_prodotto == 'm' else 'SKIP', f'{brand} ricercato', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+bellissima\b' if genere_prodotto == 'm' else 'SKIP', f'{brand} bellissimo', re.IGNORECASE),
+        
+        # Forme aggettivali tronche
+        (r'\bbellissim\b', 'bellissimo' if genere_prodotto == 'm' else 'bellissima', 0),
+        (r'\brarissim\b', 'rarissimo' if genere_prodotto == 'm' else 'rarissima', 0),
+        (r'\bricercat\b', 'ricercato' if genere_prodotto == 'm' else 'ricercata', 0),
+        (r'\bsplendid\b', 'splendido' if genere_prodotto == 'm' else 'splendida', 0),
+        (r'\bmeraviglios\b', 'meraviglioso' if genere_prodotto == 'm' else 'meravigliosa', 0),
+        (r'\bottim\b', 'ottimo' if genere_prodotto == 'm' else 'ottima', 0),
+        
+        # CORREZIONI ARTICOLI SPECIFICHE per "articolo" (sempre maschile)
+        (r'\buna\s+(bellissima?|splendida?|speciale|ottima?|rara?|particolare|meravigliosa?)\s+articolo\b', 
+         lambda m: f"un {concordanza_aggettivo(m.group(1), 'm')} articolo", re.IGNORECASE),
+        (r'\bun\'\s+(bellissima?|splendida?|speciale|ottima?|rara?|particolare|meravigliosa?)\s+articolo\b', 
+         lambda m: f"un {concordanza_aggettivo(m.group(1), 'm')} articolo", re.IGNORECASE),
+        (r'\bun\'\s+articolo\b', 'un articolo', re.IGNORECASE),
         (r'\buna particolar articolo\b', 'un particolare articolo', 0),
         (r'\buna ottim articolo\b', 'un ottimo articolo', 0),
         (r'\buna bell articolo\b', 'un bel articolo', 0),
-        (r'\brarissim rossa\b', 'rarissima rossa', 0),
+        
+        # CORREZIONI BRAND-ARTICOLO per concordanza perfetta
+        (rf'\b{re.escape(brand)}\s+(nera?|rara?|ricercata?|bellissima?|splendida?|speciale)\s+articolo\b', 
+         lambda m: f"{brand} {concordanza_aggettivo(m.group(1), 'm')}", re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+(nera?|rara?|ricercata?|bellissima?|splendida?|ottima?|particolare)\b(?!\s+articolo)', 
+         lambda m: f"{brand} {concordanza_aggettivo(m.group(1), genere_prodotto)}", re.IGNORECASE),
+        
+        # CORREZIONI SPECIFICHE BRAND-AGGETTIVO per gli errori visti
+        (rf'\b{re.escape(brand)}\s+bellissima\b', f'{brand} {"bellissimo" if genere_prodotto == "m" else "bellissima"}', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+ottima\b', f'{brand} {"ottimo" if genere_prodotto == "m" else "ottima"}', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+nera\b', f'{brand} {"nero" if genere_prodotto == "m" else "nera"}', re.IGNORECASE),
+        
+        # CORREZIONI FINALI AGGRESSIVE per concordanza con "articolo"
+        (r'\barticolo\s+\w+\s+ottima\b', lambda m: m.group(0).replace('ottima', 'ottimo'), re.IGNORECASE),
+        (r'\barticolo\s+\w+\s+bellissima\b', lambda m: m.group(0).replace('bellissima', 'bellissimo'), re.IGNORECASE),
+        (r'\barticolo\s+\w+\s+nera\b', lambda m: m.group(0).replace('nera', 'nero'), re.IGNORECASE),
+        (r'\barticolo\s+\w+\s+\w+\s+ottima\b', lambda m: m.group(0).replace('ottima', 'ottimo'), re.IGNORECASE),
+        
+        # CORREZIONI per "borsa" (femminile)
+        (r'\bborsa\s+\w+\s+ottimo\b', lambda m: m.group(0).replace('ottimo', 'ottima'), re.IGNORECASE),
+        (r'\bborsa\s+\w+\s+nero\b', lambda m: m.group(0).replace('nero', 'nera'), re.IGNORECASE),
+        (r'\bborsa\s+\w+\s+bellissimo\b', lambda m: m.group(0).replace('bellissimo', 'bellissima'), re.IGNORECASE),
+        
+        # CORREZIONI per "scarpe" (femminile plurale)
+        (r'\bscarpe\s+\w+\s+bellissimo\b', lambda m: m.group(0).replace('bellissimo', 'bellissime'), re.IGNORECASE),
+        (r'\bbellissimo\s+scarpe\b', 'bellissime scarpe', re.IGNORECASE),
+        (r'\bscarpe\s+\w+\s+ottimo\b', lambda m: m.group(0).replace('ottimo', 'ottime'), re.IGNORECASE),
+        (r'\bscarpe\s+\w+\s+nero\b', lambda m: m.group(0).replace('nero', 'nere'), re.IGNORECASE),
+        (r'\bè delle scarpe\b', 'sono delle scarpe', re.IGNORECASE),
+        
+        # CORREZIONI per "orologio" e "portafoglio" (maschili)
+        (r'\borologio\s+\w+\s+bianca\b', lambda m: m.group(0).replace('bianca', 'bianco'), re.IGNORECASE),
+        (r'\borologio\s+\w+\s+candida\b', lambda m: m.group(0).replace('candida', 'bianco'), re.IGNORECASE),
+        (r'\bportafoglio\s+\w+\s+candida\b', lambda m: m.group(0).replace('candida', 'bianco'), re.IGNORECASE),
+        (r'\barticolo\s+\w+\s+bianca\b', lambda m: m.group(0).replace('bianca', 'bianco'), re.IGNORECASE),
+        
+        # CORREZIONI numerosità per prodotti maschili
+        (r'\b(orologio|portafoglio|articolo)\s+\w+.*ne abbiamo solo una\b', lambda m: m.group(0).replace('solo una', 'solo uno'), re.IGNORECASE),
+        (r'\b(orologio|portafoglio|articolo)\s+\w+.*ne è rimasta solo una\b', lambda m: m.group(0).replace('rimasta solo una', 'rimasto solo uno'), re.IGNORECASE),
+        
+        # CORREZIONE articoli indeterminativi errati
+        (r'\bun\'\s+(orologio|articolo|portafoglio)\b', r'un \1', re.IGNORECASE),
+        (r'\bun\'\s+(ottimo|speciale|splendido)\s+(orologio|articolo|portafoglio)\b', r'un \1 \2', re.IGNORECASE),
+        (r'\bun\'\s+(bello|bell)\s+(orologio|articolo|portafoglio)\b', r"un bell'\2", re.IGNORECASE),
+        (r'\bè un\'\s+(bello|bell)\s+(orologio|articolo|portafoglio)\b', r"è un bell'\2", re.IGNORECASE),
+        (r'\bè un\'\s+(interessante|speciale|particolare)\s+(orologio|articolo|portafoglio)\b', r'è un \1 \2', re.IGNORECASE),
+        (r'\bun\'\s+(interessante|speciale|particolare)\s+(orologio|articolo|portafoglio)\b', r'un \1 \2', re.IGNORECASE),
+        (r'\bè un\'\s+(interessante)\s+(articolo)\b', r'è un interessante articolo', re.IGNORECASE),
+        (r'\bun\'\s+splendido\b', 'un splendido', re.IGNORECASE),
+        
+        # CORREZIONI per scarpe con verbo essere e plurali
+        (r'\bè delle\s+(interessante|speciale|particolare)\s+scarpe\b', lambda m: f"sono delle scarpe {m.group(1).replace('e', 'i') if m.group(1).endswith('e') else m.group(1)+'i'}", re.IGNORECASE),
+        (r'\bdelle\s+(splendida|bella|interessante|speciale|particolare)\s+scarpe\b', lambda m: f"delle {m.group(1).replace('a', 'e') if m.group(1).endswith('a') else m.group(1).replace('e', 'i') if m.group(1).endswith('e') else m.group(1)+'i'} scarpe", re.IGNORECASE),
+        
+        # CORREZIONI per aggettivi tronchi senza desinenza
+        (r'\binteressant\b', 'interessante', re.IGNORECASE),
+        (r'\bparticolar\b', 'particolare', re.IGNORECASE),
+        (r'\bspecial\b', 'speciale', re.IGNORECASE),
+        
+        # CORREZIONI plurali per scarpe (femminile plurale)
+        (r'\bscarpe\s+\w+\s+bella\b', lambda m: m.group(0).replace('bella', 'belle'), re.IGNORECASE),
+        (r'\bscarpe\s+\w+\s+\w+\s+bella\b', lambda m: m.group(0).replace('bella', 'belle'), re.IGNORECASE),
+        (r'\bscarpe\s+\w+\s+\w+\s+interessante\b', lambda m: m.group(0).replace('interessante', 'interessanti'), re.IGNORECASE),
+        (r'\bscarpe\s+\w+\s+interessante\b', lambda m: m.group(0).replace('interessante', 'interessanti'), re.IGNORECASE),
+        (r'\bscarpe\s+\w+\s+\w+\s+speciale\b', lambda m: m.group(0).replace('speciale', 'speciali'), re.IGNORECASE),
+        
+        # CORREZIONI numerosità per prodotti maschili singolari
+        (r'\b(articolo|orologio|portafoglio)\s+\w+.*ne abbiamo una sola\b', lambda m: m.group(0).replace('una sola', 'uno solo'), re.IGNORECASE),
+        (r'\b(articolo|orologio|portafoglio)\s+\w+.*ne abbiamo solo una\b', lambda m: m.group(0).replace('solo una', 'solo uno'), re.IGNORECASE),
+        (r'\b(articolo|orologio|portafoglio)\s+\w+.*è l\'ultima disponibile\b', lambda m: m.group(0).replace("l'ultima disponibile", "l'ultimo disponibile"), re.IGNORECASE),
+        
+        # CORREZIONI per scarpe plurali
+        (r'\bscarpe\s+\w+\s+rossa\b', lambda m: m.group(0).replace('rossa', 'rosse'), re.IGNORECASE),
+        (r'\bscarpe\s+\w+\s+argenta\b', lambda m: m.group(0).replace('argenta', 'argentate'), re.IGNORECASE),
+        (r'\bscarpe\s+\w+.*ne abbiamo una sola\b', lambda m: m.group(0).replace('ne abbiamo una sola', 'ne abbiamo solo queste'), re.IGNORECASE),
+        (r'\bscarpe\s+\w+.*ne è rimasta solo una\b', lambda m: m.group(0).replace('ne è rimasta solo una', 'ne sono rimaste solo queste'), re.IGNORECASE),
+        
+        # CORREZIONI colori per prodotti maschili (orologio, articolo, portafoglio)
+        (r'\b(orologio|articolo|portafoglio)\s+\w+.*rossa\b', lambda m: m.group(0).replace('rossa', 'rosso'), re.IGNORECASE),
+        (r'\b(orologio|articolo|portafoglio)\s+\w+.*argenta\b', lambda m: m.group(0).replace('argenta', 'argentato'), re.IGNORECASE),
+        
+        # CORREZIONI colori per prodotti femminili (borsa)
+        (r'\bborsa\s+\w+.*argenta\b', lambda m: m.group(0).replace('argenta', 'argentata'), re.IGNORECASE),
+        
+        # ERRORI ortografici comuni
+        (r'\bora\b(?=\s*,|\s*e|\s*$)', 'oro', re.IGNORECASE),
+        
+        # Pattern specifici per brand-aggettivo-articolo
+        (rf'\b{re.escape(brand)}\s+bellissima\s+nera\b', f'{brand} bellissimo nero', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+ottima\s+nera\b', f'{brand} ottimo nero', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+nera\s+ottima\b', f'{brand} nero ottimo', re.IGNORECASE),
+        (rf'\b{re.escape(brand)}\s+nera\s+bellissima\b', f'{brand} nero bellissimo', re.IGNORECASE),
+        
+        # Altri errori specifici
         (r'\bunic rossa\b', 'unica rossa', 0),
         (r'\bspecial rossa\b', 'speciale rossa', 0),
-        (r'\bsplendid articolo\b', 'splendido articolo', 0),
-        (r'\bsplendid borsa\b', 'splendida borsa', 0),
-        (r'\buna bellissim articolo\b', 'un bellissimo articolo', 0),
-        (r'\buna meraviglios articolo\b', 'un meraviglioso articolo', 0),
-        (r'\buna splendida articolo\b', 'un splendido articolo', 0),
-        (r'\buna ottima articolo\b', 'un ottimo articolo', 0),
-        (r'\buna speciale articolo\b', 'un speciale articolo', 0),
-        (r'\buna rar articolo\b', 'un raro articolo', 0),
         (r'\bottima in nero\b', 'ottimo in nero', 0),
-        (r'\bricercat\b', 'ricercato', 0),
         
         # Ripetizioni ringraziamenti
         (r'Grazie per il tuo "like"[^.]*\. Intanto grazie per il tuo "like"', 'Grazie per il tuo "like"', 0),
@@ -908,11 +1123,16 @@ def _pulisci_messaggio_vestiaire_migliorato(messaggio: str, brand: str, nome_pul
         (r'([,.;:!?])\s*([,.;:!?])', r'\1')
     ]
     
-    # Applica le correzioni
+    # Applica le correzioni (filtra pattern SKIP)
     messaggio_pulito = messaggio
     for pattern, replacement, *flags in patterns_problematici:
+        if pattern == 'SKIP':  # Salta pattern condizionali non applicabili
+            continue
         flag = flags[0] if flags else 0
-        messaggio_pulito = re.sub(pattern, replacement, messaggio_pulito, flags=flag)
+        try:
+            messaggio_pulito = re.sub(pattern, replacement, messaggio_pulito, flags=flag)
+        except re.error:
+            continue  # Salta pattern invalidi
     
     # 🎨 CORREZIONI STILISTICHE AVANZATE
     correzioni_manuali = {
