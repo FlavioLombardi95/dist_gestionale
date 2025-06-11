@@ -311,9 +311,18 @@ def classifica_keywords(keywords: List[str]) -> Dict[str, List[str]]:
     return risultato
 
 def concordanza_aggettivo(aggettivo: str, genere: str) -> str:
-    """Converte aggettivi al genere corretto con cache"""
+    """Converte aggettivi al genere corretto con cache - VERSIONE CORRETTA"""
+    if not aggettivo or not genere:
+        return aggettivo or ""
+        
+    # *** CORREZIONE: Validazione input ***    
+    genere = genere.lower().strip()
+    if genere not in ['m', 'f']:
+        genere = 'm'  # Default maschio se genere non valido
+        
+    aggettivo = aggettivo.strip()
     if not aggettivo:
-        return aggettivo
+        return ""
         
     # **MAPPATURA ESTESA** - Aggiunti tutti gli aggettivi mancanti
     concordanze = {
@@ -326,19 +335,21 @@ def concordanza_aggettivo(aggettivo: str, genere: str) -> str:
         'blu': {'m': 'blu', 'f': 'blu'},  # invariabile
         'rosa': {'m': 'rosa', 'f': 'rosa'},  # invariabile
         'marrone': {'m': 'marrone', 'f': 'marrone'},  # invariabile
+        'viola': {'m': 'viola', 'f': 'viola'},  # invariabile
+        'beige': {'m': 'beige', 'f': 'beige'},  # invariabile
         'raro': {'m': 'raro', 'f': 'rara'},
         'nuovo': {'m': 'nuovo', 'f': 'nuova'},
         'usato': {'m': 'usato', 'f': 'usata'},
         'perfetto': {'m': 'perfetto', 'f': 'perfetta'},
         'iconico': {'m': 'iconico', 'f': 'iconica'},
         'esclusivo': {'m': 'esclusivo', 'f': 'esclusiva'},
-        'stupendo': {'m': 'stupendo', 'f': 'stupenda'},  # **AGGIUNTO**
+        'stupendo': {'m': 'stupendo', 'f': 'stupenda'},
         'bello': {'m': 'bello', 'f': 'bella'},
         'magnifico': {'m': 'magnifico', 'f': 'magnifica'},
         'meraviglioso': {'m': 'meraviglioso', 'f': 'meravigliosa'},
         'splendido': {'m': 'splendido', 'f': 'splendida'},
         'fantastico': {'m': 'fantastico', 'f': 'fantastica'},
-        'straordinario': {'m': 'straordinario', 'f': 'straordinaria'},  # **AGGIUNTO**
+        'straordinario': {'m': 'straordinario', 'f': 'straordinaria'},
         'elegante': {'m': 'elegante', 'f': 'elegante'},  # invariabile
         'raffinato': {'m': 'raffinato', 'f': 'raffinata'},
         'classico': {'m': 'classico', 'f': 'classica'},
@@ -347,23 +358,37 @@ def concordanza_aggettivo(aggettivo: str, genere: str) -> str:
         'introvabile': {'m': 'introvabile', 'f': 'introvabile'},  # invariabile
         'ricercato': {'m': 'ricercato', 'f': 'ricercata'},
         'pregiato': {'m': 'pregiato', 'f': 'pregiata'},
-        'realizzato': {'m': 'realizzato', 'f': 'realizzata'},  # **AGGIUNTO**
-        'classificato': {'m': 'classificato', 'f': 'classificata'},  # **AGGIUNTO**
+        'realizzato': {'m': 'realizzato', 'f': 'realizzata'},
+        'classificato': {'m': 'classificato', 'f': 'classificata'},
         'conservato': {'m': 'conservato', 'f': 'conservata'},
-        'tenuto': {'m': 'tenuto', 'f': 'tenuta'},  # **AGGIUNTO**
-        'garantito': {'m': 'garantito', 'f': 'garantita'},  # **AGGIUNTO**
+        'tenuto': {'m': 'tenuto', 'f': 'tenuta'},
+        'garantito': {'m': 'garantito', 'f': 'garantita'},
+        'dorato': {'m': 'dorato', 'f': 'dorata'},  # *** AGGIUNTO ***
+        'argentato': {'m': 'argentato', 'f': 'argentata'},  # *** AGGIUNTO ***
+        'metallico': {'m': 'metallico', 'f': 'metallica'},  # *** AGGIUNTO ***
     }
     
     aggettivo_lower = aggettivo.lower()
     if aggettivo_lower in concordanze:
-        return concordanze[aggettivo_lower].get(genere, aggettivo)
+        risultato = concordanze[aggettivo_lower].get(genere, aggettivo)
+        # *** CORREZIONE: Mantieni la capitalizzazione originale se necessaria ***
+        if aggettivo[0].isupper() and risultato:
+            return risultato[0].upper() + risultato[1:] if len(risultato) > 1 else risultato.upper()
+        return risultato
     
-    # **REGOLE AUTOMATICHE** per aggettivi non in lista
-    if aggettivo_lower.endswith('o') and genere == 'f':
-        return aggettivo_lower[:-1] + 'a'
-    elif aggettivo_lower.endswith('a') and genere == 'm':
-        return aggettivo_lower[:-1] + 'o'
+    # *** CORREZIONE: Regole automatiche più robuste ***
+    try:
+        if len(aggettivo_lower) >= 2:
+            if aggettivo_lower.endswith('o') and genere == 'f':
+                base = aggettivo_lower[:-1] + 'a'
+                return base[0].upper() + base[1:] if aggettivo[0].isupper() else base
+            elif aggettivo_lower.endswith('a') and genere == 'm':
+                base = aggettivo_lower[:-1] + 'o'
+                return base[0].upper() + base[1:] if aggettivo[0].isupper() else base
+    except (IndexError, AttributeError):
+        pass
     
+    # Se non riesce a convertire, ritorna l'originale
     return aggettivo
 
 def genera_frase_stile_professionale(brand: str, nome: str, colore: str, materiale: str, 
@@ -417,8 +442,17 @@ def genera_frase_personalizzata_ottimizzata(brand: str, nome: str, colore: str, 
         keywords_analizzate, tipo_articolo
     )
     
-    # Cache key per memoria anti-ripetizione
-    cache_key = f"{brand}_{nome}_{colore or 'none'}_{materiale or 'none'}_{stile}"
+    # *** CORREZIONE: Cache key robusta senza caratteri problematici ***
+    def clean_for_cache(text):
+        if not text:
+            return 'none'
+        # Rimuovi caratteri speciali e sostituisci spazi con underscores
+        import re
+        cleaned = re.sub(r'[^\w\s-]', '', str(text))
+        cleaned = re.sub(r'\s+', '_', cleaned.strip())
+        return cleaned[:50] if cleaned else 'none'  # Limita lunghezza
+    
+    cache_key = f"{clean_for_cache(brand)}_{clean_for_cache(nome)}_{clean_for_cache(colore)}_{clean_for_cache(materiale)}_{clean_for_cache(stile)}"
     
     # Selezione template con memoria
     frase_principale = _seleziona_template_con_memoria(
@@ -783,28 +817,47 @@ def _pulizia_finale_frase(frase: str) -> str:
     if not frase:
         return ""
     
-    # Pulizia avanzata
+    # Pulizia avanzata step by step
     frase_pulita = re.sub(r'\s+', ' ', frase)
     frase_pulita = frase_pulita.replace(' ,', ',').replace('  ', ' ').strip()
     frase_pulita = frase_pulita.replace(': ,', ':').replace(', ,', ',').replace(' :', ':')
     frase_pulita = frase_pulita.replace('.,', '.').replace(',.', '.').replace('..', '.')
     frase_pulita = frase_pulita.replace('  ', ' ').replace(' .', '.')
     
-    # Rimuovi pattern problematici
+    # *** CORREZIONE: Rimuovi pattern problematici con regex più accurate ***
     pattern_problematici = [
-        r'\b(\w+)\s+\1\b',  # Parole duplicate
-        r'\s+([,.;:])',      # Spazi prima punteggiatura
-        r'([,.;:])\s*([,.;:])',  # Punteggiatura doppia
+        (r'\b(\w+)\s+\1\b', r'\1'),  # Parole duplicate -> mantieni solo la prima
+        (r'\s+([,.;:])', r'\1'),      # Spazi prima punteggiatura
+        (r'([,.;:])\s*([,.;:])', r'\1'),  # Punteggiatura doppia -> mantieni solo la prima
+        (r'\b(in|di|da|con|per)\s+\1\b', r'\1'),  # Preposizioni duplicate
+        (r'\b(il|la|lo|le|gli|i)\s+\1\b', r'\1'),  # Articoli duplicati
+        (r'\s*\n\s*', '\n'),  # Pulizia line breaks
+        (r'\n{3,}', '\n\n'),  # Max 2 line breaks consecutivi
     ]
     
-    for pattern in pattern_problematici:
-        frase_pulita = re.sub(pattern, r'\1', frase_pulita)
+    for pattern, replacement in pattern_problematici:
+        frase_pulita = re.sub(pattern, replacement, frase_pulita, flags=re.IGNORECASE)
     
-    # Capitalizzazione corretta
+    # *** CORREZIONE: Gestione sicura della capitalizzazione ***
     if frase_pulita:
-        frase_pulita = frase_pulita[0].upper() + frase_pulita[1:] if len(frase_pulita) > 1 else frase_pulita.upper()
+        # Capitalizza ogni riga separatamente
+        righe = frase_pulita.split('\n')
+        righe_pulite = []
+        for riga in righe:
+            riga = riga.strip()
+            if riga:
+                riga = riga[0].upper() + riga[1:] if len(riga) > 1 else riga.upper()
+            righe_pulite.append(riga)
+        frase_pulita = '\n'.join(righe_pulite)
     
-    return frase_pulita.strip()
+    # *** CORREZIONE: Validazione finale ***
+    frase_pulita = frase_pulita.strip()
+    
+    # Assicurati che non ci siano spazi doppi residui
+    while '  ' in frase_pulita:
+        frase_pulita = frase_pulita.replace('  ', ' ')
+    
+    return frase_pulita
 
 def pulisci_cache_frasi():
     """Pulisce la cache delle frasi per liberare memoria"""
@@ -874,7 +927,9 @@ def _costruisci_descrizione_materiali_avanzata(materiale: str, colore: str, keyw
             return f"dal magnifico {materiale.lower()} {colore_concordato}"
         
         elif stile == 'amichevole':
-            return f"in {materiale.lower()} {colore_concordato} stupend{concordanza_aggettivo('stupendo', genere)[-1]}"
+            # *** CORREZIONE: Gestione sicura del suffisso ***
+            stupendo_concordato = concordanza_aggettivo('stupendo', genere)
+            return f"in {materiale.lower()} {colore_concordato} {stupendo_concordato}"
         
         elif stile == 'professionale':
             return f"realizzat{concordanza_aggettivo('realizzato', genere)[-1]} in {materiale.lower()} {colore_concordato}"
@@ -1553,26 +1608,34 @@ def get_statistiche_frasi():
                     stile = parts[-1]
                     stats_stili[stile] = stats_stili.get(stile, 0) + len(FRASE_MEMORY_CACHE[cache_key])
         
-        # **PARSING CORRETTO CACHE KEY** - Articoli più attivi (con più frasi generate)
+        # *** CORREZIONE: PARSING CORRETTO CACHE KEY *** - Articoli più attivi (con più frasi generate)
         articoli_attivi = {}  # Uso dict per raggruppare
         
         for cache_key, frasi in FRASE_MEMORY_CACHE.items():
             if '_' in cache_key:
-                parts = cache_key.split('_')
-                if len(parts) >= 5:  # brand_nome_colore_materiale_stile
-                    brand = parts[0]
-                    # Il nome può contenere spazi, quindi ricostruisco tutto tranne brand, colore, materiale, stile
-                    # Format: brand_nome_colore_materiale_stile
-                    # Prendo tutto dal secondo elemento fino al penultimo-2 (escludo colore, materiale, stile)
-                    nome_parts = parts[1:-3]  # Escludo brand (0), colore (-3), materiale (-2), stile (-1)
-                    nome = ' '.join(nome_parts) if nome_parts else 'Articolo sconosciuto'
-                    
-                    # Creo identificatore unico per articolo
-                    articolo_id = f"{brand} - {nome}"
-                    
-                    if articolo_id not in articoli_attivi:
-                        articoli_attivi[articolo_id] = 0
-                    articoli_attivi[articolo_id] += len(frasi)
+                try:
+                    # *** PARSING MIGLIORATO: gestisce nomi con underscores ***
+                    parts = cache_key.split('_')
+                    if len(parts) >= 5:  # brand_nome_colore_materiale_stile
+                        brand = parts[0]
+                        stile = parts[-1]
+                        materiale = parts[-2] if parts[-2] != 'none' else ''
+                        colore = parts[-3] if parts[-3] != 'none' else ''
+                        
+                        # Il nome è tutto quello che rimane nel mezzo
+                        nome_parts = parts[1:-3]  # Tutto tranne brand, colore, materiale, stile
+                        nome = '_'.join(nome_parts) if nome_parts else 'Articolo sconosciuto'
+                        nome = nome.replace('_', ' ')  # Riconverti underscores in spazi
+                        
+                        # Creo identificatore unico per articolo
+                        articolo_id = f"{brand} - {nome}".strip()
+                        if not articolo_id.endswith(' - '):
+                            if articolo_id not in articoli_attivi:
+                                articoli_attivi[articolo_id] = 0
+                            articoli_attivi[articolo_id] += len(frasi)
+                except (IndexError, AttributeError) as e:
+                    # In caso di errore, salta questo elemento
+                    continue
         
         # Converto in lista e ordino
         articoli_lista = [
