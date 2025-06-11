@@ -809,25 +809,8 @@
             const totalBrands = [...new Set(articoli.map(a => a.brand))].length;
             const articoliVintage = articoli.filter(a => a.vintage).length;
             
-            // Chiama API per statistiche frasi avanzate
-            try {
-                const response = await fetch('/api/statistiche-frasi');
-                if (response.ok) {
-                    const statsFrasi = await response.json();
-                    frasiGenerateCount = statsFrasi.total_frasi_generate;
-                    
-                    // Mostra statistiche avanzate se disponibili
-                    if (statsFrasi.total_frasi_generate > 0) {
-                        showAdvancedFraseStats(statsFrasi);
-                    }
-                } else {
-                    // Fallback alle statistiche locali
-                    frasiGenerateCount = 0;
-                }
-            } catch (error) {
-                console.log('Statistiche frasi non disponibili, uso fallback');
-                frasiGenerateCount = 0;
-            }
+            // Statistiche frasi semplificate (endpoint rimosso)
+            frasiGenerateCount = articoli.filter(a => a.keywords && a.keywords.length > 0).length;
             
             // Animazione contatori
             animateCounter('totalArticoli', totalArticoli);
