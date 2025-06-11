@@ -394,23 +394,148 @@ def concordanza_aggettivo(aggettivo: str, genere: str) -> str:
 
 
 # ===============================
-# SISTEMA GENERAZIONE FRASI MULTI-STILE AVANZATO CON OTTIMIZZAZIONI
+# SISTEMA ANTI-RIPETIZIONE CROSS-SESSIONE
 # ===============================
 
-# Cache per memorizzare frasi generate ed evitare ripetizioni
-FRASE_MEMORY_CACHE = {}
-SEMANTIC_VARIATIONS_CACHE = {}
+# Cache per tracking messaggi recenti (limitata per performance)
+MESSAGGI_RECENTI_CACHE = {}
+MAX_CACHE_SIZE = 100
+
+def _track_messaggio_generato(articolo_id: int, pattern_usato: str):
+    """Traccia i pattern usati recentemente per evitare ripetizioni"""
+    global MESSAGGI_RECENTI_CACHE
+    
+    # Mantieni cache limitata
+    if len(MESSAGGI_RECENTI_CACHE) > MAX_CACHE_SIZE:
+        # Rimuovi il più vecchio
+        oldest_key = next(iter(MESSAGGI_RECENTI_CACHE))
+        del MESSAGGI_RECENTI_CACHE[oldest_key]
+    
+    MESSAGGI_RECENTI_CACHE[articolo_id] = {
+        'pattern': pattern_usato,
+        'timestamp': datetime.now().isoformat()
+    }
+
+def _get_pattern_non_utilizzato_recentemente(patterns: List[str], articolo_id: int) -> str:
+    """Seleziona un pattern non utilizzato recentemente per questo articolo"""
+    
+    if articolo_id not in MESSAGGI_RECENTI_CACHE:
+        return random.choice(patterns)
+    
+    ultimo_pattern = MESSAGGI_RECENTI_CACHE[articolo_id]['pattern']
+    
+    # Filtra i pattern diversi dall'ultimo usato
+    pattern_alternativi = [p for p in patterns if p != ultimo_pattern]
+    
+    if pattern_alternativi:
+        return random.choice(pattern_alternativi)
+    else:
+        # Se tutti sono stati usati, scegli casualmente
+        return random.choice(patterns)
 
 # ===============================
-# NUOVO ALGORITMO MESSAGGI DIRETTI VESTIAIRE
+# RANDOMNESS PESATA PER QUALITÀ
 # ===============================
+
+def _scelta_pesata(opzioni: List[str], pesi: List[float] = None) -> str:
+    """Scelta casuale con pesi per favorire opzioni di maggiore qualità"""
+    if not pesi or len(pesi) != len(opzioni):
+        return random.choice(opzioni)
+    
+    return random.choices(opzioni, weights=pesi, k=1)[0]
+
+def _costruisci_ringraziamento_like_pesato() -> str:
+    """Ringraziamenti con pesi basati su naturalezza percepita"""
+    ringraziamenti = [
+        "per ringraziarti del tuo \"like\"",
+        "per ringraziarti dell'interesse", 
+        "grazie per il tuo \"like\"",
+        "per il tuo interesse",
+        "visto il tuo \"like\"",
+        "dato il tuo interesse"
+    ]
+    
+    # Pesi: più naturali = peso maggiore
+    pesi = [0.25, 0.20, 0.15, 0.15, 0.15, 0.10]
+    
+    return _scelta_pesata(ringraziamenti, pesi)
+
+def _costruisci_offerta_personalizzata_pesata() -> str:
+    """Offerte con pesi basati su efficacia commerciale"""
+    offerte = [
+        "ti sto inviando un'offerta con uno sconto in più",
+        "ti stiamo inviando un'offerta con un ulteriore sconto solo per te", 
+        "ti stiamo facendo un'offerta speciale",
+        "ti abbiamo riservato uno sconto esclusivo",
+        "ti stiamo preparando un'offerta personalizzata",
+        "ti facciamo un prezzo speciale",
+        "ti stiamo inviando un'offerta riservata"
+    ]
+    
+    # Pesi: più dirette e personal = peso maggiore  
+    pesi = [0.20, 0.18, 0.15, 0.15, 0.12, 0.12, 0.08]
+    
+    return _scelta_pesata(offerte, pesi)
+
+def _costruisci_chiusura_cortese_pesata() -> str:
+    """Chiusure con pesi basati su cordialità"""
+    chiusure = [
+        "fammi sapere se ti interessa",
+        "spero possa interessarti", 
+        "speriamo ti piaccia la proposta",
+        "grazie ancora per l'interesse mostrato",
+        "intanto grazie per il tuo \"like\"",
+        "sempre grazie per aver notato questo pezzo",
+        "comunque grazie per l'attenzione",
+        "il massimo che possiamo fare, in ogni caso grazie per l'interesse"
+    ]
+    
+    # Pesi: più personali e dirette = peso maggiore
+    pesi = [0.20, 0.18, 0.15, 0.12, 0.12, 0.10, 0.08, 0.05]
+    
+    return _scelta_pesata(chiusure, pesi)
+
+# ===============================
+# TEMPLATE STRUTTURATI PER TIPO TARGET  
+# ===============================
+
+def _get_template_per_target(target: str, saluto: str, desc_prodotto: str, 
+                           scarsita: str, ringraziamento: str, 
+                           offerta: str, chiusura: str) -> List[str]:
+    """Template messaggi ottimizzati per tipo di target"""
+    
+    if target and 'Lusso' in target:
+        # Template più eleganti per target luxury
+        return [
+            f"{saluto}, è {desc_prodotto}, {scarsita}. {ringraziamento.capitalize()} {offerta}. {chiusura.capitalize()}.",
+            f"{saluto}, {desc_prodotto} e {scarsita}. {offerta.capitalize()}, {ringraziamento}.",
+            f"{saluto}, è {desc_prodotto}, {scarsita}. {ringraziamento.capitalize()}, {offerta}."
+        ]
+    elif target and 'Vintage' in target:
+        # Template più nostalgici per vintage lovers
+        return [
+            f"{saluto}, {desc_prodotto} e {scarsita}. {offerta.capitalize()} {ringraziamento}!",
+            f"{saluto}, è {desc_prodotto}, {scarsita}. {ringraziamento.capitalize()}, {offerta}!",
+            f"{saluto}, {desc_prodotto}, {scarsita}. {offerta.capitalize()}, {ringraziamento}!"
+        ]
+    else:
+        # Template generici bilanciati
+        return [
+            f"{saluto}, è {desc_prodotto}, {scarsita}. {ringraziamento.capitalize()} {offerta}. {chiusura.capitalize()}!",
+            f"{saluto}, {desc_prodotto}, {scarsita}. {offerta.capitalize()} {ringraziamento}!",
+            f"{saluto}, è {desc_prodotto} e {scarsita}. {ringraziamento.capitalize()}, {offerta}. {chiusura.capitalize()}!",
+            f"{saluto}, {desc_prodotto}, {scarsita}. {offerta.capitalize()}, {ringraziamento}!",
+            f"{saluto}, è {desc_prodotto}, {scarsita}. {ringraziamento.capitalize()}, {offerta}!",
+            f"{saluto}, {desc_prodotto} e {scarsita}. {offerta.capitalize()} {ringraziamento}!"
+        ]
 
 def genera_messaggio_like_vestiaire(brand: str, nome: str, colore: str, materiale: str, 
                                    keywords_classificate: Dict, condizioni: str, rarita: str, 
-                                   vintage: bool, target: str, termini_commerciali: List[str]) -> str:
+                                   vintage: bool, target: str, termini_commerciali: List[str],
+                                   articolo_id: int = None) -> str:
     """
-    🎯 ALGORITMO MIGLIORATO - Genera messaggi diretti naturali per like Vestiaire
-    Con controllo ripetizioni e interpretazione semantica avanzata
+    🎯 ALGORITMO ULTRA-OTTIMIZZATO - Genera messaggi diretti naturali per like Vestiaire
+    Con controllo ripetizioni, randomness pesata e template strutturati
     """
     
     # 📝 ANALISI SEMANTICA AVANZATA DEL NOME
@@ -435,23 +560,24 @@ def genera_messaggio_like_vestiaire(brand: str, nome: str, colore: str, material
         vintage, genere, parametri_rilevanti, keywords_classificate
     )
     
-    # Altri componenti
+    # Altri componenti con randomness pesata
     scarsita = _costruisci_scarsita_naturale(genere)
-    ringraziamento = _costruisci_ringraziamento_like()
-    offerta = _costruisci_offerta_personalizzata()
-    chiusura = _costruisci_chiusura_cortese()
+    ringraziamento = _costruisci_ringraziamento_like_pesato()
+    offerta = _costruisci_offerta_personalizzata_pesata()
+    chiusura = _costruisci_chiusura_cortese_pesata()
     
-    # 🎨 PATTERN MESSAGGI MIGLIORATI con logica più naturale
-    messaggi_pattern = [
-        f"{saluto}, è {desc_prodotto}, {scarsita}. {ringraziamento.capitalize()} {offerta}. {chiusura.capitalize()}!",
-        f"{saluto}, {desc_prodotto}, {scarsita}. {offerta.capitalize()} {ringraziamento}!",
-        f"{saluto}, è {desc_prodotto} e {scarsita}. {ringraziamento.capitalize()}, {offerta}. {chiusura.capitalize()}!",
-        f"{saluto}, {desc_prodotto}, {scarsita}. {offerta.capitalize()}, {ringraziamento}!",
-        f"{saluto}, è {desc_prodotto}, {scarsita}. {ringraziamento.capitalize()}, {offerta}!",
-        f"{saluto}, {desc_prodotto} e {scarsita}. {offerta.capitalize()} {ringraziamento}!"
-    ]
+    # 🎨 TEMPLATE STRUTTURATI per tipo target
+    messaggi_pattern = _get_template_per_target(
+        target, saluto, desc_prodotto, scarsita, 
+        ringraziamento, offerta, chiusura
+    )
     
-    messaggio = random.choice(messaggi_pattern)
+    # 🔄 SELEZIONE CON ANTI-RIPETIZIONE CROSS-SESSIONE
+    if articolo_id:
+        messaggio = _get_pattern_non_utilizzato_recentemente(messaggi_pattern, articolo_id)
+        _track_messaggio_generato(articolo_id, messaggio)
+    else:
+        messaggio = random.choice(messaggi_pattern)
     
     # Pulizia finale migliorata
     messaggio = _pulisci_messaggio_vestiaire_migliorato(messaggio, brand, nome_pulito)
@@ -689,48 +815,6 @@ def _costruisci_scarsita_naturale(genere: str) -> str:
     
     return random.choice(scarsita_patterns)
 
-def _costruisci_ringraziamento_like() -> str:
-    """Crea ringraziamento per il like"""
-    ringraziamenti = [
-        "per ringraziarti del tuo \"like\"",
-        "per ringraziarti dell'interesse",
-        "grazie per il tuo \"like\"", 
-        "per il tuo interesse",
-        "visto il tuo \"like\"",
-        "dato il tuo interesse"
-    ]
-    
-    return random.choice(ringraziamenti)
-
-def _costruisci_offerta_personalizzata() -> str:
-    """Crea offerta personalizzata"""
-    offerte = [
-        "ti sto inviando un'offerta con uno sconto in più",
-        "ti stiamo inviando un'offerta con un ulteriore sconto solo per te",
-        "ti stiamo facendo un'offerta speciale",
-        "ti abbiamo riservato uno sconto esclusivo", 
-        "ti stiamo preparando un'offerta personalizzata",
-        "ti facciamo un prezzo speciale",
-        "ti stiamo inviando un'offerta riservata"
-    ]
-    
-    return random.choice(offerte)
-
-def _costruisci_chiusura_cortese() -> str:
-    """Crea chiusura cortese"""
-    chiusure = [
-        "il massimo che possiamo fare, in ogni caso grazie per l'interesse",
-        "intanto grazie per il tuo \"like\"",
-        "comunque grazie per l'attenzione",
-        "speriamo ti piaccia la proposta",
-        "fammi sapere se ti interessa",
-        "spero possa interessarti",
-        "grazie ancora per l'interesse mostrato",
-        "sempre grazie per aver notato questo pezzo"
-    ]
-    
-    return random.choice(chiusure)
-
 def _pulisci_messaggio_vestiaire_migliorato(messaggio: str, brand: str, nome_pulito: str) -> str:
     """🧹 PULIZIA AVANZATA del messaggio con controllo ripetizioni specifiche"""
     if not messaggio:
@@ -818,8 +902,18 @@ def _pulisci_messaggio_vestiaire(messaggio: str) -> str:
 # SISTEMA CACHE PER MESSAGGI (semplificato)
 # ===============================
 
-# Cache per statistiche (solo se necessario)
-FRASE_MEMORY_CACHE = {}
+# Mantieni retrocompatibilità per funzioni deprecate ma ancora chiamate
+def _costruisci_ringraziamento_like() -> str:
+    """Versione legacy - usa la versione pesata"""
+    return _costruisci_ringraziamento_like_pesato()
+
+def _costruisci_offerta_personalizzata() -> str:
+    """Versione legacy - usa la versione pesata"""
+    return _costruisci_offerta_personalizzata_pesata()
+
+def _costruisci_chiusura_cortese() -> str:
+    """Versione legacy - usa la versione pesata"""
+    return _costruisci_chiusura_cortese_pesata()
 
 # ===============================
 # MANTIENI COMPATIBILITÀ BACKWARD - RIMOSSE FUNZIONI SUPERFLUE
@@ -827,9 +921,9 @@ FRASE_MEMORY_CACHE = {}
 
 def pulisci_cache_frasi():
     """Pulisce la cache delle frasi per liberare memoria"""
-    global FRASE_MEMORY_CACHE
-    FRASE_MEMORY_CACHE.clear()
-    logger.info("Cache frasi pulita - memoria liberata")
+    global MESSAGGI_RECENTI_CACHE
+    MESSAGGI_RECENTI_CACHE.clear()
+    logger.info("Cache messaggi recenti pulita - memoria liberata")
 
 def _get_articolo_determinativo(genere: str, tipo: str) -> str:
     """Ottiene l'articolo determinativo corretto"""
@@ -1091,7 +1185,7 @@ def genera_messaggio_like(id):
         # Genera messaggio per like
         messaggio = genera_messaggio_like_vestiaire(
             articolo.brand, articolo.nome, colore, materiale, keywords_classificate,
-            condizioni, rarita, articolo.vintage, target, termini_commerciali
+            condizioni, rarita, articolo.vintage, target, termini_commerciali, id
         )
         
         logger.info(f"Messaggio like generato per articolo {id}")
