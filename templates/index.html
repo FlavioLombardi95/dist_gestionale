@@ -513,17 +513,17 @@
                 <form id="articoloForm" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="nome" class="form-label">Nome Articolo *</label>
-                                <input type="text" class="form-control" id="nome" required>
+                                <input type="text" class="form-control form-control-sm" id="nome" required placeholder="Speedy 30, Pigalle...">
                                 <div class="validation-feedback"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="brand" class="form-label">Brand *</label>
-                                <select class="form-select" id="brand" required>
-                                    <option value="">Seleziona un brand</option>
+                                <select class="form-select form-select-sm" id="brand" required>
+                                    <option value="">Seleziona brand</option>
                                     <option value="Alexander McQueen">Alexander McQueen</option>
                                     <option value="Balenciaga">Balenciaga</option>
                                     <option value="Bottega Veneta">Bottega Veneta</option>
@@ -562,40 +562,40 @@
 
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="immagine" class="form-label">Immagine</label>
-                                <input type="file" class="form-control" id="immagine" accept="image/*">
+                                <input type="file" class="form-control form-control-sm" id="immagine" accept="image/*">
                                 <div id="previewContainer" class="preview-container d-none">
                                     <img id="imagePreview" src="" alt="Preview">
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="colore" class="form-label">Colore</label>
-                                <input type="text" class="form-control" id="colore" placeholder="Es: nero, rosso, beige...">
+                                <input type="text" class="form-control form-control-sm" id="colore" placeholder="nero, rosso...">
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="materiale" class="form-label">Materiale</label>
-                                <input type="text" class="form-control" id="materiale" placeholder="Es: pelle, tessuto, cotone...">
+                                <input type="text" class="form-control form-control-sm" id="materiale" placeholder="pelle, tessuto...">
                             </div>
                         </div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-2">
                         <label for="keywords" class="form-label">Parole Chiave</label>
-                        <input type="text" class="form-control" id="keywords" placeholder="Es: tracolla, borchie, vintage... (separate da virgola)">
-                        <div class="form-text">Parole chiave per migliorare la descrizione automatica</div>
+                        <input type="text" class="form-control form-control-sm" id="keywords" placeholder="tracolla, borchie, vintage...">
+                        <div class="form-text small">Separate da virgola</div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="condizioni" class="form-label">Condizioni *</label>
-                                <select class="form-select" id="condizioni" required>
-                                    <option value="">Seleziona condizioni</option>
+                                <select class="form-select form-select-sm" id="condizioni" required>
+                                    <option value="">Seleziona</option>
                                     <option value="Eccellenti">Eccellenti</option>
                                     <option value="Ottime">Ottime</option>
                                     <option value="Buone">Buone</option>
@@ -605,10 +605,10 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="rarita" class="form-label">Rarità *</label>
-                                <select class="form-select" id="rarita" required>
-                                    <option value="">Seleziona rarità</option>
+                                <select class="form-select form-select-sm" id="rarita" required>
+                                    <option value="">Seleziona</option>
                                     <option value="Comune">Comune</option>
                                     <option value="Raro">Raro</option>
                                     <option value="Molto Raro">Molto Raro</option>
@@ -618,15 +618,15 @@
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="target" class="form-label">Target</label>
-                                <select class="form-select" id="target">
-                                    <option value="">Seleziona target</option>
+                                <select class="form-select form-select-sm" id="target">
+                                    <option value="">Generale</option>
                                     <option value="Intenditrici">Intenditrici</option>
                                     <option value="Collezionisti">Collezionisti</option>
-                                    <option value="Amanti del vintage">Amanti del vintage</option>
-                                    <option value="Appassionati di lusso">Appassionati di lusso</option>
-                                    <option value="Chi ama distinguersi">Chi ama distinguersi</option>
+                                    <option value="Amanti del vintage">Vintage</option>
+                                    <option value="Appassionati di lusso">Lusso</option>
+                                    <option value="Chi ama distinguersi">Distinguersi</option>
                                 </select>
                             </div>
                         </div>
@@ -634,19 +634,19 @@
 
                     <div class="row">
                         <div class="col-md-8">
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label for="termini_commerciali" class="form-label">Termini Commerciali</label>
-                                <input type="text" class="form-control" id="termini_commerciali" placeholder="Es: offerta scontata, occasione rara...">
-                                <div class="form-text">Termini per personalizzare le call-to-action</div>
+                                <input type="text" class="form-control form-control-sm" id="termini_commerciali" placeholder="offerta scontata, occasione rara...">
+                                <div class="form-text small">Per call-to-action personalizzate</div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="mb-3">
+                            <div class="mb-2">
                                 <label class="form-label d-block">Opzioni</label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="vintage">
                                     <label class="form-check-label" for="vintage">
-                                        Articolo Vintage
+                                        <small>Articolo Vintage</small>
                                     </label>
                                 </div>
                             </div>
