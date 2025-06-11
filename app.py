@@ -414,19 +414,39 @@ def genera_messaggio_like_vestiaire(brand: str, nome: str, colore: str, material
                                    keywords_classificate: Dict, condizioni: str, rarita: str, 
                                    vintage: bool, target: str, termini_commerciali: List[str]) -> str:
     """
-    Genera messaggi diretti e naturali per rispondere ai like su Vestiaire
-    Basato sui pattern delle frasi scritte manualmente dall'utente
+    🎯 ALGORITMO OTTIMIZZATO - Genera messaggi diretti naturali per like Vestiaire
+    Utilizza PARAMETRI CASUALI per massima varietà e naturalezza
     """
     
     # Determina tipo e genere per accordi
     tipo_articolo = get_tipo_articolo_cached(nome)
     genere = get_genere_cached(tipo_articolo)
     
-    # Componenti del messaggio
+    # 🎲 SELEZIONE CASUALE PARAMETRI DA UTILIZZARE (almeno 2)
+    parametri_disponibili = []
+    
+    if colore and colore.strip():
+        parametri_disponibili.append(('colore', colore.strip()))
+    if materiale and materiale.strip():
+        parametri_disponibili.append(('materiale', materiale.strip()))
+    if keywords_classificate and any(keywords_classificate.values()):
+        parametri_disponibili.append(('keywords', keywords_classificate))
+    if vintage:
+        parametri_disponibili.append(('vintage', vintage))
+    if target and target.strip():
+        parametri_disponibili.append(('target', target.strip()))
+    
+    # Seleziona casualmente 2-3 parametri da utilizzare
+    parametri_selezionati = random.sample(parametri_disponibili, min(len(parametri_disponibili), random.randint(2, 3)))
+    
+    # Componenti del messaggio con VARIETÀ MASSIMA
     saluto = "Ciao"
     
-    # Descrizione prodotto naturale
-    desc_prodotto = _costruisci_descrizione_naturale(brand, nome, colore, materiale, condizioni, rarita, vintage, genere)
+    # 🔥 DESCRIZIONE PRODOTTO POTENZIATA con parametri casuali
+    desc_prodotto = _costruisci_descrizione_avanzata_vestiaire(
+        brand, nome, colore, materiale, condizioni, rarita, vintage, genere, 
+        parametri_selezionati, keywords_classificate
+    )
     
     # Scarsità
     scarsita = _costruisci_scarsita_naturale(genere)
@@ -440,11 +460,15 @@ def genera_messaggio_like_vestiaire(brand: str, nome: str, colore: str, material
     # Chiusura cortese
     chiusura = _costruisci_chiusura_cortese()
     
-    # Combina il messaggio
+    # 🎨 PATTERN MESSAGGI AMPLIATI per più varietà
     messaggi_pattern = [
         f"{saluto}, è {desc_prodotto}, {scarsita}, {ringraziamento} {offerta}, {chiusura}",
         f"{saluto}, è {desc_prodotto}, {scarsita}, {offerta} {ringraziamento}",
         f"{saluto}, {desc_prodotto}, {scarsita}, {offerta}, {ringraziamento}",
+        f"{saluto}, è {desc_prodotto}, {scarsita}, {offerta}, {ringraziamento} {chiusura}",
+        f"{saluto}, {desc_prodotto}, {scarsita}, {ringraziamento} {offerta}",
+        f"{saluto}, è {desc_prodotto}, {scarsita}, {ringraziamento} {offerta}",
+        f"{saluto}, {desc_prodotto}, {scarsita}, {offerta} {ringraziamento}, {chiusura}"
     ]
     
     messaggio = random.choice(messaggi_pattern)
@@ -454,50 +478,109 @@ def genera_messaggio_like_vestiaire(brand: str, nome: str, colore: str, material
     
     return messaggio
 
-def _costruisci_descrizione_naturale(brand: str, nome: str, colore: str, materiale: str, 
-                                   condizioni: str, rarita: str, vintage: bool, genere: str) -> str:
-    """Crea descrizione naturale e diretta del prodotto"""
+def _costruisci_descrizione_avanzata_vestiaire(brand: str, nome: str, colore: str, materiale: str, 
+                                            condizioni: str, rarita: str, vintage: bool, genere: str,
+                                            parametri_selezionati: List, keywords_classificate: Dict) -> str:
+    """🔥 DESCRIZIONE AVANZATA che utilizza PARAMETRI CASUALI per massima varietà"""
     
     # Costruisci nome base
     nome_base = f"{brand}"
     if nome and nome.lower() != brand.lower():
         nome_base = f"{brand} {nome}"
     
-    # Aggettivi per rarità
+    # 🎯 AGGETTIVI ESPANSI per ogni categoria
     aggettivi_rarita = {
-        'Introvabile': ['rarissima', 'introvabile', 'unica', 'eccezionale'],
-        'Molto Raro': ['molto rara', 'rara', 'speciale', 'particolare'],
-        'Raro': ['rara', 'bella', 'particolare', 'interessante'],
-        'Comune': ['bella', 'molto bella', 'interessante', 'carina']
+        'Introvabile': ['rarissima', 'introvabile', 'unica', 'eccezionale', 'leggendaria', 'mitica'],
+        'Molto Raro': ['molto rara', 'rara', 'speciale', 'particolare', 'difficile da trovare', 'ricercata'],
+        'Raro': ['rara', 'bella', 'particolare', 'interessante', 'speciale', 'carina'],
+        'Comune': ['bella', 'molto bella', 'interessante', 'carina', 'stupenda', 'fantastica']
     }
     
-    # Aggettivi per condizioni
     aggettivi_condizioni = {
-        'Eccellenti': ['perfetta', 'come nuova', 'in condizioni perfette', 'impeccabile'],
-        'Ottime': ['molto bella', 'in ottime condizioni', 'ben conservata', 'bellissima'],
-        'Buone': ['bella', 'in buone condizioni', 'ben tenuta', 'ancora molto bella'],
-        'Discrete': ['interessante', 'con carattere', 'autentica', 'con personalità']
+        'Eccellenti': ['perfetta', 'come nuova', 'in condizioni perfette', 'impeccabile', 'quasi nuova', 'stupenda'],
+        'Ottime': ['molto bella', 'in ottime condizioni', 'ben conservata', 'bellissima', 'davvero bella'],
+        'Buone': ['bella', 'in buone condizioni', 'ben tenuta', 'ancora molto bella', 'in belle condizioni'],
+        'Discrete': ['interessante', 'con carattere', 'autentica', 'con personalità', 'con storia']
     }
     
-    # Seleziona aggettivi
+    # Seleziona aggettivi base
     aggettivo_rarita = random.choice(aggettivi_rarita.get(rarita, aggettivi_rarita['Comune']))
     aggettivo_condizioni = random.choice(aggettivi_condizioni.get(condizioni, aggettivi_condizioni['Buone']))
     
-    # Accordi femminili/maschili
-    if genere == 'm':
-        aggettivo_rarita = aggettivo_rarita.replace('a', 'o').replace('e', 'e')
-        aggettivo_condizioni = aggettivo_condizioni.replace('a', 'o').replace('conservata', 'conservato').replace('tenuta', 'tenuto')
-        nome_base = f"un {nome_base}"
-    else:
-        nome_base = f"una {nome_base}"
+    # 🎲 UTILIZZA PARAMETRI SELEZIONATI per arricchire la descrizione
+    dettagli_extra = []
     
-    # Pattern naturali come nelle frasi manuali
-    patterns = [
-        f"{nome_base} {aggettivo_rarita} e {aggettivo_condizioni}",
-        f"{nome_base} {aggettivo_condizioni}, {aggettivo_rarita}",
-        f"un pezzo {aggettivo_rarita}" if genere == 'm' else f"una {nome_base} {aggettivo_rarita}",
-        f"{nome_base} davvero {aggettivo_condizioni}"
-    ]
+    for param_tipo, param_valore in parametri_selezionati:
+        if param_tipo == 'colore' and param_valore:
+            # Aggiungi colore con varietà
+            colori_descrittivi = {
+                'nero': ['nera', 'total black', 'in nero elegante'],
+                'bianco': ['bianca', 'candida', 'in bianco puro'],
+                'rosso': ['rossa', 'in rosso acceso', 'color rosso'],
+                'blu': ['blu', 'in blu elegante', 'color blu'],
+                'marrone': ['marrone', 'color cognac', 'in marrone'],
+                'beige': ['beige', 'color sabbia', 'in beige raffinato']
+            }
+            colori_match = colori_descrittivi.get(param_valore.lower(), [param_valore.lower()])
+            dettagli_extra.append(random.choice(colori_match))
+            
+        elif param_tipo == 'materiale' and param_valore:
+            # Aggiungi materiale con varietà
+            materiali_descrittivi = {
+                'pelle': ['in pelle', 'in vera pelle', 'in pelle pregiata'],
+                'tessuto': ['in tessuto', 'in stoffa elegante', 'in tessuto pregiato'],
+                'canvas': ['in canvas', 'in tela canvas', 'canvas resistente'],
+                'nylon': ['in nylon', 'in tessuto tecnico', 'nylon di qualità']
+            }
+            materiali_match = materiali_descrittivi.get(param_valore.lower(), [f'in {param_valore.lower()}'])
+            dettagli_extra.append(random.choice(materiali_match))
+            
+        elif param_tipo == 'vintage' and param_valore:
+            vintage_descrizioni = ['vintage', 'd\'epoca', 'storica', 'retrò', 'del passato']
+            dettagli_extra.append(random.choice(vintage_descrizioni))
+            
+        elif param_tipo == 'keywords' and param_valore:
+            # Usa una keyword casuale dalle categorie disponibili
+            keywords_utilizzabili = []
+            for categoria, keywords_lista in param_valore.items():
+                if keywords_lista and categoria in ['stili', 'caratteristiche', 'dettagli']:
+                    keywords_utilizzabili.extend(keywords_lista[:2])  # Max 2 per categoria
+            
+            if keywords_utilizzabili:
+                keyword_scelta = random.choice(keywords_utilizzabili)
+                dettagli_extra.append(keyword_scelta)
+    
+    # 📝 COSTRUISCI DESCRIZIONE con accordi grammaticali
+    if genere == 'm':
+        aggettivo_rarita = concordanza_aggettivo(aggettivo_rarita, 'm')
+        aggettivo_condizioni = concordanza_aggettivo(aggettivo_condizioni, 'm')
+        nome_base = f"un {nome_base}"
+        articolo = "un"
+    else:
+        aggettivo_rarita = concordanza_aggettivo(aggettivo_rarita, 'f')
+        aggettivo_condizioni = concordanza_aggettivo(aggettivo_condizioni, 'f')
+        nome_base = f"una {nome_base}" 
+        articolo = "una"
+    
+    # 🎨 PATTERN AVANZATI con dettagli extra casuali
+    if dettagli_extra:
+        dettaglio_casuale = random.choice(dettagli_extra)
+        patterns = [
+            f"{nome_base} {dettaglio_casuale} {aggettivo_rarita} e {aggettivo_condizioni}",
+            f"{nome_base} {aggettivo_condizioni}, {dettaglio_casuale}, {aggettivo_rarita}",
+            f"{articolo} {brand} {dettaglio_casuale} {aggettivo_rarita}",
+            f"{nome_base} {aggettivo_rarita} {dettaglio_casuale}",
+            f"{nome_base} davvero {aggettivo_condizioni} e {aggettivo_rarita}",
+            f"{articolo} pezzo {aggettivo_rarita}, {dettaglio_casuale}"
+        ]
+    else:
+        # Pattern base se non ci sono dettagli extra
+        patterns = [
+            f"{nome_base} {aggettivo_rarita} e {aggettivo_condizioni}",
+            f"{nome_base} {aggettivo_condizioni}, {aggettivo_rarita}",
+            f"{articolo} pezzo {aggettivo_rarita}",
+            f"{nome_base} davvero {aggettivo_condizioni}"
+        ]
     
     return random.choice(patterns)
 
@@ -1983,51 +2066,7 @@ def delete_articolo(id):
         logger.error(f"Errore nell'eliminazione articolo {id}: {e}")
         raise
 
-@app.route('/api/genera-frase/<int:id>', methods=['GET'])
-@handle_errors
-@log_request_info
-def genera_frase(id):
-    """Genera una frase personalizzata per l'articolo con stile selezionabile"""
-    try:
-        articolo = Articolo.query.get_or_404(id)
-        
-        # Parametro stile dalla query string
-        stile = request.args.get('stile', 'elegante')
-        
-        # Validazione stili disponibili
-        stili_disponibili = ['elegante', 'emotivo', 'amichevole', 'professionale', 'esclusivo']
-        if stile not in stili_disponibili:
-            stile = 'elegante'
-        
-        # Estrai e processa i dati
-        colore = articolo.colore.strip() if articolo.colore else ''
-        materiale = articolo.materiale.strip() if articolo.materiale else ''
-        keywords = articolo._parse_keywords()
-        termini_commerciali = articolo._parse_termini_commerciali()
-        condizioni = articolo.condizioni.strip() if articolo.condizioni else ''
-        rarita = articolo.rarita.strip() if articolo.rarita else ''
-        target = articolo.target.strip() if articolo.target else ''
-        
-        # Classifica keywords con cache
-        keywords_str = ','.join(keywords)
-        keywords_classificate = classifica_keywords_cached(keywords_str) if keywords_str else {}
-        
-        # Genera la frase con lo stile selezionato
-        frase = genera_frase_personalizzata_ottimizzata(
-            articolo.brand, articolo.nome, colore, materiale, keywords_classificate,
-            condizioni, rarita, articolo.vintage, target, termini_commerciali, stile
-        )
-        
-        logger.info(f"Frase generata per articolo {id} con stile '{stile}'")
-        return jsonify({
-            'frase': frase,
-            'stile': stile,
-            'stili_disponibili': stili_disponibili
-        })
-        
-    except Exception as e:
-        logger.error(f"Errore nella generazione frase per articolo {id}: {e}")
-        raise
+
 
 @app.route('/api/stats', methods=['GET'])
 @handle_errors

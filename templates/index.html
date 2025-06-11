@@ -741,10 +741,7 @@
                         </div>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn btn-primary genera-frase-btn">
-                            <i class="fas fa-magic"></i> Genera Frase
-                        </button>
-                        <button class="btn btn-outline-primary genera-messaggio-like-btn">
+                        <button class="btn btn-primary genera-messaggio-like-btn">
                             <i class="fas fa-heart"></i> Messaggio Like
                         </button>
                         <button class="btn btn-warning edit-btn">
@@ -964,109 +961,7 @@
             }
         }
 
-        // Generazione frase con modal professionale
-        async function generaFrase(id, card) {
-            // Modal professionale per selezione stile
-            const { value: stile } = await Swal.fire({
-                title: 'Seleziona lo Stile della Frase',
-                html: `
-                    <div class="mb-3">
-                        <p class="text-muted mb-0">Scegli il tono più adatto per il tuo messaggio promozionale</p>
-                    </div>
-                    <div class="style-selector-grid">
-                        <div class="style-option" data-style="elegante">
-                            <h6>Elegante</h6>
-                            <div class="description">Tono raffinato e sofisticato per una comunicazione di classe</div>
-                        </div>
-                        <div class="style-option" data-style="emotivo">
-                            <h6>Emotivo</h6>
-                            <div class="description">Linguaggio coinvolgente che tocca le emozioni del cliente</div>
-                        </div>
-                        <div class="style-option" data-style="amichevole">
-                            <h6>Amichevole</h6>
-                            <div class="description">Tono colloquiale e caloroso per un approccio personale</div>
-                        </div>
-                        <div class="style-option" data-style="professionale">
-                            <h6>Professionale</h6>
-                            <div class="description">Linguaggio tecnico e formale per clientela esperta</div>
-                        </div>
-                        <div class="style-option" data-style="esclusivo">
-                            <h6>Esclusivo</h6>
-                            <div class="description">Tono luxury per una clientela VIP e selezionata</div>
-                        </div>
-                    </div>
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Genera Frase',
-                cancelButtonText: 'Annulla',
-                confirmButtonColor: '#3498db',
-                cancelButtonColor: '#6c757d',
-                customClass: {
-                    popup: 'swal-wide'
-                },
-                didOpen: () => {
-                    // Setup selezione stili
-                    const options = document.querySelectorAll('.style-option');
-                    let selectedStyle = 'elegante'; // Default
-                    
-                    // Preseleziona elegante
-                    options[0].classList.add('selected');
-                    
-                    options.forEach(option => {
-                        option.addEventListener('click', () => {
-                            options.forEach(opt => opt.classList.remove('selected'));
-                            option.classList.add('selected');
-                            selectedStyle = option.dataset.style;
-                        });
-                    });
-                },
-                preConfirm: () => {
-                    const selected = document.querySelector('.style-option.selected');
-                    return selected ? selected.dataset.style : 'elegante';
-                }
-            });
-            
-            if (!stile) return; // User cancelled
-            
-            const btn = card.querySelector('.genera-frase-btn');
-            const originalContent = showLoading(btn, 'Generando...');
-            
-            try {
-                const response = await fetch(`/api/genera-frase/${id}?stile=${stile}`);
-                if (!response.ok) throw new Error('Errore nella generazione della frase');
-                
-                const data = await response.json();
-                
-                const fraseContainer = card.querySelector('.frase-generata');
-                fraseContainer.classList.remove('d-none');
-                fraseContainer.classList.add('animate__animated', 'animate__fadeIn');
-                
-                // Aggiorna contenuto
-                const fraseContent = fraseContainer.querySelector('p');
-                fraseContent.textContent = data.frase;
-                
-                // Aggiungi badge stile
-                let styleBadge = fraseContainer.querySelector('.style-badge');
-                if (!styleBadge) {
-                    styleBadge = document.createElement('span');
-                    styleBadge.className = 'badge style-badge';
-                    fraseContainer.querySelector('.d-flex').prepend(styleBadge);
-                }
-                
-                styleBadge.textContent = stile.charAt(0).toUpperCase() + stile.slice(1);
-                styleBadge.className = `badge style-badge bg-gradient-${stile}`;
-                
-                // Incrementa contatore locale e aggiorna
-                frasiGenerateCount++;
-                updateStats(articoliGlobal);
-                
-                showAlert(`Frase generata con stile ${stile}`, 'success', 3000);
-            } catch (error) {
-                showAlert('Errore nella generazione della frase', 'danger');
-            } finally {
-                hideLoading(btn, originalContent);
-            }
-        }
+
 
         // Validazione in tempo reale
         function setupFormValidation() {
@@ -1346,9 +1241,7 @@
                     });
 
                     // Event listeners
-                    clone.querySelector('.genera-frase-btn').addEventListener('click', () => generaFrase(articolo.id, card));
                     clone.querySelector('.genera-messaggio-like-btn').addEventListener('click', () => generaMessaggioLike(articolo.id, card));
-                    clone.querySelector('.rigenera-btn')?.addEventListener('click', () => generaFrase(articolo.id, card));
                     clone.querySelector('.edit-btn').addEventListener('click', () => editArticolo(articolo));
                     clone.querySelector('.delete-btn').addEventListener('click', () => deleteArticolo(articolo.id));
                     clone.querySelector('.copy-btn').addEventListener('click', () => copyFrase(card));
