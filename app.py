@@ -407,6 +407,187 @@ FRASE_MEMORY_CACHE = {}
 SEMANTIC_VARIATIONS_CACHE = {}
 
 # ===============================
+# NUOVO ALGORITMO MESSAGGI DIRETTI VESTIAIRE
+# ===============================
+
+def genera_messaggio_like_vestiaire(brand: str, nome: str, colore: str, materiale: str, 
+                                   keywords_classificate: Dict, condizioni: str, rarita: str, 
+                                   vintage: bool, target: str, termini_commerciali: List[str]) -> str:
+    """
+    Genera messaggi diretti e naturali per rispondere ai like su Vestiaire
+    Basato sui pattern delle frasi scritte manualmente dall'utente
+    """
+    
+    # Determina tipo e genere per accordi
+    tipo_articolo = get_tipo_articolo_cached(nome)
+    genere = get_genere_cached(tipo_articolo)
+    
+    # Componenti del messaggio
+    saluto = "Ciao"
+    
+    # Descrizione prodotto naturale
+    desc_prodotto = _costruisci_descrizione_naturale(brand, nome, colore, materiale, condizioni, rarita, vintage, genere)
+    
+    # Scarsità
+    scarsita = _costruisci_scarsita_naturale(genere)
+    
+    # Ringraziamento like
+    ringraziamento = _costruisci_ringraziamento_like()
+    
+    # Offerta personalizzata
+    offerta = _costruisci_offerta_personalizzata()
+    
+    # Chiusura cortese
+    chiusura = _costruisci_chiusura_cortese()
+    
+    # Combina il messaggio
+    messaggi_pattern = [
+        f"{saluto}, è {desc_prodotto}, {scarsita}, {ringraziamento} {offerta}, {chiusura}",
+        f"{saluto}, è {desc_prodotto}, {scarsita}, {offerta} {ringraziamento}",
+        f"{saluto}, {desc_prodotto}, {scarsita}, {offerta}, {ringraziamento}",
+    ]
+    
+    messaggio = random.choice(messaggi_pattern)
+    
+    # Pulizia finale
+    messaggio = _pulisci_messaggio_vestiaire(messaggio)
+    
+    return messaggio
+
+def _costruisci_descrizione_naturale(brand: str, nome: str, colore: str, materiale: str, 
+                                   condizioni: str, rarita: str, vintage: bool, genere: str) -> str:
+    """Crea descrizione naturale e diretta del prodotto"""
+    
+    # Costruisci nome base
+    nome_base = f"{brand}"
+    if nome and nome.lower() != brand.lower():
+        nome_base = f"{brand} {nome}"
+    
+    # Aggettivi per rarità
+    aggettivi_rarita = {
+        'Introvabile': ['rarissima', 'introvabile', 'unica', 'eccezionale'],
+        'Molto Raro': ['molto rara', 'rara', 'speciale', 'particolare'],
+        'Raro': ['rara', 'bella', 'particolare', 'interessante'],
+        'Comune': ['bella', 'molto bella', 'interessante', 'carina']
+    }
+    
+    # Aggettivi per condizioni
+    aggettivi_condizioni = {
+        'Eccellenti': ['perfetta', 'come nuova', 'in condizioni perfette', 'impeccabile'],
+        'Ottime': ['molto bella', 'in ottime condizioni', 'ben conservata', 'bellissima'],
+        'Buone': ['bella', 'in buone condizioni', 'ben tenuta', 'ancora molto bella'],
+        'Discrete': ['interessante', 'con carattere', 'autentica', 'con personalità']
+    }
+    
+    # Seleziona aggettivi
+    aggettivo_rarita = random.choice(aggettivi_rarita.get(rarita, aggettivi_rarita['Comune']))
+    aggettivo_condizioni = random.choice(aggettivi_condizioni.get(condizioni, aggettivi_condizioni['Buone']))
+    
+    # Accordi femminili/maschili
+    if genere == 'm':
+        aggettivo_rarita = aggettivo_rarita.replace('a', 'o').replace('e', 'e')
+        aggettivo_condizioni = aggettivo_condizioni.replace('a', 'o').replace('conservata', 'conservato').replace('tenuta', 'tenuto')
+        nome_base = f"un {nome_base}"
+    else:
+        nome_base = f"una {nome_base}"
+    
+    # Pattern naturali come nelle frasi manuali
+    patterns = [
+        f"{nome_base} {aggettivo_rarita} e {aggettivo_condizioni}",
+        f"{nome_base} {aggettivo_condizioni}, {aggettivo_rarita}",
+        f"un pezzo {aggettivo_rarita}" if genere == 'm' else f"una {nome_base} {aggettivo_rarita}",
+        f"{nome_base} davvero {aggettivo_condizioni}"
+    ]
+    
+    return random.choice(patterns)
+
+def _costruisci_scarsita_naturale(genere: str) -> str:
+    """Crea messaggio di scarsità naturale"""
+    scarsita_patterns = [
+        "ne abbiamo solo una",
+        "ne abbiamo una sola", 
+        "è l'ultima disponibile",
+        "abbiamo solo questo pezzo",
+        "è un pezzo unico",
+        "ne è rimasta solo una" if genere == 'f' else "ne è rimasto solo uno"
+    ]
+    
+    return random.choice(scarsita_patterns)
+
+def _costruisci_ringraziamento_like() -> str:
+    """Crea ringraziamento per il like"""
+    ringraziamenti = [
+        "per ringraziarti del tuo \"like\"",
+        "per ringraziarti dell'interesse",
+        "grazie per il tuo \"like\"", 
+        "per il tuo interesse",
+        "visto il tuo \"like\"",
+        "dato il tuo interesse"
+    ]
+    
+    return random.choice(ringraziamenti)
+
+def _costruisci_offerta_personalizzata() -> str:
+    """Crea offerta personalizzata"""
+    offerte = [
+        "ti sto inviando un'offerta con uno sconto in più",
+        "ti stiamo inviando un'offerta con un ulteriore sconto solo per te",
+        "ti stiamo facendo un'offerta speciale",
+        "ti abbiamo riservato uno sconto esclusivo", 
+        "ti stiamo preparando un'offerta personalizzata",
+        "ti facciamo un prezzo speciale",
+        "ti stiamo inviando un'offerta riservata"
+    ]
+    
+    return random.choice(offerte)
+
+def _costruisci_chiusura_cortese() -> str:
+    """Crea chiusura cortese"""
+    chiusure = [
+        "il massimo che possiamo fare, in ogni caso grazie per l'interesse",
+        "intanto grazie per il tuo \"like\"",
+        "comunque grazie per l'attenzione",
+        "speriamo ti piaccia la proposta",
+        "fammi sapere se ti interessa",
+        "spero possa interessarti",
+        "grazie ancora per l'interesse mostrato",
+        "sempre grazie per aver notato questo pezzo"
+    ]
+    
+    return random.choice(chiusure)
+
+def _pulisci_messaggio_vestiaire(messaggio: str) -> str:
+    """Pulisce e migliora il messaggio finale"""
+    if not messaggio:
+        return ""
+    
+    # Sostituzioni per naturalezza
+    sostituzioni = {
+        'un offerta': "un'offerta",
+        'un ulteriore': "un ulteriore",
+        ' , ': ', ',
+        ',,': ',',
+        '  ': ' ',
+        ' .': '.',
+        '..': '.'
+    }
+    
+    for vecchio, nuovo in sostituzioni.items():
+        messaggio = messaggio.replace(vecchio, nuovo)
+    
+    # Capitalizza dopo punto
+    frasi = messaggio.split('. ')
+    frasi_pulite = []
+    
+    for frase in frasi:
+        frase = frase.strip()
+        if frase:
+            frase = frase[0].upper() + frase[1:] if len(frase) > 1 else frase.upper()
+            frasi_pulite.append(frase)
+    
+    return '. '.join(frasi_pulite)
+
+# ===============================
 # NUOVO ALGORITMO GENERAZIONE FRASI LUXURY - BASATO SU MODELLI PROFESSIONALI
 # ===============================
 
@@ -1880,6 +2061,43 @@ def get_stats():
         
     except Exception as e:
         logger.error(f"Errore nel recupero statistiche: {e}")
+        raise
+
+@app.route('/api/genera-messaggio-like/<int:id>', methods=['GET'])
+@handle_errors  
+@log_request_info
+def genera_messaggio_like(id):
+    """Genera messaggio diretto per utenti che hanno messo like"""
+    try:
+        articolo = Articolo.query.get_or_404(id)
+        
+        # Estrai e processa i dati
+        colore = articolo.colore.strip() if articolo.colore else ''
+        materiale = articolo.materiale.strip() if articolo.materiale else ''
+        keywords = articolo._parse_keywords()
+        termini_commerciali = articolo._parse_termini_commerciali()
+        condizioni = articolo.condizioni.strip() if articolo.condizioni else ''
+        rarita = articolo.rarita.strip() if articolo.rarita else ''
+        target = articolo.target.strip() if articolo.target else ''
+        
+        # Classifica keywords
+        keywords_str = ','.join(keywords)
+        keywords_classificate = classifica_keywords_cached(keywords_str) if keywords_str else {}
+        
+        # Genera messaggio per like
+        messaggio = genera_messaggio_like_vestiaire(
+            articolo.brand, articolo.nome, colore, materiale, keywords_classificate,
+            condizioni, rarita, articolo.vintage, target, termini_commerciali
+        )
+        
+        logger.info(f"Messaggio like generato per articolo {id}")
+        return jsonify({
+            'messaggio': messaggio,
+            'tipo': 'like_response'
+        })
+        
+    except Exception as e:
+        logger.error(f"Errore nella generazione messaggio like per articolo {id}: {e}")
         raise
 
 @app.route('/api/statistiche-frasi', methods=['GET'])

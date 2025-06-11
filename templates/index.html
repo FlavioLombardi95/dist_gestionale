@@ -744,6 +744,9 @@
                         <button class="btn btn-primary genera-frase-btn">
                             <i class="fas fa-magic"></i> Genera Frase
                         </button>
+                        <button class="btn btn-outline-primary genera-messaggio-like-btn">
+                            <i class="fas fa-heart"></i> Messaggio Like
+                        </button>
                         <button class="btn btn-warning edit-btn">
                             <i class="fas fa-edit"></i> Modifica
                         </button>
@@ -869,6 +872,96 @@
             }
 
             requestAnimationFrame(updateCounter);
+        }
+
+        // Generazione messaggio like diretto
+        async function generaMessaggioLike(id, card) {
+            const btn = card.querySelector('.genera-messaggio-like-btn');
+            const originalContent = showLoading(btn, 'Generando...');
+            
+            try {
+                const response = await fetch(`/api/genera-messaggio-like/${id}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Modal per visualizzare il messaggio
+                await Swal.fire({
+                    title: '<i class="fas fa-heart text-danger me-2"></i>Messaggio per Like',
+                    html: `
+                        <div class="mb-3">
+                            <p class="text-muted mb-2">Messaggio naturale per rispondere al like dell'utente:</p>
+                        </div>
+                        <div class="generated-message-display">
+                            <div class="message-content">${data.messaggio}</div>
+                            <div class="message-actions mt-3">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="copyMessage('${data.messaggio.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-copy"></i> Copia
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="regenerateMessage(${id})">
+                                    <i class="fas fa-sync"></i> Rigenera
+                                </button>
+                            </div>
+                        </div>
+                    `,
+                    width: '600px',
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    customClass: {
+                        popup: 'message-result-modal'
+                    }
+                });
+                
+                frasiGenerateCount++;
+                updateStats(articoliGlobal);
+                showAlert('Messaggio generato con successo!', 'success');
+                
+            } catch (error) {
+                console.error('Errore generazione messaggio like:', error);
+                showAlert(`Errore nella generazione: ${error.message}`, 'danger');
+            } finally {
+                hideLoading(btn, originalContent);
+            }
+        }
+
+        // Helper per copiare messaggio
+        function copyMessage(message) {
+            navigator.clipboard.writeText(message).then(() => {
+                showAlert('Messaggio copiato negli appunti!', 'success', 2000);
+            }).catch(() => {
+                // Fallback per browser non supportati
+                const textArea = document.createElement('textarea');
+                textArea.value = message;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showAlert('Messaggio copiato!', 'success', 2000);
+            });
+        }
+
+        // Helper per rigenerare messaggio
+        async function regenerateMessage(id) {
+            const messageContent = document.querySelector('.message-content');
+            const originalText = messageContent.textContent;
+            messageContent.innerHTML = '<span class="loading-spinner"></span>Rigenerando...';
+            
+            try {
+                const response = await fetch(`/api/genera-messaggio-like/${id}`);
+                const data = await response.json();
+                messageContent.textContent = data.messaggio;
+                
+                // Aggiorna bottone copia
+                const copyBtn = document.querySelector('.message-actions button');
+                copyBtn.setAttribute('onclick', `copyMessage('${data.messaggio.replace(/'/g, "\\'")}')`)
+                
+            } catch (error) {
+                messageContent.textContent = originalText;
+                showAlert('Errore nella rigenerazione', 'danger');
+            }
         }
 
         // Generazione frase con modal professionale
@@ -1254,6 +1347,7 @@
 
                     // Event listeners
                     clone.querySelector('.genera-frase-btn').addEventListener('click', () => generaFrase(articolo.id, card));
+                    clone.querySelector('.genera-messaggio-like-btn').addEventListener('click', () => generaMessaggioLike(articolo.id, card));
                     clone.querySelector('.rigenera-btn')?.addEventListener('click', () => generaFrase(articolo.id, card));
                     clone.querySelector('.edit-btn').addEventListener('click', () => editArticolo(articolo));
                     clone.querySelector('.delete-btn').addEventListener('click', () => deleteArticolo(articolo.id));
