@@ -409,175 +409,272 @@ def genera_messaggio_like_vestiaire(brand: str, nome: str, colore: str, material
                                    keywords_classificate: Dict, condizioni: str, rarita: str, 
                                    vintage: bool, target: str, termini_commerciali: List[str]) -> str:
     """
-    🎯 ALGORITMO OTTIMIZZATO - Genera messaggi diretti naturali per like Vestiaire
-    Utilizza PARAMETRI CASUALI per massima varietà e naturalezza
+    🎯 ALGORITMO MIGLIORATO - Genera messaggi diretti naturali per like Vestiaire
+    Con controllo ripetizioni e interpretazione semantica avanzata
     """
     
-    # Determina tipo e genere per accordi
-    tipo_articolo = get_tipo_articolo_cached(nome)
+    # 📝 ANALISI SEMANTICA AVANZATA DEL NOME
+    nome_analizzato = _analizza_nome_prodotto_intelligente(nome, brand)
+    tipo_articolo = nome_analizzato['tipo']
     genere = get_genere_cached(tipo_articolo)
+    nome_pulito = nome_analizzato['nome_pulito']
+    modello = nome_analizzato['modello']
     
-    # 🎲 SELEZIONE CASUALE PARAMETRI DA UTILIZZARE (almeno 2)
-    parametri_disponibili = []
-    
-    if colore and colore.strip():
-        parametri_disponibili.append(('colore', colore.strip()))
-    if materiale and materiale.strip():
-        parametri_disponibili.append(('materiale', materiale.strip()))
-    if keywords_classificate and any(keywords_classificate.values()):
-        parametri_disponibili.append(('keywords', keywords_classificate))
-    if vintage:
-        parametri_disponibili.append(('vintage', vintage))
-    if target and target.strip():
-        parametri_disponibili.append(('target', target.strip()))
-    
-    # Seleziona casualmente 2-3 parametri da utilizzare
-    parametri_selezionati = random.sample(parametri_disponibili, min(len(parametri_disponibili), random.randint(2, 3)))
-    
-    # Componenti del messaggio con VARIETÀ MASSIMA
-    saluto = "Ciao"
-    
-    # 🔥 DESCRIZIONE PRODOTTO POTENZIATA con parametri casuali
-    desc_prodotto = _costruisci_descrizione_avanzata_vestiaire(
-        brand, nome, colore, materiale, condizioni, rarita, vintage, genere, 
-        parametri_selezionati, keywords_classificate
+    # 🎯 SELEZIONE INTELLIGENTE PARAMETRI (non casuale ma semantica)
+    parametri_rilevanti = _seleziona_parametri_intelligenti(
+        colore, materiale, keywords_classificate, vintage, target, 
+        condizioni, rarita, brand, tipo_articolo
     )
     
-    # Scarsità
+    # 🔥 COSTRUZIONE COMPONENTI CON CONTROLLO RIPETIZIONI
+    saluto = "Ciao"
+    
+    # Descrizione prodotto ottimizzata
+    desc_prodotto = _costruisci_descrizione_intelligente_vestiaire(
+        brand, nome_pulito, modello, colore, materiale, condizioni, rarita, 
+        vintage, genere, parametri_rilevanti, keywords_classificate
+    )
+    
+    # Altri componenti
     scarsita = _costruisci_scarsita_naturale(genere)
-    
-    # Ringraziamento like
     ringraziamento = _costruisci_ringraziamento_like()
-    
-    # Offerta personalizzata
     offerta = _costruisci_offerta_personalizzata()
-    
-    # Chiusura cortese
     chiusura = _costruisci_chiusura_cortese()
     
-    # 🎨 PATTERN MESSAGGI AMPLIATI per più varietà
+    # 🎨 PATTERN MESSAGGI MIGLIORATI con logica più naturale
     messaggi_pattern = [
-        f"{saluto}, è {desc_prodotto}, {scarsita}, {ringraziamento} {offerta}, {chiusura}",
-        f"{saluto}, è {desc_prodotto}, {scarsita}, {offerta} {ringraziamento}",
-        f"{saluto}, {desc_prodotto}, {scarsita}, {offerta}, {ringraziamento}",
-        f"{saluto}, è {desc_prodotto}, {scarsita}, {offerta}, {ringraziamento} {chiusura}",
-        f"{saluto}, {desc_prodotto}, {scarsita}, {ringraziamento} {offerta}",
-        f"{saluto}, è {desc_prodotto}, {scarsita}, {ringraziamento} {offerta}",
-        f"{saluto}, {desc_prodotto}, {scarsita}, {offerta} {ringraziamento}, {chiusura}"
+        f"{saluto}, è {desc_prodotto}, {scarsita}. {ringraziamento.capitalize()} {offerta}. {chiusura.capitalize()}!",
+        f"{saluto}, {desc_prodotto}, {scarsita}. {offerta.capitalize()} {ringraziamento}!",
+        f"{saluto}, è {desc_prodotto} e {scarsita}. {ringraziamento.capitalize()}, {offerta}. {chiusura.capitalize()}!",
+        f"{saluto}, {desc_prodotto}, {scarsita}. {offerta.capitalize()}, {ringraziamento}!",
+        f"{saluto}, è {desc_prodotto}, {scarsita}. {ringraziamento.capitalize()}, {offerta}!",
+        f"{saluto}, {desc_prodotto} e {scarsita}. {offerta.capitalize()} {ringraziamento}!"
     ]
     
     messaggio = random.choice(messaggi_pattern)
     
-    # Pulizia finale
-    messaggio = _pulisci_messaggio_vestiaire(messaggio)
+    # Pulizia finale migliorata
+    messaggio = _pulisci_messaggio_vestiaire_migliorato(messaggio, brand, nome_pulito)
     
     return messaggio
 
-def _costruisci_descrizione_avanzata_vestiaire(brand: str, nome: str, colore: str, materiale: str, 
-                                            condizioni: str, rarita: str, vintage: bool, genere: str,
-                                            parametri_selezionati: List, keywords_classificate: Dict) -> str:
-    """🔥 DESCRIZIONE AVANZATA che utilizza PARAMETRI CASUALI per massima varietà"""
+def _analizza_nome_prodotto_intelligente(nome: str, brand: str) -> Dict[str, str]:
+    """🧠 ANALISI INTELLIGENTE del nome prodotto per evitare ripetizioni"""
     
-    # Costruisci nome base
-    nome_base = f"{brand}"
-    if nome and nome.lower() != brand.lower():
-        nome_base = f"{brand} {nome}"
+    if not nome:
+        return {
+            'tipo': 'articolo',
+            'nome_pulito': '',
+            'modello': '',
+            'brand_nel_nome': False
+        }
     
-    # 🎯 AGGETTIVI ESPANSI per ogni categoria
-    aggettivi_rarita = {
-        'Introvabile': ['rarissima', 'introvabile', 'unica', 'eccezionale', 'leggendaria', 'mitica'],
-        'Molto Raro': ['molto rara', 'rara', 'speciale', 'particolare', 'difficile da trovare', 'ricercata'],
-        'Raro': ['rara', 'bella', 'particolare', 'interessante', 'speciale', 'carina'],
-        'Comune': ['bella', 'molto bella', 'interessante', 'carina', 'stupenda', 'fantastica']
+    nome_lower = nome.lower()
+    brand_lower = brand.lower()
+    
+    # 🔍 RIMUOVI BRAND DAL NOME se presente
+    nome_senza_brand = nome
+    brand_nel_nome = brand_lower in nome_lower
+    
+    if brand_nel_nome:
+        # Rimuovi brand in tutte le sue forme
+        nome_senza_brand = re.sub(rf'\b{re.escape(brand_lower)}\b', '', nome_lower, flags=re.IGNORECASE)
+        nome_senza_brand = re.sub(r'\s+', ' ', nome_senza_brand).strip()
+    
+    # 🎯 IDENTIFICA TIPO ARTICOLO
+    tipo_articolo = get_tipo_articolo_cached(nome)
+    
+    # 🧹 PULISCI NOME DA TIPO ARTICOLO
+    nome_pulito = nome_senza_brand
+    tipo_variants = [
+        tipo_articolo, tipo_articolo + 's', tipo_articolo + 'e', 
+        tipo_articolo.capitalize(), tipo_articolo.upper()
+    ]
+    
+    for variant in tipo_variants:
+        nome_pulito = re.sub(rf'\b{re.escape(variant)}\b', '', nome_pulito, flags=re.IGNORECASE)
+    
+    nome_pulito = re.sub(r'\s+', ' ', nome_pulito).strip()
+    nome_pulito = re.sub(r'^[-\s:]+|[-\s:]+$', '', nome_pulito)
+    
+    # 🏷️ IDENTIFICA MODELLO (quello che rimane)
+    modello = nome_pulito if nome_pulito and len(nome_pulito) > 2 else ''
+    
+    return {
+        'tipo': tipo_articolo,
+        'nome_pulito': nome_pulito,
+        'modello': modello,
+        'brand_nel_nome': brand_nel_nome
+    }
+
+def _seleziona_parametri_intelligenti(colore: str, materiale: str, keywords_classificate: Dict, 
+                                    vintage: bool, target: str, condizioni: str, rarita: str,
+                                    brand: str, tipo_articolo: str) -> Dict[str, any]:
+    """🎯 SELEZIONE INTELLIGENTE dei parametri più rilevanti"""
+    
+    parametri = {
+        'colore': None,
+        'materiale': None,
+        'keywords_rilevanti': [],
+        'vintage': False,
+        'target': None,
+        'priorita_condizioni': 0,
+        'priorita_rarita': 0
     }
     
-    aggettivi_condizioni = {
-        'Eccellenti': ['perfetta', 'come nuova', 'in condizioni perfette', 'impeccabile', 'quasi nuova', 'stupenda'],
-        'Ottime': ['molto bella', 'in ottime condizioni', 'ben conservata', 'bellissima', 'davvero bella'],
-        'Buone': ['bella', 'in buone condizioni', 'ben tenuta', 'ancora molto bella', 'in belle condizioni'],
-        'Discrete': ['interessante', 'con carattere', 'autentica', 'con personalità', 'con storia']
+    # 🎨 COLORE: Sempre rilevante se presente
+    if colore and colore.strip():
+        parametri['colore'] = colore.strip()
+    
+    # 🧵 MATERIALE: Sempre rilevante se presente
+    if materiale and materiale.strip():
+        parametri['materiale'] = materiale.strip()
+    
+    # 🏷️ KEYWORDS: Seleziona solo le più rilevanti per il tipo di articolo
+    if keywords_classificate:
+        keywords_rilevanti = []
+        
+        # Priorità per tipo articolo
+        if tipo_articolo == 'borsa':
+            keywords_rilevanti.extend(keywords_classificate.get('dettagli', [])[:2])
+            keywords_rilevanti.extend(keywords_classificate.get('forme', [])[:1])
+        elif tipo_articolo == 'scarpe':
+            keywords_rilevanti.extend(keywords_classificate.get('stili', [])[:2])
+            keywords_rilevanti.extend(keywords_classificate.get('caratteristiche', [])[:1])
+        elif tipo_articolo in ['vestito', 'top', 'pantaloni']:
+            keywords_rilevanti.extend(keywords_classificate.get('stili', [])[:1])
+            keywords_rilevanti.extend(keywords_classificate.get('forme', [])[:2])
+        
+        parametri['keywords_rilevanti'] = keywords_rilevanti[:3]  # Max 3 keywords
+    
+    # 🕰️ VINTAGE: Sempre rilevante se true
+    if vintage:
+        parametri['vintage'] = True
+    
+    # 🎯 TARGET: Rilevante se specifico
+    if target and target.strip() and target.strip() != 'Generale':
+        parametri['target'] = target.strip()
+    
+    # 📊 PRIORITÀ CONDIZIONI E RARITÀ
+    condizioni_priorita = {
+        'Eccellenti': 3, 'Ottime': 2, 'Buone': 1, 'Discrete': 1
+    }
+    rarita_priorita = {
+        'Introvabile': 3, 'Molto Raro': 2, 'Raro': 1, 'Comune': 0
     }
     
-    # Seleziona aggettivi base
-    aggettivo_rarita = random.choice(aggettivi_rarita.get(rarita, aggettivi_rarita['Comune']))
-    aggettivo_condizioni = random.choice(aggettivi_condizioni.get(condizioni, aggettivi_condizioni['Buone']))
+    parametri['priorita_condizioni'] = condizioni_priorita.get(condizioni, 1)
+    parametri['priorita_rarita'] = rarita_priorita.get(rarita, 0)
     
-    # 🎲 UTILIZZA PARAMETRI SELEZIONATI per arricchire la descrizione
-    dettagli_extra = []
+    return parametri
+
+def _costruisci_descrizione_intelligente_vestiaire(brand: str, nome_pulito: str, modello: str, 
+                                                  colore: str, materiale: str, condizioni: str, 
+                                                  rarita: str, vintage: bool, genere: str,
+                                                  parametri: Dict, keywords_classificate: Dict) -> str:
+    """🎯 COSTRUZIONE INTELLIGENTE della descrizione senza ripetizioni"""
     
-    for param_tipo, param_valore in parametri_selezionati:
-        if param_tipo == 'colore' and param_valore:
-            # Aggiungi colore con varietà
-            colori_descrittivi = {
-                'nero': ['nera', 'total black', 'in nero elegante'],
-                'bianco': ['bianca', 'candida', 'in bianco puro'],
-                'rosso': ['rossa', 'in rosso acceso', 'color rosso'],
-                'blu': ['blu', 'in blu elegante', 'color blu'],
-                'marrone': ['marrone', 'color cognac', 'in marrone'],
-                'beige': ['beige', 'color sabbia', 'in beige raffinato']
-            }
-            colori_match = colori_descrittivi.get(param_valore.lower(), [param_valore.lower()])
-            dettagli_extra.append(random.choice(colori_match))
-            
-        elif param_tipo == 'materiale' and param_valore:
-            # Aggiungi materiale con varietà
-            materiali_descrittivi = {
-                'pelle': ['in pelle', 'in vera pelle', 'in pelle pregiata'],
-                'tessuto': ['in tessuto', 'in stoffa elegante', 'in tessuto pregiato'],
-                'canvas': ['in canvas', 'in tela canvas', 'canvas resistente'],
-                'nylon': ['in nylon', 'in tessuto tecnico', 'nylon di qualità']
-            }
-            materiali_match = materiali_descrittivi.get(param_valore.lower(), [f'in {param_valore.lower()}'])
-            dettagli_extra.append(random.choice(materiali_match))
-            
-        elif param_tipo == 'vintage' and param_valore:
-            vintage_descrizioni = ['vintage', 'd\'epoca', 'storica', 'retrò', 'del passato']
-            dettagli_extra.append(random.choice(vintage_descrizioni))
-            
-        elif param_tipo == 'keywords' and param_valore:
-            # Usa una keyword casuale dalle categorie disponibili
-            keywords_utilizzabili = []
-            for categoria, keywords_lista in param_valore.items():
-                if keywords_lista and categoria in ['stili', 'caratteristiche', 'dettagli']:
-                    keywords_utilizzabili.extend(keywords_lista[:2])  # Max 2 per categoria
-            
-            if keywords_utilizzabili:
-                keyword_scelta = random.choice(keywords_utilizzabili)
-                dettagli_extra.append(keyword_scelta)
-    
-    # 📝 COSTRUISCI DESCRIZIONE con accordi grammaticali
-    if genere == 'm':
-        aggettivo_rarita = concordanza_aggettivo(aggettivo_rarita, 'm')
-        aggettivo_condizioni = concordanza_aggettivo(aggettivo_condizioni, 'm')
-        nome_base = f"un {nome_base}"
-        articolo = "un"
+    # 🏷️ COSTRUISCI NOME PRODOTTO
+    if modello:
+        nome_prodotto = f"{brand} {modello}"
     else:
-        aggettivo_rarita = concordanza_aggettivo(aggettivo_rarita, 'f')
-        aggettivo_condizioni = concordanza_aggettivo(aggettivo_condizioni, 'f')
-        nome_base = f"una {nome_base}" 
-        articolo = "una"
+        tipo_articolo = get_tipo_articolo_cached(nome_pulito) if nome_pulito else 'articolo'
+        nome_prodotto = f"{brand} {tipo_articolo}"
     
-    # 🎨 PATTERN AVANZATI con dettagli extra casuali
-    if dettagli_extra:
-        dettaglio_casuale = random.choice(dettagli_extra)
+    # 🎨 AGGETTIVI INTELLIGENTI basati su priorità
+    aggettivi_condizioni = _get_aggettivi_condizioni_intelligenti(condizioni, parametri['priorita_condizioni'])
+    aggettivi_rarita = _get_aggettivi_rarita_intelligenti(rarita, parametri['priorita_rarita'])
+    
+    # 🔗 COSTRUISCI DETTAGLI SENZA RIPETIZIONI
+    dettagli = []
+    
+    # Aggiungi colore se rilevante
+    if parametri['colore']:
+        dettagli.append(_formatta_colore_intelligente(parametri['colore'], genere))
+    
+    # Aggiungi materiale se rilevante
+    if parametri['materiale']:
+        dettagli.append(_formatta_materiale_intelligente(parametri['materiale']))
+    
+    # Aggiungi keywords più rilevanti
+    if parametri['keywords_rilevanti']:
+        dettagli.extend(parametri['keywords_rilevanti'][:2])  # Max 2 per evitare sovraffollamento
+    
+    # Aggiungi vintage se rilevante
+    if parametri['vintage']:
+        dettagli.append(random.choice(['vintage', 'd\'epoca', 'storico']))
+    
+    # 📝 COSTRUISCI DESCRIZIONE FINALE
+    articolo = "una" if genere == 'f' else "un"
+    
+    # Seleziona aggettivo principale
+    aggettivo_principale = random.choice(aggettivi_rarita + aggettivi_condizioni)
+    aggettivo_principale = concordanza_aggettivo(aggettivo_principale, genere)
+    
+    # Pattern intelligenti
+    if dettagli:
+        dettaglio_principale = dettagli[0]
         patterns = [
-            f"{nome_base} {dettaglio_casuale} {aggettivo_rarita} e {aggettivo_condizioni}",
-            f"{nome_base} {aggettivo_condizioni}, {dettaglio_casuale}, {aggettivo_rarita}",
-            f"{articolo} {brand} {dettaglio_casuale} {aggettivo_rarita}",
-            f"{nome_base} {aggettivo_rarita} {dettaglio_casuale}",
-            f"{nome_base} davvero {aggettivo_condizioni} e {aggettivo_rarita}",
-            f"{articolo} pezzo {aggettivo_rarita}, {dettaglio_casuale}"
+            f"{articolo} {nome_prodotto} {dettaglio_principale} {aggettivo_principale}",
+            f"{articolo} {aggettivo_principale} {nome_prodotto} {dettaglio_principale}",
+            f"{articolo} {nome_prodotto} {aggettivo_principale} {dettaglio_principale}",
+            f"{articolo} splendido {nome_prodotto} {dettaglio_principale}"
         ]
     else:
-        # Pattern base se non ci sono dettagli extra
         patterns = [
-            f"{nome_base} {aggettivo_rarita} e {aggettivo_condizioni}",
-            f"{nome_base} {aggettivo_condizioni}, {aggettivo_rarita}",
-            f"{articolo} pezzo {aggettivo_rarita}",
-            f"{nome_base} davvero {aggettivo_condizioni}"
+            f"{articolo} {nome_prodotto} {aggettivo_principale}",
+            f"{articolo} {aggettivo_principale} {nome_prodotto}",
+            f"{articolo} splendido {nome_prodotto}",
+            f"{articolo} bellissimo {nome_prodotto}"
         ]
     
     return random.choice(patterns)
+
+def _get_aggettivi_condizioni_intelligenti(condizioni: str, priorita: int) -> List[str]:
+    """Aggettivi per condizioni basati su priorità"""
+    if priorita >= 3:  # Eccellenti
+        return ['perfetta', 'impeccabile', 'come nuova', 'stupenda']
+    elif priorita >= 2:  # Ottime
+        return ['bellissima', 'molto bella', 'ben conservata', 'splendida']
+    elif priorita >= 1:  # Buone/Discrete
+        return ['bella', 'interessante', 'particolare', 'carina']
+    else:
+        return ['interessante', 'particolare']
+
+def _get_aggettivi_rarita_intelligenti(rarita: str, priorita: int) -> List[str]:
+    """Aggettivi per rarità basati su priorità"""
+    if priorita >= 3:  # Introvabile
+        return ['rarissima', 'introvabile', 'unica', 'eccezionale', 'mitica']
+    elif priorita >= 2:  # Molto Raro
+        return ['molto rara', 'rara', 'speciale', 'ricercata']
+    elif priorita >= 1:  # Raro
+        return ['rara', 'particolare', 'speciale']
+    else:
+        return ['bella', 'interessante']
+
+def _formatta_colore_intelligente(colore: str, genere: str) -> str:
+    """Formattazione intelligente del colore"""
+    colore_concordato = concordanza_aggettivo(colore, genere)
+    
+    colori_speciali = {
+        'nero': 'total black' if random.random() < 0.3 else colore_concordato,
+        'bianco': 'candido' if genere == 'm' else 'candida',
+        'rosso': 'rosso acceso' if random.random() < 0.4 else colore_concordato,
+        'blu': 'blu elegante' if random.random() < 0.3 else colore_concordato
+    }
+    
+    return colori_speciali.get(colore.lower(), colore_concordato)
+
+def _formatta_materiale_intelligente(materiale: str) -> str:
+    """Formattazione intelligente del materiale"""
+    materiali_speciali = {
+        'pelle': random.choice(['in pelle', 'in vera pelle', 'in pelle pregiata']),
+        'tessuto': random.choice(['in tessuto', 'in stoffa elegante']),
+        'canvas': random.choice(['in canvas', 'in tela canvas']),
+        'nylon': 'in nylon di qualità'
+    }
+    
+    return materiali_speciali.get(materiale.lower(), f'in {materiale.lower()}')
 
 def _costruisci_scarsita_naturale(genere: str) -> str:
     """Crea messaggio di scarsità naturale"""
@@ -634,36 +731,88 @@ def _costruisci_chiusura_cortese() -> str:
     
     return random.choice(chiusure)
 
-def _pulisci_messaggio_vestiaire(messaggio: str) -> str:
-    """Pulisce e migliora il messaggio finale"""
+def _pulisci_messaggio_vestiaire_migliorato(messaggio: str, brand: str, nome_pulito: str) -> str:
+    """🧹 PULIZIA AVANZATA del messaggio con controllo ripetizioni specifiche"""
     if not messaggio:
         return ""
     
-    # Sostituzioni per naturalezza
-    sostituzioni = {
+    # 🔍 CONTROLLO RIPETIZIONI SPECIFICHE
+    brand_lower = brand.lower()
+    
+    # Pattern problematici da rimuovere
+    patterns_problematici = [
+        # Ripetizioni di brand
+        (rf'\b{re.escape(brand_lower)}\s+{re.escape(brand_lower)}\b', brand, re.IGNORECASE),
+        # Ripetizioni di articoli
+        (r'\b(un|una)\s+(un|una)\b', r'\1', re.IGNORECASE),
+        (r'\b(il|la|lo|gli|le)\s+(il|la|lo|gli|le)\b', r'\1', re.IGNORECASE),
+        # Ripetizioni di preposizioni
+        (r'\b(in|di|da|con|per)\s+(in|di|da|con|per)\b', r'\1', re.IGNORECASE),
+        # Ripetizioni di aggettivi comuni
+        (r'\b(bella|bello)\s+(bella|bello)\b', r'\1', re.IGNORECASE),
+        (r'\b(rara|raro)\s+(rara|raro)\b', r'\1', re.IGNORECASE),
+        # Spazi multipli
+        (r'\s+', ' '),
+        # Punteggiatura problematica
+        (r'\s*,\s*,\s*', ', '),
+        (r'\s*\.\s*\.\s*', '. '),
+        (r'\s+([,.;:!?])', r'\1'),
+        (r'([,.;:!?])\s*([,.;:!?])', r'\1')
+    ]
+    
+    # Applica le correzioni
+    messaggio_pulito = messaggio
+    for pattern, replacement, *flags in patterns_problematici:
+        flag = flags[0] if flags else 0
+        messaggio_pulito = re.sub(pattern, replacement, messaggio_pulito, flags=flag)
+    
+    # 📝 CORREZIONI GRAMMATICALI SPECIFICHE
+    correzioni_grammaticali = {
         'un offerta': "un'offerta",
-        'un ulteriore': "un ulteriore",
-        ' , ': ', ',
-        ',,': ',',
-        '  ': ' ',
+        'un ulteriore': "un ulteriore", 
+        'una ulteriore': "un'ulteriore",
+        'è è': 'è',
+        'e e': 'e',
+        ', ,': ',',
+        '. .': '.',
         ' .': '.',
-        '..': '.'
+        ' ,': ',',
+        ' !': '!',
+        ' ?': '?'
     }
     
-    for vecchio, nuovo in sostituzioni.items():
-        messaggio = messaggio.replace(vecchio, nuovo)
+    for errore, correzione in correzioni_grammaticali.items():
+        messaggio_pulito = messaggio_pulito.replace(errore, correzione)
     
-    # Capitalizza dopo punto
-    frasi = messaggio.split('. ')
-    frasi_pulite = []
+    # 🎨 MIGLIORAMENTI STILISTICI
+    # Evita ripetizioni di "molto" vicine
+    messaggio_pulito = re.sub(r'\bmolto\s+molto\b', 'molto', messaggio_pulito, flags=re.IGNORECASE)
     
-    for frase in frasi:
-        frase = frase.strip()
-        if frase:
-            frase = frase[0].upper() + frase[1:] if len(frase) > 1 else frase.upper()
-            frasi_pulite.append(frase)
+    # Rimuovi parole duplicate adiacenti (generiche)
+    parole_da_controllare = ['bella', 'bello', 'interessante', 'particolare', 'speciale', 'rara', 'raro']
+    for parola in parole_da_controllare:
+        pattern = rf'\b{parola}\s+{parola}\b'
+        messaggio_pulito = re.sub(pattern, parola, messaggio_pulito, flags=re.IGNORECASE)
     
-    return '. '.join(frasi_pulite)
+    # 🔤 CORREZIONE CAPITALIZZAZIONE
+    messaggio_pulito = messaggio_pulito.strip()
+    if messaggio_pulito:
+        # Capitalizza inizio messaggio
+        messaggio_pulito = messaggio_pulito[0].upper() + messaggio_pulito[1:]
+        
+        # Capitalizza dopo punto
+        messaggio_pulito = re.sub(r'(\.\s+)([a-z])', lambda m: m.group(1) + m.group(2).upper(), messaggio_pulito)
+    
+    # ✅ VALIDAZIONE FINALE
+    # Se il messaggio è troppo corto o ha troppi problemi, usa fallback
+    if len(messaggio_pulito) < 15 or messaggio_pulito.count('  ') > 2:
+        return f"Ciao, è un bellissimo {brand} che ti piacerà! Te lo sto proponendo con uno sconto speciale per il tuo interesse. Fammi sapere!"
+    
+    return messaggio_pulito
+
+def _pulisci_messaggio_vestiaire(messaggio: str) -> str:
+    """Mantiene compatibilità con versione precedente"""
+    return _pulisci_messaggio_vestiaire_migliorato(messaggio, "", "")
 
 # ===============================
 # SISTEMA CACHE PER MESSAGGI (mantenuto solo per statistiche)
