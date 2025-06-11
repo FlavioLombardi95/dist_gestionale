@@ -874,6 +874,8 @@ def _pulisci_messaggio_vestiaire_migliorato(messaggio: str, brand: str, nome_pul
         (r'\bsplendid borsa\b', 'splendida borsa', 0),
         (r'\buna bellissim articolo\b', 'un bellissimo articolo', 0),
         (r'\buna meraviglios articolo\b', 'un meraviglioso articolo', 0),
+        (r'\buna splendida articolo\b', 'un splendido articolo', 0),
+        (r'\buna ottima articolo\b', 'un ottimo articolo', 0),
         
         # Ripetizioni colore
         (r'\btotal black\s+nera?\b', 'total black', re.IGNORECASE),
