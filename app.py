@@ -406,82 +406,374 @@ def genera_frase_stile_professionale(brand: str, nome: str, colore: str, materia
 FRASE_MEMORY_CACHE = {}
 SEMANTIC_VARIATIONS_CACHE = {}
 
+# ===============================
+# NUOVO ALGORITMO GENERAZIONE FRASI LUXURY - BASATO SU MODELLI PROFESSIONALI
+# ===============================
+
+# *** ARCHETIPI BRAND LUXURY (basati su ricerca) ***
+BRAND_ARCHETYPES = {
+    'Chanel': {
+        'archetype': 'Sage',
+        'personality': ['iconico', 'intramontabile', 'parigino', 'couture', 'audace'],
+        'values': ['indipendenza', 'eleganza', 'ribellione raffinata', 'femminilità forte'],
+        'emotional_triggers': ['empowerment', 'sofisticazione', 'atemporalità']
+    },
+    'Hermès': {
+        'archetype': 'Creator',
+        'personality': ['artigianale', 'esclusivo', 'leggendario', 'prezioso', 'perfetto'],
+        'values': ['maestria', 'tradizione', 'eccellenza', 'unicità'],
+        'emotional_triggers': ['prestigio', 'rarità', 'collezione']
+    },
+    'Louis Vuitton': {
+        'archetype': 'Explorer',
+        'personality': ['viaggiatore', 'distintivo', 'prestigioso', 'avventuroso'],
+        'values': ['scoperta', 'viaggio', 'status', 'innovazione'],
+        'emotional_triggers': ['esplorazione', 'prestigio', 'scoperta']
+    },
+    'Dior': {
+        'archetype': 'Lover',
+        'personality': ['romantico', 'elegante', 'femminile', 'sognante', 'couture'],
+        'values': ['bellezza', 'femminilità', 'eleganza', 'passione'],
+        'emotional_triggers': ['desiderio', 'bellezza', 'seduzione']
+    },
+    'Gucci': {
+        'archetype': 'Creator',
+        'personality': ['italiano', 'creativo', 'audace', 'innovativo', 'contemporaneo'],
+        'values': ['creatività', 'individualità', 'italian style', 'innovazione'],
+        'emotional_triggers': ['espressione', 'creatività', 'distinzione']
+    },
+    'Prada': {
+        'archetype': 'Intellectual',
+        'personality': ['minimale', 'sofisticato', 'moderno', 'intellettuale', 'avant-garde'],
+        'values': ['intelletto', 'modernità', 'raffinatezza', 'innovazione'],
+        'emotional_triggers': ['intelletto', 'modernità', 'raffinatezza']
+    }
+}
+
+# *** MODELLI NARRATIVI LUXURY (7 archetipi di Booker) ***
+NARRATIVE_STRUCTURES = {
+    'quest': {
+        'pattern': 'La ricerca del pezzo perfetto',
+        'templates': [
+            "Ogni vera connoisseur sa che esistono pezzi destinati a incontrare la propria anima. {nome_completo} rappresenta quella scoperta rara, {desc_materiali}, che trasforma un semplice accessorio in un compagno di vita {desc_condizioni}.",
+            "Nel mondo della moda, alcuni incontri sono scritti nel destino. {nome_completo} {desc_materiali} è uno di quei tesori che aspettava solo te, {desc_condizioni}, per completare la tua collezione di emozioni autentiche."
+        ]
+    },
+    'transformation': {
+        'pattern': 'La trasformazione attraverso la bellezza',
+        'templates': [
+            "C'è un momento magico in cui un accessorio smette di essere un oggetto e diventa parte della tua identità. {nome_completo} {desc_materiali} possiede questa rara qualità, {desc_condizioni}, di trasformare chi lo indossa.",
+            "La vera eleganza non si compra, si riconosce. {nome_completo} rappresenta quella scintilla {desc_materiali} che illumina la personalità autentica, {desc_condizioni}, rivelando la versione migliore di te."
+        ]
+    },
+    'heritage': {
+        'pattern': 'Il legame con la tradizione e il futuro',
+        'templates': [
+            "Quando tradizione e modernità si incontrano, nascono capolavori senza tempo. {nome_completo} {desc_materiali} porta con sé l'eredità di generazioni di maestri artigiani, {desc_condizioni}, per scrivere il tuo futuro.",
+            "Ogni grande Maison custodisce segreti tramandati attraverso i secoli. {nome_completo} è il custode di questa sapienza, {desc_materiali}, {desc_condizioni}, pronto a diventare parte della tua storia personale."
+        ]
+    },
+    'discovery': {
+        'pattern': 'La scoperta del tesoro nascosto', 
+        'templates': [
+            "In un mondo di infinite scelte, pochissimi pezzi possiedono quell'aura inconfondibile che cattura il cuore al primo sguardo. {nome_completo} {desc_materiali} è una di quelle rare scoperte, {desc_condizioni}, che ti farà innamorare ogni giorno.",
+            "Esistono tesori che il tempo ha preservato per le anime che sanno riconoscerli. {nome_completo} rappresenta quella scoperta preziosa {desc_materiali}, {desc_condizioni}, che aspettava solo il momento giusto per incontrarti."
+        ]
+    },
+    'sensory_experience': {
+        'pattern': 'L\'esperienza sensoriale ed emotiva',
+        'templates': [
+            "Chiudi gli occhi e immagina: la carezza {desc_materiali} sulla pelle, il profumo sottile del lusso autentico, lo sguardo ammirato di chi sa riconoscere la bellezza. {nome_completo} {desc_condizioni} è tutto questo e molto di più.",
+            "La vera bellezza si percepisce con tutti i sensi. {nome_completo} {desc_materiali} sussurra storie di eleganza attraverso ogni dettaglio, {desc_condizioni}, creando un'esperienza che va oltre il semplice possedere."
+        ]
+    }
+}
+
+# *** CALL TO ACTION LUXURY CON TRIGGER PSICOLOGICI ***
+LUXURY_CTA_PATTERNS = {
+    'exclusivity': [
+        "Riservato a pochi intenditori: scopri se questo pezzo fa per te.",
+        "Accesso esclusivo: verifica la disponibilità nella tua area riservata.",
+        "Solo per collezionisti raffinati: esplora questa opportunità unica.",
+        "Esperienza VIP: prenota il tuo appuntamento privato per visionare questo capolavoro."
+    ],
+    'scarcity': [
+        "Ultimo pezzo disponibile: non lasciarti sfuggire questa occasione irripetibile.",
+        "Rarità assoluta: aggiungi questo gioiello alla tua collezione prima che scompaia.",
+        "Pezzo unico in collezione: assicurati questa esclusiva prima di altri.",
+        "Disponibilità limitata: riserva ora questo tesoro per la tua collezione privata."
+    ],
+    'emotional_reward': [
+        "Concediti il lusso che meriti: questa bellezza aspetta solo te.",
+        "Regala a te stesso un momento di pura eleganza: scopri come.",
+        "La felicità ha il sapore della bellezza autentica: vivila ora.",
+        "Il tuo momento di gloria inizia da qui: lasciati conquistare."
+    ],
+    'investment': [
+        "Investi nella bellezza senza tempo: un acquisto che valorizza per sempre.",
+        "Patrimonio di stile: aggiungi valore alla tua collezione personale.",
+        "Investimento in eleganza: scopri il valore che cresce nel tempo.",
+        "Capitale di bellezza: un investimento che non perde mai valore."
+    ]
+}
+
 def genera_frase_personalizzata_ottimizzata(brand: str, nome: str, colore: str, materiale: str, 
                                           keywords_classificate: Dict, condizioni: str, rarita: str, 
                                           vintage: bool, target: str, termini_commerciali: List[str], 
                                           stile: str = 'elegante') -> str:
-    """Sistema ottimizzato di generazione frasi con memoria anti-ripetizione e scoring avanzato"""
+    """
+    NUOVO ALGORITMO: Generazione frasi basata su storytelling luxury e psicologia del consumatore
+    Implementa i modelli delle migliori maison di lusso mondiali
+    """
     
-    # Cache per tipo e genere
+    # *** ATTIVA IL NUOVO ALGORITMO LUXURY STORYTELLING ***
+    return genera_frase_luxury_storytelling(
+        brand, nome, colore, materiale, keywords_classificate,
+        condizioni, rarita, vintage, target, termini_commerciali, stile
+    )
+
+def genera_frase_luxury_storytelling(brand: str, nome: str, colore: str, materiale: str, 
+                                   keywords_classificate: Dict, condizioni: str, rarita: str, 
+                                   vintage: bool, target: str, termini_commerciali: List[str], 
+                                   stile: str = 'elegante') -> str:
+    """
+    NUOVO ALGORITMO: Generazione frasi basata su storytelling luxury e psicologia del consumatore
+    Implementa i modelli delle migliori maison di lusso mondiali
+    """
+    
+    # Ottieni dati brand
+    brand_data = BRAND_ARCHETYPES.get(brand, {
+        'archetype': 'Creator',
+        'personality': ['esclusivo', 'raffinato', 'distintivo'],
+        'values': ['qualità', 'eleganza', 'tradizione'],
+        'emotional_triggers': ['prestigio', 'bellezza', 'unicità']
+    })
+    
+    # Determina tipo e genere
     tipo_articolo = get_tipo_articolo_cached(nome)
     genere = get_genere_cached(tipo_articolo)
     
-    # Analisi contestuale avanzata
-    keywords_analizzate = _analisi_contestuale_keywords(keywords_classificate, tipo_articolo, brand)
+    # Costruisci componenti narrativi
+    nome_completo = _costruisci_nome_narrativo(nome, brand, tipo_articolo, brand_data)
+    desc_materiali = _costruisci_descrizione_sensoriale(materiale, colore, genere, brand_data)
+    desc_condizioni = _costruisci_descrizione_condizioni_emotiva(condizioni, genere, brand_data)
+    desc_rarita = _costruisci_descrizione_rarita_storytelling(rarita, genere, brand_data)
     
-    # Costruzione componenti ottimizzati
-    nome_completo = _costruisci_nome_avanzato_con_variazioni(nome, brand, tipo_articolo, stile)
-    desc_materiali = _costruisci_descrizione_materiali_avanzata_ottimizzata(
-        materiale, colore, keywords_analizzate, genere, stile, tipo_articolo
-    )
-    desc_condizioni = _costruisci_descrizione_condizioni_avanzata(condizioni, genere, stile)
-    desc_rarita = _costruisci_descrizione_rarita_avanzata(rarita, genere, stile)
-    desc_target = _costruisci_descrizione_target_avanzata(target, stile)
+    # Seleziona struttura narrativa basata su stile e brand
+    narrative_key = _seleziona_struttura_narrativa(stile, brand_data, vintage, rarita)
+    narrative = NARRATIVE_STRUCTURES[narrative_key]
     
-    # Aggettivi brand dinamici
-    aggettivo_brand = _genera_aggettivo_dinamico_brand(brand, genere, stile, keywords_analizzate)
-    
-    # Articoli grammaticali
-    art_det = _get_articolo_determinativo(genere, tipo_articolo)
-    art_indet = _get_articolo_indeterminativo(genere, tipo_articolo)
-    
-    # Template con scoring avanzato
-    templates_con_score = _get_templates_con_scoring(
-        stile, nome_completo, desc_materiali, desc_condizioni, desc_rarita,
-        desc_target, aggettivo_brand, art_det, art_indet, genere, vintage,
-        keywords_analizzate, tipo_articolo
+    # Genera frase principale
+    template = random.choice(narrative['templates'])
+    frase_principale = template.format(
+        nome_completo=nome_completo,
+        desc_materiali=desc_materiali,
+        desc_condizioni=desc_condizioni,
+        desc_rarita=desc_rarita
     )
     
-    # *** CORREZIONE: Cache key robusta senza caratteri problematici ***
+    # Genera call to action psicologicamente mirato
+    cta_category = _seleziona_cta_category(brand_data, rarita, condizioni)
+    call_to_action = random.choice(LUXURY_CTA_PATTERNS[cta_category])
+    
+    # Combina e pulisci
+    frase_completa = f"{frase_principale}\n\n{call_to_action}"
+    
+    # *** CACHE E STATISTICHE ***
     def clean_for_cache(text):
         if not text:
             return 'none'
-        # Rimuovi caratteri speciali e sostituisci spazi con underscores
         import re
         cleaned = re.sub(r'[^\w\s-]', '', str(text))
         cleaned = re.sub(r'\s+', '_', cleaned.strip())
-        return cleaned[:50] if cleaned else 'none'  # Limita lunghezza
+        return cleaned[:50] if cleaned else 'none'
     
     cache_key = f"{clean_for_cache(brand)}_{clean_for_cache(nome)}_{clean_for_cache(colore)}_{clean_for_cache(materiale)}_{clean_for_cache(stile)}"
     
-    # Selezione template con memoria
-    frase_principale = _seleziona_template_con_memoria(
-        templates_con_score, nome_completo, brand, stile, cache_key
-    )
-    
-    # Call to action con variazioni
-    call_to_action = _genera_call_to_action_con_variazioni(termini_commerciali, stile, cache_key)
-    
-    # Pulizia finale
-    frase_completa = f"{frase_principale}\n{call_to_action}"
-    frase_finale = _pulizia_finale_frase(frase_completa)
-    
-    # **AGGIORNAMENTO CACHE PER STATISTICHE**
     if cache_key not in FRASE_MEMORY_CACHE:
         FRASE_MEMORY_CACHE[cache_key] = []
-    FRASE_MEMORY_CACHE[cache_key].append(frase_finale)
+    FRASE_MEMORY_CACHE[cache_key].append(frase_completa)
     
-    # Mantieni solo le ultime 10 frasi per articolo
     if len(FRASE_MEMORY_CACHE[cache_key]) > 10:
         FRASE_MEMORY_CACHE[cache_key] = FRASE_MEMORY_CACHE[cache_key][-10:]
     
-    # Auto-pulizia cache se diventa troppo grande
     if len(FRASE_MEMORY_CACHE) > 1000:
-        keys_to_remove = list(FRASE_MEMORY_CACHE.keys())[:-500]  # Mantieni solo ultimi 500
+        keys_to_remove = list(FRASE_MEMORY_CACHE.keys())[:-500]
         for key in keys_to_remove:
             del FRASE_MEMORY_CACHE[key]
     
-    return frase_finale
+    return _pulizia_finale_frase(frase_completa)
+
+def _costruisci_nome_narrativo(nome: str, brand: str, tipo_articolo: str, brand_data: Dict) -> str:
+    """Costruisce il nome con personalità brand"""
+    nome_base = _costruisci_nome_avanzato(nome, brand, tipo_articolo)
+    
+    # Aggiungi tocco brand personality se appropriato
+    if random.random() < 0.3:
+        personality_trait = random.choice(brand_data.get('personality', ['esclusivo']))
+        if personality_trait in ['iconico', 'leggendario', 'mitico']:
+            return f"{personality_trait} {nome_base}"
+    
+    return nome_base
+
+def _costruisci_descrizione_sensoriale(materiale: str, colore: str, genere: str, brand_data: Dict) -> str:
+    """Descrizione che stimola i sensi (vista, tatto, emozione)"""
+    if not materiale and not colore:
+        return "dal fascino intramontabile"
+    
+    # Linguaggio sensoriale avanzato
+    sensory_materials = {
+        'pelle': ['carezza morbida della pelle', 'avvolgente morbidezza', 'tattile eleganza della pelle'],
+        'seta': ['fluida seduzione della seta', 'carezza setosa', 'liquida eleganza'],
+        'cashmere': ['nuvola di cashmere', 'avvolgente morbidezza', 'carezza preziosa'],
+        'cotone': ['purezza del cotone', 'freschezza naturale', 'comfort raffinato'],
+        'lana': ['calore avvolgente', 'protezione elegante', 'comfort naturale']
+    }
+    
+    sensory_colors = {
+        'nero': ['profondità del nero', 'mistero del nero assoluto', 'eleganza noir'],
+        'bianco': ['purezza cristallina', 'luminosità eterea', 'essenza candida'],
+        'rosso': ['passione del rosso', 'energia vibrante', 'calore seducente'],
+        'blu': ['profondità oceanica', 'serenità del blu', 'eleganza marina'],
+        'grigio': ['sofisticazione perla', 'eleganza metropolitana', 'raffinatezza urbana'],
+        'oro': ['scintillio dorato', 'splendore aureo', 'luce preziosa'],
+        'argento': ['brillantezza lunare', 'eleganza argentea', 'bagliore metallico'],
+        'beige': ['calore terroso', 'eleganza naturale', 'raffinatezza discreta']
+    }
+    
+    parts = []
+    
+    # Aggiungi materiale con linguaggio sensoriale
+    if materiale:
+        mat_lower = materiale.lower()
+        for key, descriptions in sensory_materials.items():
+            if key in mat_lower:
+                parts.append(random.choice(descriptions))
+                break
+        else:
+            parts.append(f"preziosa fattura in {materiale.lower()}")
+    
+    # Aggiungi colore con linguaggio evocativo
+    if colore:
+        col_lower = colore.lower()
+        for key, descriptions in sensory_colors.items():
+            if key in col_lower:
+                parts.append(random.choice(descriptions))
+                break
+        else:
+            parts.append(f"dalle sfumature {concordanza_aggettivo(colore, genere)}")
+    
+    if not parts:
+        return "dalla bellezza che cattura l'anima"
+    
+    return "dalla " + " e ".join(parts) if len(parts) > 1 else "dalla " + parts[0]
+
+def _costruisci_descrizione_condizioni_emotiva(condizioni: str, genere: str, brand_data: Dict) -> str:
+    """Descrizione condizioni che evoca emozioni positive"""
+    if not condizioni:
+        return "che ispira fiducia"
+    
+    emotional_conditions = {
+        'Eccellenti': [
+            "che emana perfezione in ogni dettaglio",
+            "dalla bellezza incontaminata",
+            "che conserva intatta la sua magnificenza",
+            "di una bellezza che toglie il fiato"
+        ],
+        'Ottime': [
+            "che racconta storie di eleganza vissuta",
+            "dal fascino maturo e raffinato", 
+            "che porta con grazia i segni del tempo",
+            "dalla bellezza che ha attraversato il tempo"
+        ],
+        'Buone': [
+            "ricco di personalità autentica",
+            "dal carattere distintivo e vissuto",
+            "che porta con orgoglio la sua storia",
+            "dalle cicatrici che raccontano avventure"
+        ],
+        'Discrete': [
+            "dal fascino dell'autenticità",
+            "che sa raccontare storie vere",
+            "dalla bellezza che non teme il tempo",
+            "ricco di carattere e personalità"
+        ]
+    }
+    
+    return random.choice(emotional_conditions.get(condizioni, ["di carattere unico"]))
+
+def _costruisci_descrizione_rarita_storytelling(rarita: str, genere: str, brand_data: Dict) -> str:
+    """Trasforma la rarità in narrativa emotiva"""
+    if not rarita or rarita == 'Comune':
+        return ""
+    
+    rarity_stories = {
+        'Introvabile': [
+            "un incontro che accade una volta nella vita",
+            "un tesoro che il destino ha riservato per te",
+            "una scoperta che cambierà per sempre la tua collezione",
+            "un miracolo della moda che pochi hanno il privilegio di possedere"
+        ],
+        'Molto Raro': [
+            "una rarità che fa battere il cuore agli intenditori",
+            "un pezzo che i collezionisti cercano da anni",
+            "una gemma nascosta che pochi sanno riconoscere",
+            "un tesoro per anime raffinate che sanno cosa cercare"
+        ],
+        'Raro': [
+            "una scoperta che rallegra il cuore di chi sa apprezzare",
+            "un pezzo speciale che distingue il tuo stile",
+            "una chicca per chi ama l'unicità",
+            "un piccolo gioiello che fa la differenza"
+        ]
+    }
+    
+    return random.choice(rarity_stories.get(rarita, [""]))
+
+def _seleziona_struttura_narrativa(stile: str, brand_data: Dict, vintage: bool, rarita: str) -> str:
+    """Seleziona la struttura narrativa più appropriata"""
+    archetype = brand_data.get('archetype', 'Creator')
+    
+    # Mapping archetipi -> strutture narrative preferite
+    archetype_mapping = {
+        'Sage': ['heritage', 'transformation'],
+        'Creator': ['discovery', 'transformation'], 
+        'Explorer': ['quest', 'discovery'],
+        'Lover': ['sensory_experience', 'transformation'],
+        'Intellectual': ['discovery', 'heritage']
+    }
+    
+    # Considera fattori speciali
+    if vintage:
+        return 'heritage'
+    if rarita in ['Introvabile', 'Molto Raro']:
+        return 'discovery'
+    
+    preferred = archetype_mapping.get(archetype, ['transformation', 'discovery'])
+    return random.choice(preferred)
+
+def _seleziona_cta_category(brand_data: Dict, rarita: str, condizioni: str) -> str:
+    """Seleziona categoria CTA basata su trigger psicologici"""
+    
+    # Priorità per rarità
+    if rarita in ['Introvabile', 'Molto Raro']:
+        return 'scarcity'
+    
+    # Priorità per condizioni eccellenti
+    if condizioni == 'Eccellenti':
+        return 'investment'
+    
+    # Basato su archetipi brand
+    archetype = brand_data.get('archetype', 'Creator')
+    archetype_cta = {
+        'Sage': 'investment',
+        'Creator': 'emotional_reward',
+        'Explorer': 'exclusivity',
+        'Lover': 'emotional_reward',
+        'Intellectual': 'exclusivity'
+    }
+    
+    return archetype_cta.get(archetype, 'emotional_reward')
 
 def _analisi_contestuale_keywords(keywords_classificate: Dict, tipo_articolo: str, brand: str) -> Dict:
     """Analisi contestuale avanzata delle keywords con sinonimi e contesti"""
