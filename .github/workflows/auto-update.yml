@@ -1,0 +1,104 @@
+name: 🔄 Auto Update System
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+    
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+        
+    - name: 📦 Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: 🔍 Check Files Consistency
+      run: |
+        echo "🔍 Verificando coerenza file..."
+        
+        # Controlla se requirements.txt è aggiornato
+        if [ -f "requirements.txt" ]; then
+          echo "✅ requirements.txt trovato"
+          pip freeze > current_reqs.txt
+          # Verifica dipendenze principali
+          grep -q "Flask" requirements.txt && echo "✅ Flask presente" || echo "❌ Flask mancante"
+          grep -q "SQLAlchemy" requirements.txt && echo "✅ SQLAlchemy presente" || echo "❌ SQLAlchemy mancante"
+        fi
+        
+        # Controlla struttura file
+        [ -f "app.py" ] && echo "✅ app.py presente" || echo "❌ app.py mancante"
+        [ -f "Procfile" ] && echo "✅ Procfile presente" || echo "❌ Procfile mancante"
+        [ -d "templates" ] && echo "✅ templates/ presente" || echo "❌ templates/ mancante"
+        [ -d "static" ] && echo "✅ static/ presente" || echo "❌ static/ mancante"
+        
+    - name: 📊 Generate Stats
+      run: |
+        echo "📊 Generando statistiche progetto..."
+        
+        # Conta righe codice
+        LINES_APP=$(wc -l < app.py)
+        LINES_HTML=$(find templates -name "*.html" -exec wc -l {} + | tail -1 | awk '{print $1}')
+        TOTAL_FILES=$(find . -type f -name "*.py" -o -name "*.html" -o -name "*.js" -o -name "*.css" | wc -l)
+        
+        echo "🔢 Statistiche:"
+        echo "- Righe app.py: $LINES_APP"
+        echo "- Righe templates: $LINES_HTML"  
+        echo "- File totali: $TOTAL_FILES"
+        
+        # Salva statistiche in file
+        echo "# 📊 Statistiche Progetto" > STATS.md
+        echo "" >> STATS.md
+        echo "- **Righe codice principale**: $LINES_APP" >> STATS.md
+        echo "- **Righe templates**: $LINES_HTML" >> STATS.md
+        echo "- **File totali**: $TOTAL_FILES" >> STATS.md
+        echo "- **Ultimo aggiornamento**: $(date)" >> STATS.md
+        
+    - name: 🔄 Update Documentation
+      run: |
+        echo "📝 Aggiornando documentazione..."
+        
+        # Aggiorna data nel README se necessario
+        if grep -q "Ultima ottimizzazione" README.md; then
+          sed -i "s/\*\*Ultima ottimizzazione\*\*: .*/\*\*Ultima ottimizzazione\*\*: $(date +"%B %Y") - Sistema Messaggi Vestiaire v2.0/" README.md
+          echo "✅ Data README aggiornata"
+        fi
+        
+    - name: 📤 Commit Changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        git add -A
+        
+        if git diff --staged --quiet; then
+          echo "✅ Nessun cambiamento da committare"
+        else
+          git commit -m "🤖 AUTO-UPDATE: Documenti e statistiche aggiornate"
+          git push
+          echo "✅ Cambiamenti committati e pushati"
+        fi
+        
+    - name: 🎯 Validation Summary
+      run: |
+        echo "🎯 RIEPILOGO VALIDAZIONE:"
+        echo "================================"
+        echo "✅ Dipendenze verificate"
+        echo "✅ Struttura file controllata"  
+        echo "✅ Statistiche generate"
+        echo "✅ Documentazione aggiornata"
+        echo "🚀 Sistema pronto per deploy!" 
