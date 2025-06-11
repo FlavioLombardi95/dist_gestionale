@@ -375,6 +375,8 @@ def concordanza_aggettivo(aggettivo: str, genere: str) -> str:
         'special': {'m': 'speciale', 'f': 'speciale'},
         'splendid': {'m': 'splendido', 'f': 'splendida'},
         'meraviglios': {'m': 'meraviglioso', 'f': 'meravigliosa'},
+        'rar': {'m': 'raro', 'f': 'rara'},
+        'ricercat': {'m': 'ricercato', 'f': 'ricercata'},
     }
     
     aggettivo_lower = aggettivo.lower()
@@ -876,6 +878,14 @@ def _pulisci_messaggio_vestiaire_migliorato(messaggio: str, brand: str, nome_pul
         (r'\buna meraviglios articolo\b', 'un meraviglioso articolo', 0),
         (r'\buna splendida articolo\b', 'un splendido articolo', 0),
         (r'\buna ottima articolo\b', 'un ottimo articolo', 0),
+        (r'\buna speciale articolo\b', 'un speciale articolo', 0),
+        (r'\buna rar articolo\b', 'un raro articolo', 0),
+        (r'\bottima in nero\b', 'ottimo in nero', 0),
+        (r'\bricercat\b', 'ricercato', 0),
+        
+        # Ripetizioni ringraziamenti
+        (r'Grazie per il tuo "like"[^.]*\. Intanto grazie per il tuo "like"', 'Grazie per il tuo "like"', 0),
+        (r'per ringraziarti[^.]*\. [^.]*grazie[^.]*', lambda m: m.group(0).split('.')[0] + '.', 0),
         
         # Ripetizioni colore
         (r'\btotal black\s+nera?\b', 'total black', re.IGNORECASE),
