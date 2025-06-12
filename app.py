@@ -1653,7 +1653,6 @@ def get_articoli():
         raise
 
 @app.route('/api/articoli', methods=['POST'])
-@handle_errors
 @log_request_info
 def create_articolo():
     """Crea un nuovo articolo con validazione avanzata"""
@@ -1669,48 +1668,78 @@ def create_articolo():
         filename = None
         file = request.files.get('immagine')
         if file and file.filename:
-            # Validazione tipo file
-            allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-            if not ('.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in allowed_extensions):
-                return jsonify({'error': 'Tipo di file non supportato'}), 400
-            
-            filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            logger.info(f"File salvato: {file_path}")
+            try:
+                # Validazione tipo file
+                allowed_extensions = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+                if not ('.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in allowed_extensions):
+                    return jsonify({'error': 'Tipo di file non supportato'}), 400
+                
+                filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)
+                logger.info(f"File salvato: {file_path}")
+            except Exception as file_error:
+                logger.warning(f"Errore salvataggio file: {file_error}")
+                # Continua senza immagine invece di fallire
+                filename = None
 
         # Conversione vintage
         vintage_value = data.get('vintage', 'false').lower()
         vintage_bool = vintage_value in ['true', '1', 'on', 'yes']
 
-        # Creazione articolo
-        articolo = Articolo(
-            nome=data['nome'].strip(),
-            brand=data['brand'].strip(),
-            immagine=filename,
-            colore=data.get('colore', '').strip(),
-            materiale=data.get('materiale', '').strip(),
-            keywords=data.get('keywords', '').strip(),
-            termini_commerciali=data.get('termini_commerciali', '').strip(),
-            condizioni=data.get('condizioni', '').strip(),
-            rarita=data.get('rarita', '').strip(),
-            vintage=vintage_bool,
-            target=data.get('target', '').strip()
-        )
+        # Creazione articolo con retry
+        def _create_articolo():
+            articolo = Articolo(
+                nome=data['nome'].strip(),
+                brand=data['brand'].strip(),
+                immagine=filename,
+                colore=data.get('colore', '').strip(),
+                materiale=data.get('materiale', '').strip(),
+                keywords=data.get('keywords', '').strip(),
+                termini_commerciali=data.get('termini_commerciali', '').strip(),
+                condizioni=data.get('condizioni', '').strip(),
+                rarita=data.get('rarita', '').strip(),
+                vintage=vintage_bool,
+                target=data.get('target', '').strip()
+            )
+            
+            db.session.add(articolo)
+            db.session.commit()
+            return articolo
         
-        db.session.add(articolo)
-        db.session.commit()
+        # Usa retry per operazioni database
+        articolo = retry_db_operation(_create_articolo)
         
-        logger.info(f"Articolo creato: {articolo.id} - {articolo.nome}")
-        return jsonify(articolo.to_dict()), 201
+        logger.info(f"✅ Articolo creato con successo: {articolo.id} - {articolo.nome}")
+        
+        # Risposta sempre valida
+        response_data = {
+            'success': True,
+            'message': 'Articolo creato con successo',
+            'articolo': articolo.to_dict()
+        }
+        
+        return jsonify(response_data), 201
         
     except Exception as e:
-        db.session.rollback()
-        logger.error(f"Errore nella creazione articolo: {e}")
-        raise
+        # Cleanup in caso di errore
+        try:
+            db.session.rollback()
+            db.session.close()
+        except:
+            pass
+            
+        error_msg = str(e)
+        logger.error(f"❌ Errore nella creazione articolo: {error_msg}")
+        
+        # Risposta di errore strutturata
+        return jsonify({
+            'success': False,
+            'error': 'Errore nella creazione dell\'articolo',
+            'details': error_msg[:200]  # Limita lunghezza errore
+        }), 500
 
 @app.route('/api/articoli/<int:id>', methods=['PUT'])
-@handle_errors
 @log_request_info
 def update_articolo(id):
     """Aggiorna un articolo esistente"""
@@ -1756,13 +1785,29 @@ def update_articolo(id):
             logger.info(f"Nuova immagine salvata: {file_path}")
         
         db.session.commit()
-        logger.info(f"Articolo aggiornato: {articolo.id} - {articolo.nome}")
-        return jsonify(articolo.to_dict())
+        logger.info(f"✅ Articolo aggiornato: {articolo.id} - {articolo.nome}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Articolo aggiornato con successo',
+            'articolo': articolo.to_dict()
+        }), 200
         
     except Exception as e:
-        db.session.rollback()
-        logger.error(f"Errore nell'aggiornamento articolo {id}: {e}")
-        raise
+        try:
+            db.session.rollback()
+            db.session.close()
+        except:
+            pass
+            
+        error_msg = str(e)
+        logger.error(f"❌ Errore nell'aggiornamento articolo {id}: {error_msg}")
+        
+        return jsonify({
+            'success': False,
+            'error': 'Errore nell\'aggiornamento dell\'articolo',
+            'details': error_msg[:200]
+        }), 500
 
 @app.route('/api/articoli/<int:id>', methods=['DELETE'])
 @handle_errors

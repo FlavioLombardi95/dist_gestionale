@@ -1083,13 +1083,18 @@
                         body: formData
                     });
                     
-                    if (response.ok) {
-                        showAlert('Articolo modificato con successo', 'success');
+                    // Gestione risposta migliorata
+                    const responseData = await response.json();
+                    
+                    if (response.ok && responseData.success) {
+                        showAlert(responseData.message || 'Articolo modificato con successo', 'success');
                         resetForm();
                         clearCache(); // Invalida cache dopo modifica
                         loadArticoli(true); // Force refresh
                     } else {
-                        throw new Error('Errore nella modifica dell\'articolo');
+                        // Gestisci errori strutturati
+                        const errorMsg = responseData.error || responseData.details || 'Errore nella modifica dell\'articolo';
+                        throw new Error(errorMsg);
                     }
                 } else {
                     response = await fetch('/api/articoli', {
@@ -1097,13 +1102,18 @@
                         body: formData
                     });
                     
-                    if (response.ok) {
-                        showAlert('Articolo creato con successo', 'success');
+                    // Gestione risposta migliorata
+                    const responseData = await response.json();
+                    
+                    if (response.ok && responseData.success) {
+                        showAlert(responseData.message || 'Articolo creato con successo', 'success');
                         resetForm();
                         clearCache(); // Invalida cache dopo creazione
                         loadArticoli(true); // Force refresh
                     } else {
-                        throw new Error('Errore nella creazione dell\'articolo');
+                        // Gestisci errori strutturati
+                        const errorMsg = responseData.error || responseData.details || 'Errore nella creazione dell\'articolo';
+                        throw new Error(errorMsg);
                     }
                 }
             } catch (error) {

@@ -911,3 +911,24 @@
 2025-06-12 16:00:02,412 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
 2025-06-12 16:00:02,429 - werkzeug - WARNING -  * Debugger is active!
 2025-06-12 16:00:02,442 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:04:57,876 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:04:58,002 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:04:59,842 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:04:59,935 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 16:04:59,941 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 16:05:00,039 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:05:00,089 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:05:18,287 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:05:18,401 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:05:19,076 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:05:19,108 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 16:05:19,112 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 16:05:19,126 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:05:19,137 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:05:29,230 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:05:29,335 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:05:30,082 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:05:30,153 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 16:05:30,158 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 16:05:30,172 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:05:30,184 - werkzeug - INFO -  * Debugger PIN: 381-560-159
