@@ -1054,17 +1054,12 @@
                 articoliGlobal = articoli;
                 
                 updateStats(articoli);
-                mostraBrand(articoli);
                 
                 if (articoli.length === 0) {
-                    document.getElementById('emptyState').classList.remove('d-none');
-                    document.getElementById('searchContainer').style.display = 'none';
+                    mostraArticoli([]);  // Mostra messaggio empty state solo se non ci sono articoli
                 } else {
-                    document.getElementById('emptyState').classList.add('d-none');
-                    document.getElementById('searchContainer').style.display = 'block';
+                    mostraBrand(articoli);  // Mostra i brand se ci sono articoli
                 }
-                
-                mostraArticoli([]);
             } catch (error) {
                 showAlert('Errore nel caricamento degli articoli', 'danger');
             }
