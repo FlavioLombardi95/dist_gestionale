@@ -4,9 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vintage & Modern - Gestionale Articoli di Lusso</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style">
+    <link rel="preload" href="/static/css/styles.css" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style">
+    
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="/static/manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="/static/css/styles.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #654321;      /* Marrone Louis Vuitton classico */
@@ -196,6 +209,16 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        /* Lazy loading styles */
+        .lazy {
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .lazy:not([src]) {
+            visibility: hidden;
         }
 
         .preview-container {
@@ -447,7 +470,7 @@
             <h1 class="display-5 fw-bold text-dark mb-3">
                 Vintage & Modern
             </h1>
-            <p class="lead text-muted">Gestionale professionale per articoli di lusso preloved autentici</p>
+            <p class="lead text-muted">Gestionale professionale per articoli di lusso vintage autentici</p>
         </div>
 
         <!-- Statistiche -->
@@ -711,6 +734,68 @@
         let articoliGlobal = [];
         let brandSelezionato = null;
 
+        // ===============================
+        // CACHE E OTTIMIZZAZIONI FRONTEND
+        // ===============================
+        
+        // Cache articoli per performance
+        const articoliCache = new Map();
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 minuti
+        
+        // Debounce utility
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // Lazy loading per immagini
+        function setupLazyLoading() {
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.src = img.dataset.src;
+                            img.classList.remove('lazy');
+                            imageObserver.unobserve(img);
+                        }
+                    });
+                });
+                
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            }
+        }
+        
+        // Cache management
+        function getCachedArticoli() {
+            const cached = articoliCache.get('articoli');
+            if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+                return cached.data;
+            }
+            return null;
+        }
+        
+        function setCachedArticoli(data) {
+            articoliCache.set('articoli', {
+                data: data,
+                timestamp: Date.now()
+            });
+        }
+        
+        function clearCache() {
+            articoliCache.clear();
+        }
+
+        // ===============================
 
         // Configurazione animazioni
         const animationConfig = {
@@ -1001,7 +1086,8 @@
                     if (response.ok) {
                         showAlert('Articolo modificato con successo', 'success');
                         resetForm();
-                        loadArticoli();
+                        clearCache(); // Invalida cache dopo modifica
+                        loadArticoli(true); // Force refresh
                     } else {
                         throw new Error('Errore nella modifica dell\'articolo');
                     }
@@ -1014,7 +1100,8 @@
                     if (response.ok) {
                         showAlert('Articolo creato con successo', 'success');
                         resetForm();
-                        loadArticoli();
+                        clearCache(); // Invalida cache dopo creazione
+                        loadArticoli(true); // Force refresh
                     } else {
                         throw new Error('Errore nella creazione dell\'articolo');
                     }
@@ -1046,20 +1133,43 @@
 
         document.getElementById('resetBtn').addEventListener('click', resetForm);
 
-        // Caricamento articoli
-        async function loadArticoli() {
+        // Caricamento articoli con cache
+        async function loadArticoli(forceRefresh = false) {
             try {
+                // Controlla cache se non è un refresh forzato
+                if (!forceRefresh) {
+                    const cachedData = getCachedArticoli();
+                    if (cachedData) {
+                        console.log('📦 Caricamento da cache');
+                        articoliGlobal = cachedData;
+                        updateStats(cachedData);
+                        
+                        if (cachedData.length === 0) {
+                            mostraArticoli([]);
+                        } else {
+                            mostraBrand(cachedData);
+                        }
+                        setupLazyLoading();
+                        return;
+                    }
+                }
+                
+                console.log('🌐 Caricamento da server');
                 const response = await fetch('/api/articoli');
                 const articoli = await response.json();
+                
+                // Salva in cache
+                setCachedArticoli(articoli);
                 articoliGlobal = articoli;
                 
                 updateStats(articoli);
                 
                 if (articoli.length === 0) {
-                    mostraArticoli([]);  // Mostra messaggio empty state solo se non ci sono articoli
+                    mostraArticoli([]);
                 } else {
-                    mostraBrand(articoli);  // Mostra i brand se ci sono articoli
+                    mostraBrand(articoli);
                 }
+                setupLazyLoading();
             } catch (error) {
                 showAlert('Errore nel caricamento degli articoli', 'danger');
             }
@@ -1152,7 +1262,14 @@
                     card.dataset.id = articolo.id;
                     
                     const img = clone.querySelector('.card-img-top');
-                    img.src = articolo.immagine ? `/static/uploads/${articolo.immagine}` : 'https://via.placeholder.com/300x300?text=Nessuna+Immagine';
+                    // Lazy loading implementation
+                    if (articolo.immagine) {
+                        img.dataset.src = `/static/uploads/${articolo.immagine}`;
+                        img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjhmOWZhIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZjNzU3ZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkNhcmljYW1lbnRvLi4uPC90ZXh0Pjwvc3ZnPg==';
+                        img.classList.add('lazy');
+                    } else {
+                        img.src = 'https://via.placeholder.com/300x300?text=Nessuna+Immagine';
+                    }
                     img.alt = articolo.nome;
                     
                     clone.querySelector('.card-title').textContent = articolo.nome;
@@ -1203,7 +1320,9 @@
                 mostraArticoli(filteredArticoli);
             }
             
-            searchInput.addEventListener('input', applyFilters);
+            // Debounced search per performance
+            const debouncedSearch = debounce(applyFilters, 300);
+            searchInput.addEventListener('input', debouncedSearch);
             sortSelect.addEventListener('change', applyFilters);
         }
 
@@ -1263,7 +1382,8 @@
                 
                 if (response.ok) {
                     showAlert('Articolo eliminato con successo', 'success');
-                    loadArticoli();
+                    clearCache(); // Invalida cache dopo eliminazione
+                    loadArticoli(true); // Force refresh
                     
                     const articoliBrand = articoliGlobal.filter(a => a.brand === brandSelezionato && a.id != id);
                     if (articoliBrand.length === 0 && brandSelezionato) {
@@ -1296,6 +1416,19 @@
             });
         }
 
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/js/sw.js')
+                    .then(registration => {
+                        console.log('🎯 SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('❌ SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
         // Inizializzazione
         document.addEventListener('DOMContentLoaded', () => {
             setupFormValidation();
@@ -1307,6 +1440,16 @@
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
                 document.head.appendChild(script);
+            }
+            
+            // Performance monitoring
+            if ('performance' in window) {
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        const perfData = performance.getEntriesByType('navigation')[0];
+                        console.log('📊 Page Load Time:', Math.round(perfData.loadEventEnd - perfData.fetchStart), 'ms');
+                    }, 0);
+                });
             }
         });
     </script>
@@ -1345,7 +1488,7 @@
                     Vintage & Modern
                 </h5>
                 <p class="small mb-0" style="color: #8B6F47; line-height: 1.6;">
-                    Specializzati nella vendita di capi e accessori di lusso autentici preloved.<br>
+                    Specializzati nella vendita di capi e accessori di lusso vintage autentici.<br>
                     Promuoviamo un approccio sostenibile alla moda con pezzi iconici senza tempo.
                 </p>
             </div>
@@ -1360,6 +1503,8 @@
 
     </div>
 
+    <!-- Performance Monitor -->
+    <script src="/static/js/performance.js"></script>
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Bootstrap JS -->

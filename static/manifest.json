@@ -1,0 +1,110 @@
+{
+  "name": "Vintage & Modern - Gestionale Articoli di Lusso",
+  "short_name": "Vintage & Modern",
+  "description": "Sistema gestionale professionale per articoli di lusso vintage autentici",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF0E6",
+  "theme_color": "#654321",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "it",
+  "categories": ["business", "productivity", "lifestyle"],
+  "icons": [
+    {
+      "src": "/static/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nuovo Articolo",
+      "short_name": "Nuovo",
+      "description": "Aggiungi un nuovo articolo di lusso",
+      "url": "/#nuovo-articolo",
+      "icons": [
+        {
+          "src": "/static/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Statistiche",
+      "short_name": "Stats",
+      "description": "Visualizza statistiche del gestionale",
+      "url": "/#statistiche",
+      "icons": [
+        {
+          "src": "/static/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/static/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Dashboard principale del gestionale"
+    },
+    {
+      "src": "/static/screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Vista mobile del gestionale"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+} 

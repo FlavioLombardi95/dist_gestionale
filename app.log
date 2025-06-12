@@ -741,3 +741,19 @@
 2025-06-12 12:35:26,233 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
 2025-06-12 12:35:26,249 - werkzeug - WARNING -  * Debugger is active!
 2025-06-12 12:35:26,262 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 15:29:26,951 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 15:29:27,222 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 15:29:28,391 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 15:29:28,440 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 15:29:28,445 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 15:29:28,468 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 15:29:28,488 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 15:29:37,574 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 15:29:37,684 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 15:29:38,394 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 15:29:38,435 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 15:29:38,441 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 15:29:38,457 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 15:29:38,470 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 15:30:39,778 - __main__ - INFO - HEAD / - 0.015s
+2025-06-12 15:30:39,779 - werkzeug - INFO - 127.0.0.1 - - [12/Jun/2025 15:30:39] "HEAD / HTTP/1.1" 200 -

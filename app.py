@@ -1407,6 +1407,16 @@ def index():
     """Homepage dell'applicazione"""
     return render_template('index.html')
 
+@app.route('/static/js/sw.js')
+def service_worker():
+    """Service Worker per PWA"""
+    return app.send_static_file('js/sw.js'), 200, {'Content-Type': 'application/javascript'}
+
+@app.route('/static/manifest.json')
+def manifest():
+    """Manifest per PWA"""
+    return app.send_static_file('manifest.json'), 200, {'Content-Type': 'application/json'}
+
 @app.route('/api/articoli', methods=['GET'])
 @handle_errors
 @log_request_info
