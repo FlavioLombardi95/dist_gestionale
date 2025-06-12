@@ -487,20 +487,11 @@
             padding: 32px !important;
         }
 
-        .social-links .btn {
+        /* Instagram link minimal styling */
+        .footer-section a:hover {
+            color: #6c757d !important;
             transition: var(--transition);
         }
-
-        .social-links .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-        }
-
-        /* Preloved brand colors */
-        .text-preloved-primary { color: #2c3e50 !important; }
-        .text-preloved-vintage { color: #27ae60 !important; }
-        .text-preloved-modern { color: #f39c12 !important; }
-        .text-preloved-heart { color: #e74c3c !important; }
     </style>
 </head>
 <body>
@@ -508,18 +499,9 @@
         <!-- Header migliorato -->
         <div class="header-section text-center mb-5">
             <h1 class="display-5 fw-bold text-dark mb-3">
-                <i class="fas fa-heart text-danger me-2"></i>
-                <span class="text-primary">Preloved</span> 
-                <span class="text-success">Vintage</span> & 
-                <span class="text-warning">Modern</span>
+                Preloved Vintage & Modern
             </h1>
-            <p class="lead text-muted mb-3">Gestionale per articoli di lusso amati e curati con passione</p>
-            <div class="social-links">
-                <a href="https://www.instagram.com/preloved_vintage_and_modern/" target="_blank" class="btn btn-outline-danger btn-sm me-2">
-                    <i class="fab fa-instagram me-1"></i> @preloved_vintage_and_modern
-                </a>
-                <small class="text-muted">Seguici per scoprire tesori unici</small>
-            </div>
+            <p class="lead text-muted">Gestionale per articoli di lusso amati e curati con passione</p>
         </div>
 
         <!-- Statistiche -->
@@ -1419,21 +1401,16 @@
     <footer class="footer-section mt-5 pt-4 border-top text-center">
         <div class="row">
             <div class="col-md-6 mb-3">
-                <h6 class="fw-bold text-primary mb-2">
-                    <i class="fas fa-heart text-danger me-1"></i>
+                <h6 class="fw-bold text-dark mb-2">
                     Preloved Vintage & Modern
                 </h6>
-                <p class="small text-muted mb-2">
+                <p class="small text-muted mb-0">
                     Articoli di lusso amati e curati con passione.<br>
                     Ogni pezzo racconta una storia unica.
                 </p>
-                <a href="https://www.instagram.com/preloved_vintage_and_modern/" target="_blank" class="btn btn-sm btn-outline-danger">
-                    <i class="fab fa-instagram me-1"></i> Seguici su Instagram
-                </a>
             </div>
             <div class="col-md-6 mb-3">
-                <h6 class="fw-bold text-success mb-2">
-                    <i class="fas fa-recycle me-1"></i>
+                <h6 class="fw-bold text-dark mb-2">
                     La Nostra Missione
                 </h6>
                 <p class="small text-muted mb-0">
@@ -1443,9 +1420,14 @@
             </div>
         </div>
         <hr class="my-3">
-        <p class="small text-muted mb-0">
-            © 2024 Preloved Vintage & Modern - Sistema di gestione articoli di lusso
-        </p>
+        <div class="d-flex justify-content-between align-items-center">
+            <p class="small text-muted mb-0">
+                © 2025 Preloved Vintage & Modern - Sistema di gestione articoli di lusso
+            </p>
+            <a href="https://www.instagram.com/preloved_vintage_and_modern/" target="_blank" class="text-muted">
+                <i class="fab fa-instagram" style="font-size: 1.2rem;"></i>
+            </a>
+        </div>
     </footer>
 
     </div>
