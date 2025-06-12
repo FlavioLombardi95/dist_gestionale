@@ -161,32 +161,9 @@
             transition: var(--transition);
         }
 
-        .keyword-tag {
-            display: inline-block;
-            background: #e9ecef;
-            color: var(--dark-text);
-            padding: 4px 12px;
-            border-radius: 16px;
-            margin: 2px;
-            font-size: 0.8em;
-            font-weight: 500;
-            border: 1px solid #dee2e6;
-        }
 
-        .frase-generata {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            padding: 16px;
-            border-radius: var(--border-radius);
-            margin-top: 16px;
-        }
 
-        .frase-generata p {
-            margin-bottom: 12px;
-            font-style: italic;
-            color: var(--dark-text);
-            line-height: 1.5;
-        }
+
 
         .brand-btn {
             margin: 6px;
@@ -357,61 +334,7 @@
             border-color: var(--danger-color);
         }
 
-        /* Style selector professionale */
-        .style-selector-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin: 20px 0;
-        }
 
-        .style-option {
-            border: 2px solid #e9ecef;
-            border-radius: var(--border-radius);
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            background: white;
-            position: relative;
-        }
-
-        .style-option:hover {
-            border-color: var(--secondary-color);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
-        }
-
-        .style-option.selected {
-            border-color: var(--secondary-color);
-            background: #f8f9fa;
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
-        }
-
-        .style-option h6 {
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .style-option .description {
-            font-size: 0.85em;
-            color: #8B6F47;
-            line-height: 1.4;
-        }
-
-        .style-badge {
-            font-size: 0.75em;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 500;
-            margin-right: 8px;
-        }
-
-        .bg-gradient-elegante { background: var(--primary-color); color: white; }
-        .bg-gradient-emotivo { background: var(--warning-color); color: var(--dark-text); }
-        .bg-gradient-amichevole { background: var(--accent-color); color: var(--dark-text); }
-        .bg-gradient-professionale { background: var(--secondary-color); color: white; }
-        .bg-gradient-esclusivo { background: var(--success-color); color: white; }
 
         @media (max-width: 768px) {
             .main-container {
@@ -757,7 +680,7 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Template per la card articolo migliorata -->
+    <!-- Template scheda prodotto professionale -->
     <template id="articoloTemplate">
         <div class="col-lg-4 col-md-6 mb-4 fade-in">
             <div class="card articolo-card">
@@ -767,28 +690,15 @@
                 <img src="" class="card-img-top" alt="">
                 <div class="card-body">
                     <h5 class="card-title"></h5>
-                    <p class="card-text text-muted brand-text mb-2"></p>
-                    <div class="details-text mb-3"></div>
-                    <div class="keywords-container mb-3"></div>
-                    <div class="frase-generata d-none">
-                        <p class="mb-2"></p>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <button class="btn btn-sm copy-btn" style="border: 1px solid var(--success-color); color: var(--success-color); background: transparent;">
-                                <i class="fas fa-copy"></i> Copia
-                            </button>
-                            <button class="btn btn-sm rigenera-btn" style="border: 1px solid var(--primary-color); color: var(--primary-color); background: transparent;">
-                                <i class="fas fa-sync"></i> Rigenera
-                            </button>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn genera-messaggio-like-btn" style="background: var(--primary-color); color: white; font-size: 0.85rem;">
+                    <p class="card-text brand-text mb-3"></p>
+                    <div class="d-flex gap-2 flex-wrap justify-content-center">
+                        <button class="btn genera-messaggio-like-btn" style="background: var(--primary-color); color: white; font-size: 0.9rem; padding: 8px 16px;">
                             <i class="fas fa-heart"></i> Messaggio Like
                         </button>
-                        <button class="btn edit-btn" style="background: var(--secondary-color); color: white; font-size: 0.85rem;">
+                        <button class="btn edit-btn" style="background: var(--secondary-color); color: white; font-size: 0.9rem; padding: 8px 16px;">
                             <i class="fas fa-edit"></i> Modifica
                         </button>
-                        <button class="btn delete-btn" style="background: var(--danger-color); color: white; font-size: 0.85rem;">
+                        <button class="btn delete-btn" style="background: var(--danger-color); color: white; font-size: 0.9rem; padding: 8px 16px;">
                             <i class="fas fa-trash"></i> Elimina
                         </button>
                     </div>
@@ -1227,32 +1137,14 @@
                     clone.querySelector('.card-title').textContent = articolo.nome;
                     clone.querySelector('.brand-text').textContent = articolo.brand;
                     
-                    // Dettagli
-                    const details = clone.querySelector('.details-text');
-                    let detailsHtml = '';
-                    if (articolo.colore) detailsHtml += `<span class="badge bg-secondary me-1">${articolo.colore}</span>`;
-                    if (articolo.materiale) detailsHtml += `<span class="badge bg-info me-1">${articolo.materiale}</span>`;
-                    if (articolo.condizioni) detailsHtml += `<span class="badge bg-warning me-1">${articolo.condizioni}</span>`;
-                    if (articolo.rarita) detailsHtml += `<span class="badge bg-danger me-1">${articolo.rarita}</span>`;
-                    details.innerHTML = detailsHtml;
-                    
                     if (articolo.vintage) {
                         clone.querySelector('.vintage-badge').classList.remove('d-none');
                     }
-                    
-                    const keywordsContainer = clone.querySelector('.keywords-container');
-                    articolo.keywords.forEach(keyword => {
-                        const tag = document.createElement('span');
-                        tag.className = 'keyword-tag';
-                        tag.textContent = keyword;
-                        keywordsContainer.appendChild(tag);
-                    });
 
                     // Event listeners
                     clone.querySelector('.genera-messaggio-like-btn').addEventListener('click', () => generaMessaggioLike(articolo.id, card));
                     clone.querySelector('.edit-btn').addEventListener('click', () => editArticolo(articolo));
                     clone.querySelector('.delete-btn').addEventListener('click', () => deleteArticolo(articolo.id));
-                    clone.querySelector('.copy-btn').addEventListener('click', () => copyFrase(card));
 
                     container.appendChild(clone);
                 }, index * 100);
@@ -1303,29 +1195,7 @@
             brandSelezionato = null;
         });
 
-        // Copia frase
-        async function copyFrase(card) {
-            const frase = card.querySelector('.frase-generata p').textContent;
-            const btn = card.querySelector('.copy-btn');
-            
-            try {
-                await navigator.clipboard.writeText(frase);
-                const originalContent = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check"></i> Copiato';
-                btn.classList.remove('btn-outline-success');
-                btn.classList.add('btn-success');
-                
-                setTimeout(() => {
-                    btn.innerHTML = originalContent;
-                    btn.classList.add('btn-outline-success');
-                    btn.classList.remove('btn-success');
-                }, 2000);
-                
-                showAlert('Frase copiata negli appunti', 'success', 2000);
-            } catch (error) {
-                showAlert('Errore nella copia della frase', 'danger');
-            }
-        }
+
 
         // Modifica articolo
         function editArticolo(articolo) {
@@ -1420,56 +1290,48 @@
         });
     </script>
 
-    <!-- Footer Brand -->
-    <footer class="footer-section mt-5 pt-4 border-top">
-        <div class="row text-center text-md-start">
-            <div class="col-md-4 mb-3">
-                <h6 class="fw-bold text-dark mb-3">
-                    Preloved Vintage & Modern
-                </h6>
-                <p class="small text-muted mb-0 lh-base">
-                    Specializzati nella vendita di capi e accessori di lusso autentici preloved, 
-                    selezionati con attenzione per offrire il massimo della qualità e dello stile.
-                </p>
-            </div>
-            <div class="col-md-4 mb-3">
-                <h6 class="fw-bold text-dark mb-3">
-                    La Nostra Missione
-                </h6>
-                <p class="small text-muted mb-0 lh-base">
-                    Promuovere un approccio sostenibile alla moda, dando nuova vita 
-                    a pezzi iconici senza tempo che rappresentano l'eleganza eterna.
-                </p>
-            </div>
-            <div class="col-md-4 mb-3">
-                <h6 class="fw-bold text-dark mb-3">
+    <!-- Footer Professional -->
+    <footer class="footer-section mt-5 pt-4 border-top text-center">
+        <div class="container" style="max-width: 600px;">
+            <!-- Social Icons First -->
+            <div class="mb-4">
+                <h6 class="fw-bold mb-3" style="color: var(--primary-color);">
                     Seguici Online
                 </h6>
-                <div class="d-flex justify-content-center justify-content-md-start align-items-center">
+                <div class="d-flex justify-content-center gap-3">
                     <a href="https://it.vestiairecollective.com/profile/29517320/" target="_blank" 
-                       class="btn btn-sm me-2" 
-                       style="border: 1px solid var(--secondary-color); color: var(--secondary-color); background: transparent; border-radius: 20px; padding: 8px 16px; font-size: 0.8rem; transition: all 0.3s ease;" 
+                       class="btn btn-lg" 
+                       style="border: 2px solid var(--warning-color); color: var(--warning-color); background: transparent; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.3s ease;" 
                        title="Vintage and Modern su Vestiaire Collective"
-                       onmouseover="this.style.background='var(--secondary-color)'; this.style.color='white';"
-                       onmouseout="this.style.background='transparent'; this.style.color='var(--secondary-color)';">
-                        <i class="fas fa-shopping-bag me-1"></i>
-                        <span class="d-none d-lg-inline">Vestiaire</span>
+                       onmouseover="this.style.background='var(--warning-color)'; this.style.color='white'; this.style.transform='scale(1.1)';"
+                       onmouseout="this.style.background='transparent'; this.style.color='var(--warning-color)'; this.style.transform='scale(1)';">
+                        <i class="fas fa-shopping-bag"></i>
                     </a>
                     <a href="https://www.instagram.com/preloved_vintage_and_modern/" target="_blank" 
-                       class="btn btn-sm" 
-                       style="border: 1px solid var(--secondary-color); color: var(--secondary-color); background: transparent; border-radius: 20px; padding: 8px 16px; font-size: 0.8rem; transition: all 0.3s ease;" 
+                       class="btn btn-lg" 
+                       style="border: 2px solid var(--success-color); color: var(--success-color); background: transparent; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.3s ease;" 
                        title="Seguici su Instagram"
-                       onmouseover="this.style.background='var(--secondary-color)'; this.style.color='white';"
-                       onmouseout="this.style.background='transparent'; this.style.color='var(--secondary-color)';">
-                        <i class="fab fa-instagram me-1"></i>
-                        <span class="d-none d-lg-inline">Instagram</span>
+                       onmouseover="this.style.background='var(--success-color)'; this.style.color='white'; this.style.transform='scale(1.1)';"
+                       onmouseout="this.style.background='transparent'; this.style.color='var(--success-color)'; this.style.transform='scale(1)';">
+                        <i class="fab fa-instagram"></i>
                     </a>
                 </div>
             </div>
-        </div>
-        <hr class="my-4">
-        <div class="text-center">
-            <p class="small text-muted mb-0">
+            
+            <!-- Company Info -->
+            <div class="mb-3">
+                <h5 class="fw-bold mb-2" style="color: var(--primary-color);">
+                    Preloved Vintage & Modern
+                </h5>
+                <p class="small mb-0" style="color: #8B6F47; line-height: 1.6;">
+                    Specializzati nella vendita di capi e accessori di lusso autentici preloved.<br>
+                    Promuoviamo un approccio sostenibile alla moda con pezzi iconici senza tempo.
+                </p>
+            </div>
+            
+            <!-- Copyright -->
+            <hr style="border-color: var(--accent-color); margin: 2rem 0 1rem 0;">
+            <p class="small mb-0" style="color: #8B6F47;">
                 © 2025 Preloved Vintage & Modern - Sistema di gestione articoli di lusso
             </p>
         </div>
