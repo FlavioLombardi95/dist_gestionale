@@ -1038,3 +1038,16 @@ connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.30.239)
 2025-06-12 16:44:14,656 - __main__ - INFO - 📦 Caricati 5 articoli
 2025-06-12 16:44:14,657 - __main__ - INFO - GET /api/articoli - 0.006s
 2025-06-12 16:44:14,657 - werkzeug - INFO - 127.0.0.1 - - [12/Jun/2025 16:44:14] "GET /api/articoli HTTP/1.1" 200 -
+2025-06-12 16:59:53,046 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:59:53,046 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:59:53,254 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:59:53,254 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:59:54,187 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:59:54,189 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:59:54,220 - __main__ - ERROR - Errore nell'inizializzazione del database: (sqlite3.OperationalError) no such table: articoli
+[SQL: 
+DROP TABLE articoli]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-12 16:59:54,236 - __main__ - ERROR - Errore nell'inizializzazione del database: (builtins.NameError) name 'timezone' is not defined
+[SQL: INSERT INTO articoli (nome, brand, immagine, colore, materiale, keywords, termini_commerciali, condizioni, rarita, vintage, target, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: [{'condizioni': 'Ottime', 'keywords': 'borsa, speedy, monogram, classica', 'nome': 'Borsa Speedy 30', 'materiale': 'Canvas Monogram', 'target': 'Donna' ... (10 characters truncated) ... _commerciali': 'autentica, vintage, collezione', 'rarita': 'Comune', 'vintage': True, 'brand': 'Louis Vuitton', 'colore': 'Marrone', 'immagine': None}, {'condizioni': 'Eccellenti', 'keywords': 'sciarpa, cashmere, elegante', 'nome': 'Sciarpa Cashmere', 'materiale': 'Cashmere', 'target': 'Unisex', 'termini_commerciali': 'lusso, artigianale, francese', 'rarita': 'Raro', 'vintage': False, 'brand': 'Hermès', 'colore': 'Blu Navy', 'immagine': None}, {'condizioni': 'Eccellenti', 'keywords': 'orologio, submariner, diving, automatico', 'nome': 'Orologio Submariner', 'materiale': 'Acciaio Inossidabile ... (27 characters truncated) ... ni_commerciali': 'investimento, collezione, svizzero', 'rarita': 'Molto Raro', 'vintage': False, 'brand': 'Rolex', 'colore': 'Nero', 'immagine': None}, {'condizioni': 'Buone', 'keywords': 'sneakers, jordan, basketball, retro', 'nome': 'Sneakers Air Jordan 1', 'materiale': 'Pelle', 'target': 'Unisex',  ... (10 characters truncated) ... ommerciali': 'limited edition, streetwear, iconica', 'rarita': 'Raro', 'vintage': True, 'brand': 'Nike', 'colore': 'Rosso e Bianco', 'immagine': None}, {'condizioni': 'Eccellenti', 'keywords': 'giacca, blazer, elegante, formale', 'nome': 'Giacca Blazer', 'materiale': 'Tweed', 'target': 'Donna', 'termi ... (2 characters truncated) ... _commerciali': 'haute couture, parigina, sartoriale', 'rarita': 'Molto Raro', 'vintage': False, 'brand': 'Chanel', 'colore': 'Nero', 'immagine': None}]]

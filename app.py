@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 import random
 import re
 import logging
@@ -120,8 +120,8 @@ class Articolo(db.Model):
     rarita = db.Column(db.String(50), index=True)
     vintage = db.Column(db.Boolean, default=False, index=True)
     target = db.Column(db.String(100))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     def __repr__(self):
         return f'<Articolo {self.nome} - {self.brand}>'
@@ -1618,13 +1618,39 @@ def index():
 
 @app.route('/static/js/sw.js')
 def service_worker():
-    """Service Worker per PWA"""
-    return app.send_static_file('js/sw.js'), 200, {'Content-Type': 'application/javascript'}
+    """Service Worker per PWA con fallback"""
+    try:
+        return app.send_static_file('js/sw.js'), 200, {'Content-Type': 'application/javascript'}
+    except Exception as e:
+        logger.warning(f"Service worker non trovato: {e}")
+        return "// Service worker non disponibile", 200, {'Content-Type': 'application/javascript'}
 
 @app.route('/static/manifest.json')
 def manifest():
-    """Manifest per PWA"""
-    return app.send_static_file('manifest.json')
+    """Manifest per PWA con fallback"""
+    try:
+        return app.send_static_file('manifest.json')
+    except Exception as e:
+        logger.warning(f"Manifest non trovato: {e}")
+        return jsonify({"name": "Vintage & Modern", "short_name": "V&M"}), 200
+
+@app.route('/static/css/styles.css')
+def styles_css():
+    """CSS principale con fallback per Render"""
+    try:
+        return app.send_static_file('css/styles.css')
+    except Exception as e:
+        logger.warning(f"CSS non trovato: {e}")
+        return "/* CSS non disponibile */", 200, {'Content-Type': 'text/css'}
+
+@app.route('/static/js/performance.js')
+def performance_js():
+    """Performance JS con fallback per Render"""
+    try:
+        return app.send_static_file('js/performance.js')
+    except Exception as e:
+        logger.warning(f"Performance JS non trovato: {e}")
+        return "// Performance JS non disponibile", 200, {'Content-Type': 'application/javascript'}
 
 @app.route('/health')
 def health_check():
@@ -1674,7 +1700,7 @@ def health_check():
             'fallback_active': 'sqlite' in db_type.lower(),
             'high_availability': True
         },
-        'timestamp': datetime.utcnow().isoformat()
+        'timestamp': datetime.now(timezone.utc).isoformat()
     }
     
     return jsonify(health_status), 200, {'Content-Type': 'application/json'}
@@ -1993,8 +2019,16 @@ def internal_error(error):
 # ===============================
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8000))
+    # Render usa PORT environment variable, default 3000 per locale
+    port = int(os.environ.get('PORT', 3000))
     debug = not os.environ.get('DATABASE_URL')  # Debug solo in locale
     
     logger.info(f"🚀 Avvio applicazione su porta {port} (debug: {debug})")
-    app.run(debug=debug, port=port, host='0.0.0.0') 
+    
+    # Configurazione ottimizzata per Render
+    if os.environ.get('DATABASE_URL'):
+        # Produzione Render: configurazione ottimizzata
+        app.run(debug=False, port=port, host='0.0.0.0', threaded=True)
+    else:
+        # Sviluppo locale
+        app.run(debug=debug, port=port, host='0.0.0.0') 
