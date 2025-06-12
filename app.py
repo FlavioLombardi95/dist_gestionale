@@ -8,6 +8,7 @@ import logging
 from functools import wraps, lru_cache
 from typing import Dict, List, Optional, Tuple
 import time
+from sqlalchemy.exc import OperationalError, DisconnectionError
 
 # Configurazione logging
 logging.basicConfig(
@@ -42,8 +43,10 @@ def configure_database():
         app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
             'pool_pre_ping': True,
             'pool_recycle': 300,
-            'pool_size': 10,
-            'max_overflow': 20,
+            'pool_size': 3,        # Ridotto da 10 a 3
+            'max_overflow': 5,     # Ridotto da 20 a 5
+            'pool_timeout': 20,    # Timeout per ottenere connessione
+            'pool_reset_on_return': 'commit',
             'connect_args': {'sslmode': 'require'}
         }
         logger.info("🔗 Connesso a Supabase PostgreSQL")
@@ -158,6 +161,12 @@ def handle_errors(f):
         try:
             return f(*args, **kwargs)
         except Exception as e:
+            # Chiudi connessioni in caso di errore
+            try:
+                db.session.rollback()
+                db.session.close()
+            except:
+                pass
             logger.error(f"Errore in {f.__name__}: {str(e)}")
             return jsonify({'error': str(e)}), 500
     return decorated_function
@@ -196,6 +205,57 @@ def init_database():
             raise
 
 init_database()
+
+# ===============================
+# GESTIONE CONNESSIONI DATABASE
+# ===============================
+
+@app.teardown_appcontext
+def close_db_session(error):
+    """Chiude la sessione database dopo ogni richiesta"""
+    try:
+        db.session.remove()
+    except Exception as e:
+        logger.warning(f"Errore nella chiusura sessione DB: {e}")
+
+@app.after_request
+def after_request(response):
+    """Cleanup dopo ogni richiesta"""
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Errore nel commit: {e}")
+    finally:
+        db.session.close()
+    return response
+
+def retry_db_operation(func, max_retries=3, delay=1):
+    """Retry automatico per operazioni database con backoff esponenziale"""
+    for attempt in range(max_retries):
+        try:
+            return func()
+        except (OperationalError, DisconnectionError) as e:
+            if "Max client connections reached" in str(e) or "connection" in str(e).lower():
+                if attempt < max_retries - 1:
+                    wait_time = delay * (2 ** attempt)  # Backoff esponenziale
+                    logger.warning(f"Tentativo {attempt + 1} fallito, retry tra {wait_time}s: {e}")
+                    time.sleep(wait_time)
+                    # Forza chiusura connessioni
+                    try:
+                        db.session.close()
+                        db.engine.dispose()
+                    except:
+                        pass
+                    continue
+                else:
+                    logger.error(f"Tutti i {max_retries} tentativi falliti: {e}")
+                    raise
+            else:
+                raise
+        except Exception as e:
+            logger.error(f"Errore non recuperabile: {e}")
+            raise
 
 # ===============================
 # FUNZIONI HELPER OTTIMIZZATE
@@ -1422,7 +1482,7 @@ def manifest():
 @log_request_info
 def get_articoli():
     """Ottiene tutti gli articoli con caching e paginazione opzionale"""
-    try:
+    def _get_articoli_query():
         # Parametri query opzionali
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 100, type=int)
@@ -1441,15 +1501,19 @@ def get_articoli():
         if per_page < 100:
             articoli = query.paginate(page=page, per_page=per_page, error_out=False)
             result = [articolo.to_dict() for articolo in articoli.items]
-            return jsonify({
+            return {
                 'articoli': result,
                 'total': articoli.total,
                 'pages': articoli.pages,
                 'current_page': page
-            })
+            }
         else:
             articoli = query.all()
-            return jsonify([articolo.to_dict() for articolo in articoli])
+            return [articolo.to_dict() for articolo in articoli]
+    
+    try:
+        result = retry_db_operation(_get_articoli_query)
+        return jsonify(result)
             
     except Exception as e:
         logger.error(f"Errore nel recupero articoli: {e}")
