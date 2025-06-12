@@ -932,3 +932,109 @@
 2025-06-12 16:05:30,158 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
 2025-06-12 16:05:30,172 - werkzeug - WARNING -  * Debugger is active!
 2025-06-12 16:05:30,184 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:07:40,388 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:07:40,505 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:07:41,394 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:07:41,440 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 16:07:41,446 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 16:07:41,468 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:07:41,484 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:13:08,410 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:13:08,567 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:13:09,699 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:13:09,767 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 16:13:09,778 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 16:13:09,812 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:13:09,829 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:13:50,223 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:13:50,332 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:13:51,123 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:13:51,167 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 16:13:51,172 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 16:13:51,191 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:13:51,204 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:41:31,948 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:41:32,191 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:42:03,896 - __main__ - WARNING - Test connessione fallito: (psycopg2.OperationalError) connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.30.239), port 6543 failed: timeout expired
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-12 16:42:03,896 - __main__ - ERROR - ❌ Errore connessione Supabase: (psycopg2.OperationalError) connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.30.239), port 6543 failed: timeout expired
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-12 16:42:03,897 - __main__ - WARNING - 🔄 Fallback a SQLite per alta disponibilità
+2025-06-12 16:42:03,897 - __main__ - INFO - 🔗 Usando SQLite di emergenza in produzione
+2025-06-12 16:42:03,940 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 16:42:03,946 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 16:42:03,973 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:42:03,991 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:42:22,143 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:42:22,287 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:42:23,367 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:42:23,406 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 16:42:23,411 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 16:42:23,429 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:42:23,443 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:42:23,856 - __main__ - WARNING - Test connessione fallito: (psycopg2.OperationalError) connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.30.239), port 6543 failed: timeout expired
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-12 16:42:23,856 - __main__ - ERROR - ❌ Errore connessione Supabase: (psycopg2.OperationalError) connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.30.239), port 6543 failed: timeout expired
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-12 16:42:23,856 - __main__ - WARNING - 🔄 Fallback a SQLite per alta disponibilità
+2025-06-12 16:42:23,856 - __main__ - INFO - 🔗 Usando SQLite di emergenza in produzione
+2025-06-12 16:42:23,898 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 16:42:23,903 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-12 16:42:23,934 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.8.42:8000
+2025-06-12 16:42:23,934 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-06-12 16:42:23,935 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:42:24,570 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:42:24,608 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 16:42:24,614 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-12 16:42:24,630 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:42:24,644 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:43:15,884 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:43:16,016 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:43:16,184 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:43:16,295 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:43:16,883 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:43:16,942 - __main__ - INFO - ✅ Database di sviluppo inizializzato con 5 articoli di test
+2025-06-12 16:43:16,949 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 16:43:16,970 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:43:16,986 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:43:17,006 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:43:17,055 - __main__ - INFO - ✅ Database di sviluppo inizializzato con 5 articoli di test
+2025-06-12 16:43:17,062 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-12 16:43:17,078 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:43:17,092 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:43:18,114 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:43:18,247 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:43:18,865 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:43:18,908 - __main__ - INFO - ✅ Database di sviluppo inizializzato con 5 articoli di test
+2025-06-12 16:43:18,913 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-12 16:43:18,929 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:43:18,942 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:43:19,016 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 16:43:19,114 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 16:43:19,704 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:43:19,745 - __main__ - INFO - ✅ Database di sviluppo inizializzato con 5 articoli di test
+2025-06-12 16:43:19,750 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 16:43:19,764 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 16:43:19,776 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 16:43:43,473 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 16:43:43,521 - __main__ - INFO - ✅ Database di sviluppo inizializzato con 5 articoli di test
+2025-06-12 16:43:43,527 - __main__ - INFO - 🚀 Avvio applicazione su porta 8000 (debug: True)
+2025-06-12 16:43:57,142 - werkzeug - INFO - 127.0.0.1 - - [12/Jun/2025 16:43:57] "GET /health HTTP/1.1" 200 -
+2025-06-12 16:44:14,656 - __main__ - INFO - 📦 Caricati 5 articoli
+2025-06-12 16:44:14,657 - __main__ - INFO - GET /api/articoli - 0.006s
+2025-06-12 16:44:14,657 - werkzeug - INFO - 127.0.0.1 - - [12/Jun/2025 16:44:14] "GET /api/articoli HTTP/1.1" 200 -

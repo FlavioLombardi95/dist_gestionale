@@ -234,7 +234,76 @@ def init_database():
                 # Sviluppo locale: ricrea tutto
                 db.drop_all()
                 db.create_all()
-                logger.info("Database di sviluppo inizializzato")
+                
+                # Aggiungi dati di test per sviluppo locale
+                articoli_test = [
+                    Articolo(
+                        nome="Borsa Speedy 30",
+                        brand="Louis Vuitton",
+                        colore="Marrone",
+                        materiale="Canvas Monogram",
+                        keywords="borsa, speedy, monogram, classica",
+                        termini_commerciali="autentica, vintage, collezione",
+                        condizioni="Ottime",
+                        rarita="Comune",
+                        vintage=True,
+                        target="Donna"
+                    ),
+                    Articolo(
+                        nome="Sciarpa Cashmere",
+                        brand="Hermès",
+                        colore="Blu Navy",
+                        materiale="Cashmere",
+                        keywords="sciarpa, cashmere, elegante",
+                        termini_commerciali="lusso, artigianale, francese",
+                        condizioni="Eccellenti",
+                        rarita="Raro",
+                        vintage=False,
+                        target="Unisex"
+                    ),
+                    Articolo(
+                        nome="Orologio Submariner",
+                        brand="Rolex",
+                        colore="Nero",
+                        materiale="Acciaio Inossidabile",
+                        keywords="orologio, submariner, diving, automatico",
+                        termini_commerciali="investimento, collezione, svizzero",
+                        condizioni="Eccellenti",
+                        rarita="Molto Raro",
+                        vintage=False,
+                        target="Uomo"
+                    ),
+                    Articolo(
+                        nome="Sneakers Air Jordan 1",
+                        brand="Nike",
+                        colore="Rosso e Bianco",
+                        materiale="Pelle",
+                        keywords="sneakers, jordan, basketball, retro",
+                        termini_commerciali="limited edition, streetwear, iconica",
+                        condizioni="Buone",
+                        rarita="Raro",
+                        vintage=True,
+                        target="Unisex"
+                    ),
+                    Articolo(
+                        nome="Giacca Blazer",
+                        brand="Chanel",
+                        colore="Nero",
+                        materiale="Tweed",
+                        keywords="giacca, blazer, elegante, formale",
+                        termini_commerciali="haute couture, parigina, sartoriale",
+                        condizioni="Eccellenti",
+                        rarita="Molto Raro",
+                        vintage=False,
+                        target="Donna"
+                    )
+                ]
+                
+                for articolo in articoli_test:
+                    db.session.add(articolo)
+                
+                db.session.commit()
+                logger.info(f"✅ Database di sviluppo inizializzato con {len(articoli_test)} articoli di test")
         except Exception as e:
             logger.error(f"Errore nell'inizializzazione del database: {e}")
             raise
@@ -1611,7 +1680,6 @@ def health_check():
     return jsonify(health_status), 200, {'Content-Type': 'application/json'}
 
 @app.route('/api/articoli', methods=['GET'])
-@handle_errors
 @log_request_info
 def get_articoli():
     """Ottiene tutti gli articoli con caching e paginazione opzionale"""
@@ -1630,27 +1698,21 @@ def get_articoli():
         # Ordina per data di creazione (più recenti prima)
         query = query.order_by(Articolo.created_at.desc())
         
-        # Paginazione se richiesta
-        if per_page < 100:
-            articoli = query.paginate(page=page, per_page=per_page, error_out=False)
-            result = [articolo.to_dict() for articolo in articoli.items]
-            return {
-                'articoli': result,
-                'total': articoli.total,
-                'pages': articoli.pages,
-                'current_page': page
-            }
-        else:
-            articoli = query.all()
-            return [articolo.to_dict() for articolo in articoli]
+        # SEMPRE restituisci array per compatibilità frontend
+        articoli = query.all()
+        return [articolo.to_dict() for articolo in articoli]
     
     try:
         result = retry_db_operation(_get_articoli_query)
-        return jsonify(result)
+        logger.info(f"📦 Caricati {len(result)} articoli")
+        return jsonify(result), 200
             
     except Exception as e:
-        logger.error(f"Errore nel recupero articoli: {e}")
-        raise
+        error_msg = str(e)
+        logger.error(f"❌ Errore nel recupero articoli: {error_msg}")
+        
+        # Restituisci array vuoto in caso di errore per evitare crash frontend
+        return jsonify([]), 200
 
 @app.route('/api/articoli', methods=['POST'])
 @log_request_info
