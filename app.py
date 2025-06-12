@@ -48,7 +48,6 @@ def configure_database():
                 'max_overflow': 2,     # DRASTICO: max 3 connessioni totali
                 'pool_timeout': 10,    # Timeout ridotto a 10s
                 'pool_reset_on_return': 'commit',
-                'pool_checkout_timeout': 10,
                 'connect_args': {
                     'sslmode': 'require',
                     'connect_timeout': 10,
@@ -56,14 +55,22 @@ def configure_database():
                 }
             }
             
-            # Test connessione immediato
-            from sqlalchemy import create_engine
-            test_engine = create_engine(DATABASE_URL, **app.config['SQLALCHEMY_ENGINE_OPTIONS'])
-            test_conn = test_engine.connect()
-            test_conn.close()
-            test_engine.dispose()
-            
-            logger.info("🔗 Connesso a Supabase PostgreSQL (testato)")
+            # Test connessione lazy (solo se necessario)
+            try:
+                from sqlalchemy import create_engine, text
+                test_engine = create_engine(DATABASE_URL, **app.config['SQLALCHEMY_ENGINE_OPTIONS'])
+                
+                # Test veloce con timeout
+                with test_engine.connect() as test_conn:
+                    test_conn.execute(text('SELECT 1'))
+                    test_conn.commit()
+                
+                test_engine.dispose()
+                logger.info("🔗 Connesso a Supabase PostgreSQL (testato)")
+                
+            except Exception as test_error:
+                logger.warning(f"Test connessione fallito: {test_error}")
+                raise test_error
             
         except Exception as e:
             logger.error(f"❌ Errore connessione Supabase: {e}")
@@ -1554,17 +1561,39 @@ def manifest():
 def health_check():
     """Health check per monitoraggio sistema"""
     try:
-        # Test connessione database
-        db.session.execute('SELECT 1')
+        # Test connessione database con timeout
+        from sqlalchemy import text
+        result = db.session.execute(text('SELECT 1'))
+        result.close()
+        db.session.commit()
+        
         db_status = "OK"
-        db_type = "PostgreSQL" if "postgresql" in str(db.engine.url) else "SQLite"
+        db_url = str(db.engine.url)
+        
+        if "postgresql" in db_url:
+            db_type = "PostgreSQL (Supabase)"
+        elif "sqlite" in db_url:
+            if "production" in db_url:
+                db_type = "SQLite (Fallback)"
+            else:
+                db_type = "SQLite (Development)"
+        else:
+            db_type = "Unknown"
+            
     except Exception as e:
         db_status = f"ERROR: {str(e)[:100]}"
-        db_type = "UNKNOWN"
+        db_type = "DISCONNECTED"
+        
+        # Cleanup in caso di errore
+        try:
+            db.session.rollback()
+            db.session.close()
+        except:
+            pass
     
     circuit_status = "OPEN" if is_circuit_open() else "CLOSED"
     
-    return jsonify({
+    health_status = {
         'status': 'OK' if db_status == 'OK' else 'DEGRADED',
         'database': {
             'status': db_status,
@@ -1572,8 +1601,14 @@ def health_check():
             'circuit_breaker': circuit_status,
             'failures': SUPABASE_CIRCUIT_BREAKER['failures']
         },
+        'system': {
+            'fallback_active': 'sqlite' in db_type.lower(),
+            'high_availability': True
+        },
         'timestamp': datetime.utcnow().isoformat()
-    }), 200, {'Content-Type': 'application/json'}
+    }
+    
+    return jsonify(health_status), 200, {'Content-Type': 'application/json'}
 
 @app.route('/api/articoli', methods=['GET'])
 @handle_errors
