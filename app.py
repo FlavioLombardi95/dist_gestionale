@@ -391,8 +391,8 @@ def classifica_keywords(keywords: List[str]) -> Dict[str, List[str]]:
     
     return risultato
 
-def concordanza_aggettivo(aggettivo: str, genere: str) -> str:
-    """Converte aggettivi al genere corretto con cache - VERSIONE CORRETTA"""
+def concordanza_aggettivo(aggettivo: str, genere: str, tipo_articolo: str = "") -> str:
+    """Converte aggettivi al genere corretto con gestione plurali - VERSIONE CORRETTA"""
     if not aggettivo or not genere:
         return aggettivo or ""
         
@@ -404,65 +404,74 @@ def concordanza_aggettivo(aggettivo: str, genere: str) -> str:
     aggettivo = aggettivo.strip()
     if not aggettivo:
         return ""
+    
+    # *** NUOVA GESTIONE PLURALI ***
+    is_plural = tipo_articolo in ['scarpe', 'occhiali', 'pantaloni']
         
-    # **MAPPATURA ESTESA** - Aggiunti tutti gli aggettivi mancanti
+            # **MAPPATURA ESTESA** - Con supporto plurali
     concordanze = {
-        'nero': {'m': 'nero', 'f': 'nera'},
-        'bianco': {'m': 'bianco', 'f': 'bianca'},
-        'rosso': {'m': 'rosso', 'f': 'rossa'},
-        'grigio': {'m': 'grigio', 'f': 'grigia'},
-        'giallo': {'m': 'giallo', 'f': 'gialla'},
-        'verde': {'m': 'verde', 'f': 'verde'},  # invariabile
-        'blu': {'m': 'blu', 'f': 'blu'},  # invariabile
-        'rosa': {'m': 'rosa', 'f': 'rosa'},  # invariabile
-        'marrone': {'m': 'marrone', 'f': 'marrone'},  # invariabile
-        'viola': {'m': 'viola', 'f': 'viola'},  # invariabile
-        'beige': {'m': 'beige', 'f': 'beige'},  # invariabile
-        'raro': {'m': 'raro', 'f': 'rara'},
-        'nuovo': {'m': 'nuovo', 'f': 'nuova'},
-        'usato': {'m': 'usato', 'f': 'usata'},
-        'perfetto': {'m': 'perfetto', 'f': 'perfetta'},
-        'iconico': {'m': 'iconico', 'f': 'iconica'},
-        'esclusivo': {'m': 'esclusivo', 'f': 'esclusiva'},
-        'stupendo': {'m': 'stupendo', 'f': 'stupenda'},
-        'bello': {'m': 'bello', 'f': 'bella'},
-        'magnifico': {'m': 'magnifico', 'f': 'magnifica'},
-        'meraviglioso': {'m': 'meraviglioso', 'f': 'meravigliosa'},
-        'splendido': {'m': 'splendido', 'f': 'splendida'},
-        'fantastico': {'m': 'fantastico', 'f': 'fantastica'},
-        'straordinario': {'m': 'straordinario', 'f': 'straordinaria'},
-        'elegante': {'m': 'elegante', 'f': 'elegante'},  # invariabile
-        'raffinato': {'m': 'raffinato', 'f': 'raffinata'},
-        'classico': {'m': 'classico', 'f': 'classica'},
-        'moderno': {'m': 'moderno', 'f': 'moderna'},
-        'vintage': {'m': 'vintage', 'f': 'vintage'},  # invariabile
-        'introvabile': {'m': 'introvabile', 'f': 'introvabile'},  # invariabile
-        'ricercato': {'m': 'ricercato', 'f': 'ricercata'},
-        'pregiato': {'m': 'pregiato', 'f': 'pregiata'},
-        'realizzato': {'m': 'realizzato', 'f': 'realizzata'},
-        'classificato': {'m': 'classificato', 'f': 'classificata'},
-        'conservato': {'m': 'conservato', 'f': 'conservata'},
-        'tenuto': {'m': 'tenuto', 'f': 'tenuta'},
-        'garantito': {'m': 'garantito', 'f': 'garantita'},
-        'dorato': {'m': 'dorato', 'f': 'dorata'},  # *** AGGIUNTO ***
-        'argentato': {'m': 'argentato', 'f': 'argentata'},  # *** AGGIUNTO ***
-        'metallico': {'m': 'metallico', 'f': 'metallica'},  # *** AGGIUNTO ***
+        'nero': {'m': 'nero', 'f': 'nera', 'mp': 'neri', 'fp': 'nere'},
+        'bianco': {'m': 'bianco', 'f': 'bianca', 'mp': 'bianchi', 'fp': 'bianche'},
+        'rosso': {'m': 'rosso', 'f': 'rossa', 'mp': 'rossi', 'fp': 'rosse'},
+        'grigio': {'m': 'grigio', 'f': 'grigia', 'mp': 'grigi', 'fp': 'grigie'},
+        'giallo': {'m': 'giallo', 'f': 'gialla', 'mp': 'gialli', 'fp': 'gialle'},
+        'verde': {'m': 'verde', 'f': 'verde', 'mp': 'verdi', 'fp': 'verdi'},
+        'blu': {'m': 'blu', 'f': 'blu', 'mp': 'blu', 'fp': 'blu'},
+        'rosa': {'m': 'rosa', 'f': 'rosa', 'mp': 'rosa', 'fp': 'rosa'},
+        'marrone': {'m': 'marrone', 'f': 'marrone', 'mp': 'marroni', 'fp': 'marroni'},
+        'viola': {'m': 'viola', 'f': 'viola', 'mp': 'viola', 'fp': 'viola'},
+        'beige': {'m': 'beige', 'f': 'beige', 'mp': 'beige', 'fp': 'beige'},
+        'raro': {'m': 'raro', 'f': 'rara', 'mp': 'rari', 'fp': 'rare'},
+        'nuovo': {'m': 'nuovo', 'f': 'nuova', 'mp': 'nuovi', 'fp': 'nuove'},
+        'usato': {'m': 'usato', 'f': 'usata', 'mp': 'usati', 'fp': 'usate'},
+        'perfetto': {'m': 'perfetto', 'f': 'perfetta', 'mp': 'perfetti', 'fp': 'perfette'},
+        'iconico': {'m': 'iconico', 'f': 'iconica', 'mp': 'iconici', 'fp': 'iconiche'},
+        'esclusivo': {'m': 'esclusivo', 'f': 'esclusiva', 'mp': 'esclusivi', 'fp': 'esclusive'},
+        'stupendo': {'m': 'stupendo', 'f': 'stupenda', 'mp': 'stupendi', 'fp': 'stupende'},
+        'bello': {'m': 'bello', 'f': 'bella', 'mp': 'belli', 'fp': 'belle'},
+        'magnifico': {'m': 'magnifico', 'f': 'magnifica', 'mp': 'magnifici', 'fp': 'magnifiche'},
+        'meraviglioso': {'m': 'meraviglioso', 'f': 'meravigliosa', 'mp': 'meravigliosi', 'fp': 'meravigliose'},
+        'splendido': {'m': 'splendido', 'f': 'splendida', 'mp': 'splendidi', 'fp': 'splendide'},
+        'fantastico': {'m': 'fantastico', 'f': 'fantastica', 'mp': 'fantastici', 'fp': 'fantastiche'},
+        'straordinario': {'m': 'straordinario', 'f': 'straordinaria', 'mp': 'straordinari', 'fp': 'straordinarie'},
+        'elegante': {'m': 'elegante', 'f': 'elegante', 'mp': 'eleganti', 'fp': 'eleganti'},
+        'raffinato': {'m': 'raffinato', 'f': 'raffinata', 'mp': 'raffinati', 'fp': 'raffinate'},
+        'classico': {'m': 'classico', 'f': 'classica', 'mp': 'classici', 'fp': 'classiche'},
+        'moderno': {'m': 'moderno', 'f': 'moderna', 'mp': 'moderni', 'fp': 'moderne'},
+        'vintage': {'m': 'vintage', 'f': 'vintage', 'mp': 'vintage', 'fp': 'vintage'},
+        'introvabile': {'m': 'introvabile', 'f': 'introvabile', 'mp': 'introvabili', 'fp': 'introvabili'},
+        'ricercato': {'m': 'ricercato', 'f': 'ricercata', 'mp': 'ricercati', 'fp': 'ricercate'},
+        'pregiato': {'m': 'pregiato', 'f': 'pregiata', 'mp': 'pregiati', 'fp': 'pregiate'},
+        'realizzato': {'m': 'realizzato', 'f': 'realizzata', 'mp': 'realizzati', 'fp': 'realizzate'},
+        'classificato': {'m': 'classificato', 'f': 'classificata', 'mp': 'classificati', 'fp': 'classificate'},
+        'conservato': {'m': 'conservato', 'f': 'conservata', 'mp': 'conservati', 'fp': 'conservate'},
+        'tenuto': {'m': 'tenuto', 'f': 'tenuta', 'mp': 'tenuti', 'fp': 'tenute'},
+        'garantito': {'m': 'garantito', 'f': 'garantita', 'mp': 'garantiti', 'fp': 'garantite'},
+        'dorato': {'m': 'dorato', 'f': 'dorata', 'mp': 'dorati', 'fp': 'dorate'},
+        'argentato': {'m': 'argentato', 'f': 'argentata', 'mp': 'argentati', 'fp': 'argentate'},
+        'metallico': {'m': 'metallico', 'f': 'metallica', 'mp': 'metallici', 'fp': 'metalliche'},
         # Aggettivi con forme tronche per gli errori visti
-        'bell': {'m': 'bello', 'f': 'bella'},
-        'ottim': {'m': 'ottimo', 'f': 'ottima'}, 
-        'particolar': {'m': 'particolare', 'f': 'particolare'},
-        'rarissim': {'m': 'rarissimo', 'f': 'rarissima'},
-        'unic': {'m': 'unico', 'f': 'unica'},
-        'special': {'m': 'speciale', 'f': 'speciale'},
-        'splendid': {'m': 'splendido', 'f': 'splendida'},
-        'meraviglios': {'m': 'meraviglioso', 'f': 'meravigliosa'},
-        'rar': {'m': 'raro', 'f': 'rara'},
-        'ricercat': {'m': 'ricercato', 'f': 'ricercata'},
+        'bell': {'m': 'bello', 'f': 'bella', 'mp': 'belli', 'fp': 'belle'},
+        'ottim': {'m': 'ottimo', 'f': 'ottima', 'mp': 'ottimi', 'fp': 'ottime'}, 
+        'particolar': {'m': 'particolare', 'f': 'particolare', 'mp': 'particolari', 'fp': 'particolari'},
+        'rarissim': {'m': 'rarissimo', 'f': 'rarissima', 'mp': 'rarissimi', 'fp': 'rarissime'},
+        'unic': {'m': 'unico', 'f': 'unica', 'mp': 'unici', 'fp': 'uniche'},
+        'special': {'m': 'speciale', 'f': 'speciale', 'mp': 'speciali', 'fp': 'speciali'},
+        'splendid': {'m': 'splendido', 'f': 'splendida', 'mp': 'splendidi', 'fp': 'splendide'},
+        'meraviglios': {'m': 'meraviglioso', 'f': 'meravigliosa', 'mp': 'meravigliosi', 'fp': 'meravigliose'},
+        'rar': {'m': 'raro', 'f': 'rara', 'mp': 'rari', 'fp': 'rare'},
+        'ricercat': {'m': 'ricercato', 'f': 'ricercata', 'mp': 'ricercati', 'fp': 'ricercate'},
     }
     
     aggettivo_lower = aggettivo.lower()
     if aggettivo_lower in concordanze:
-        risultato = concordanze[aggettivo_lower].get(genere, aggettivo)
+        # Seleziona la forma corretta (singolare o plurale)
+        if is_plural:
+            chiave_forma = 'fp' if genere == 'f' else 'mp'
+        else:
+            chiave_forma = genere
+        
+        risultato = concordanze[aggettivo_lower].get(chiave_forma, aggettivo)
         # *** CORREZIONE: Mantieni la capitalizzazione originale se necessaria ***
         if aggettivo[0].isupper() and risultato:
             return risultato[0].upper() + risultato[1:] if len(risultato) > 1 else risultato.upper()
@@ -840,12 +849,12 @@ def _costruisci_descrizione_intelligente_vestiaire(brand: str, nome_pulito: str,
     
     # Seleziona UN SOLO aggettivo principale
     aggettivo_base = random.choice(aggettivi_qualita)
-    aggettivo_principale = concordanza_aggettivo(aggettivo_base, genere)
+    aggettivo_principale = concordanza_aggettivo(aggettivo_base, genere, tipo_articolo)
     
     # 🎨 COSTRUISCI DESCRIZIONE COLORE/MATERIALE INTELLIGENTE  
     dettagli_fisici = []
     
-    # Gestione colore intelligente (SISTEMA AVANZATO)
+    # Gestione colore intelligente (SISTEMA AVANZATO) - PREVENZIONE RIPETIZIONI
     if parametri['colore']:
         colore_originale = parametri['colore'].lower().strip()
         
@@ -859,45 +868,80 @@ def _costruisci_descrizione_intelligente_vestiaire(brand: str, nome_pulito: str,
         }
         colore_originale = correzioni_colori.get(colore_originale, colore_originale)
         
-        # Gestione colori specifici con concordanza
+        # SISTEMA ANTI-RIPETIZIONE: se il colore è già nel nome del prodotto, usa alternative
+        colore_nel_nome = any(colore_originale in part.lower() for part in [nome_pulito or '', modello or ''])
+        
+        # Gestione colori specifici con concordanza - PLURALI CORRETTI
         if 'nero' in colore_originale or 'black' in colore_originale:
-            if genere == 'f':
-                dettagli_fisici.append(random.choice(['nera', 'total black', 'in nero']))
+            if colore_nel_nome:
+                dettagli_fisici.append('total black' if genere == 'm' else 'elegante')
+            elif genere == 'f' and tipo_articolo not in ['scarpe']:
+                dettagli_fisici.append(random.choice(['nera', 'in nero']))
+            elif tipo_articolo in ['scarpe']:
+                dettagli_fisici.append(random.choice(['nere', 'total black']))
             else:
                 dettagli_fisici.append(random.choice(['nero', 'total black', 'in nero']))
         elif 'bianco' in colore_originale or 'white' in colore_originale:
-            if genere == 'f':
+            if colore_nel_nome:
+                dettagli_fisici.append('candido' if genere == 'm' else 'candida')
+            elif genere == 'f' and tipo_articolo not in ['scarpe']:
                 dettagli_fisici.append(random.choice(['bianca', 'in bianco']))
+            elif tipo_articolo in ['scarpe']:
+                dettagli_fisici.append(random.choice(['bianche', 'total white']))
             else:
                 dettagli_fisici.append(random.choice(['bianco', 'in bianco']))
         elif 'rosso' in colore_originale or 'red' in colore_originale:
-            if genere == 'f':
+            if colore_nel_nome:
+                dettagli_fisici.append('intenso' if genere == 'm' else 'intensa')
+            elif genere == 'f' and tipo_articolo not in ['scarpe']:
                 dettagli_fisici.append(random.choice(['rossa', 'rosso acceso']))
+            elif tipo_articolo in ['scarpe']:
+                dettagli_fisici.append(random.choice(['rosse', 'rosso fuoco']))
             else:
                 dettagli_fisici.append(random.choice(['rosso', 'rosso acceso']))
         elif 'grigio' in colore_originale or 'gray' in colore_originale:
-            if genere == 'f':
+            if colore_nel_nome:
+                dettagli_fisici.append('elegante')
+            elif genere == 'f':
                 dettagli_fisici.append(random.choice(['grigia', 'grigio perla']))
             else:
                 dettagli_fisici.append(random.choice(['grigio', 'grigio antracite']))
         elif 'oro' in colore_originale or 'gold' in colore_originale:
-            dettagli_fisici.append(random.choice(['oro', 'dorato', 'color oro']))
-        elif 'argento' in colore_originale or 'silver' in colore_originale:
-            dettagli_fisici.append(random.choice(['argento', 'argentato', 'color argento']))
-        elif 'beige' in colore_originale or 'tan' in colore_originale:
-            dettagli_fisici.append(random.choice(['beige', 'color sabbia', 'tortora']))
-        elif 'marrone' in colore_originale or 'brown' in colore_originale:
-            if genere == 'f':
-                dettagli_fisici.append(random.choice(['marrone', 'cioccolato']))
+            if colore_nel_nome:
+                dettagli_fisici.append('prezioso')
             else:
-                dettagli_fisici.append(random.choice(['marrone', 'mogano']))
+                dettagli_fisici.append(random.choice(['dorato', 'color oro', 'oro']))
+        elif 'argento' in colore_originale or 'silver' in colore_originale:
+            if colore_nel_nome:
+                dettagli_fisici.append('brillante')
+            else:
+                dettagli_fisici.append(random.choice(['argentato', 'color argento', 'argento']))
+        elif 'beige' in colore_originale or 'tan' in colore_originale:
+            if colore_nel_nome:
+                dettagli_fisici.append('elegante')
+            else:
+                dettagli_fisici.append(random.choice(['color sabbia', 'tortora', 'beige']))
+        elif 'marrone' in colore_originale or 'brown' in colore_originale:
+            if colore_nel_nome:
+                dettagli_fisici.append('cioccolato' if genere == 'm' else 'elegante')
+            elif genere == 'f':
+                dettagli_fisici.append(random.choice(['cioccolato', 'mogano']))
+            else:
+                dettagli_fisici.append(random.choice(['mogano', 'cioccolato']))
         elif 'rosa' in colore_originale or 'pink' in colore_originale:
-            dettagli_fisici.append(random.choice(['rosa', 'rosa antico', 'color rosa']))
+            if colore_nel_nome:
+                dettagli_fisici.append('delicato')
+            else:
+                dettagli_fisici.append(random.choice(['rosa antico', 'color rosa', 'rosa']))
         elif 'blu' in colore_originale or 'blue' in colore_originale:
-            dettagli_fisici.append(random.choice(['blu', 'blu navy', 'color blu']))
+            if colore_nel_nome:
+                dettagli_fisici.append('intenso')
+            else:
+                dettagli_fisici.append(random.choice(['blu navy', 'color blu', 'blu']))
         else:
-            # Altri colori
-            dettagli_fisici.append(concordanza_aggettivo(colore_originale, genere))
+            # Altri colori - evita ripetizioni
+            if not colore_nel_nome:
+                dettagli_fisici.append(concordanza_aggettivo(colore_originale, genere, tipo_articolo))
     
     # Materiale (solo se diverso dal colore)
     if parametri['materiale'] and parametri['materiale'].lower() not in ['nero', 'bianco', 'rosso']:
@@ -1300,7 +1344,7 @@ def _pulisci_messaggio_vestiaire_migliorato(messaggio: str, brand: str, nome_pul
     return messaggio_pulito
 
 def _get_articolo_indeterminativo_corretto(genere: str, tipo: str) -> str:
-    """Articoli indeterminativi grammaticalmente corretti"""
+    """Articoli indeterminativi grammaticalmente corretti - CORREZIONE APOSTROFI"""
     if genere == 'f':
         if tipo in ['scarpe', 'sneakers']:
             return 'delle'
@@ -1309,8 +1353,13 @@ def _get_articolo_indeterminativo_corretto(genere: str, tipo: str) -> str:
     else:
         if tipo in ['pantaloni', 'jeans']:
             return 'dei'
+        elif tipo in ['occhiali', 'occhiale']:
+            return 'degli'
         elif tipo.startswith(('a', 'e', 'i', 'o', 'u')):
-            return "un'"
+            # CORREZIONE: "accessorio" deve essere "uno", non "un'"
+            if tipo in ['accessorio', 'anello', 'orologio']:
+                return 'uno'
+            return "un'"  # Solo per parole femminili che iniziano per vocale
         else:
             return 'un'
 
