@@ -9,21 +9,22 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1a1a1a;
-            --secondary-color: #4a4a4a;
-            --success-color: #6b7280;
-            --warning-color: #9ca3af;
-            --danger-color: #6b7280;
-            --light-bg: #fafafa;
-            --dark-text: #1a1a1a;
-            --accent-color: #d1d5db;
+            --primary-color: #654321;      /* Marrone Louis Vuitton classico */
+            --secondary-color: #8B4513;    /* Marrone caldo (saddle brown) */
+            --success-color: #B8860B;      /* Oro scuro elegante */
+            --warning-color: #DAA520;      /* Oro classico Louis Vuitton */
+            --danger-color: #A0522D;       /* Marrone rossiccio */
+            --light-bg: #FAF0E6;           /* Crema lino luxury */
+            --dark-text: #2F1B14;          /* Marrone molto scuro per testo */
+            --accent-color: #D2B48C;       /* Beige caldo */
+            --accent-gold: #FFD700;        /* Oro brillante per accenti speciali */
             --border-radius: 8px;
-            --box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+            --box-shadow: 0 2px 16px rgba(101, 67, 33, 0.1);
             --transition: all 0.3s ease;
         }
 
         body {
-            background: linear-gradient(135deg, #fafafa 0%, #f3f4f6 100%);
+            background: linear-gradient(135deg, #FAF0E6 0%, #F5E6D3 100%);
             min-height: 100vh;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             color: var(--dark-text);
@@ -53,7 +54,7 @@
         }
 
         .header-section p {
-            color: #6c757d;
+            color: #8B6F47;
             font-size: 1em;
             margin-bottom: 0;
             font-weight: 400;
@@ -235,13 +236,13 @@
         }
 
         .stats-card {
-            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-            border: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #FFFEF7 0%, #FAF0E6 100%);
+            border: 1px solid #E6D7C3;
             border-radius: var(--border-radius);
             padding: 30px 20px;
             text-align: center;
             margin-bottom: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 12px rgba(101, 67, 33, 0.08);
             transition: var(--transition);
             position: relative;
             overflow: hidden;
@@ -253,8 +254,8 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            height: 3px;
+            background: linear-gradient(90deg, var(--warning-color) 0%, var(--success-color) 100%);
         }
 
         .stats-card:hover {
@@ -270,7 +271,7 @@
 
         .stats-card p {
             margin: 8px 0 0 0;
-            color: #6c757d;
+            color: #8B6F47;
             font-size: 0.9em;
         }
 
@@ -311,7 +312,7 @@
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #6c757d;
+            color: #8B6F47;
         }
 
         .empty-state i {
@@ -394,7 +395,7 @@
 
         .style-option .description {
             font-size: 0.85em;
-            color: #6c757d;
+            color: #8B6F47;
             line-height: 1.4;
         }
 
@@ -406,11 +407,11 @@
             margin-right: 8px;
         }
 
-        .bg-gradient-elegante { background: #4b5563; color: white; }
-        .bg-gradient-emotivo { background: #6b7280; color: white; }
-        .bg-gradient-amichevole { background: #9ca3af; color: white; }
-        .bg-gradient-professionale { background: #374151; color: white; }
-        .bg-gradient-esclusivo { background: #1f2937; color: white; }
+        .bg-gradient-elegante { background: var(--primary-color); color: white; }
+        .bg-gradient-emotivo { background: var(--warning-color); color: var(--dark-text); }
+        .bg-gradient-amichevole { background: var(--accent-color); color: var(--dark-text); }
+        .bg-gradient-professionale { background: var(--secondary-color); color: white; }
+        .bg-gradient-esclusivo { background: var(--success-color); color: white; }
 
         @media (max-width: 768px) {
             .main-container {
@@ -546,7 +547,7 @@
 
         <!-- Form migliorato per nuovo articolo -->
         <div class="form-card card shadow-sm mb-5">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header" style="background: var(--primary-color); color: white;">
                 <h5 class="mb-0"><i class="fas fa-plus me-2"></i> <span id="formTitle">Nuovo Articolo</span></h5>
             </div>
             <div class="card-body">
@@ -697,7 +698,7 @@
                         <button type="button" class="btn btn-secondary me-2" id="resetBtn">
                             <i class="fas fa-undo"></i> Reset
                         </button>
-                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <button type="submit" class="btn" style="background: var(--primary-color); color: white;" id="submitBtn">
                             <i class="fas fa-save"></i> <span id="submitText">Salva Articolo</span>
                         </button>
                     </div>
@@ -761,7 +762,7 @@
         <div class="col-lg-4 col-md-6 mb-4 fade-in">
             <div class="card articolo-card">
                 <div class="status-badge">
-                    <span class="badge bg-success vintage-badge d-none">Vintage</span>
+                    <span class="badge vintage-badge d-none" style="background: var(--success-color); color: white;">Vintage</span>
                 </div>
                 <img src="" class="card-img-top" alt="">
                 <div class="card-body">
@@ -772,22 +773,22 @@
                     <div class="frase-generata d-none">
                         <p class="mb-2"></p>
                         <div class="d-flex gap-2 flex-wrap">
-                            <button class="btn btn-sm btn-outline-success copy-btn">
+                            <button class="btn btn-sm copy-btn" style="border: 1px solid var(--success-color); color: var(--success-color); background: transparent;">
                                 <i class="fas fa-copy"></i> Copia
                             </button>
-                            <button class="btn btn-sm btn-outline-primary rigenera-btn">
+                            <button class="btn btn-sm rigenera-btn" style="border: 1px solid var(--primary-color); color: var(--primary-color); background: transparent;">
                                 <i class="fas fa-sync"></i> Rigenera
                             </button>
                         </div>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
-                        <button class="btn btn-primary genera-messaggio-like-btn">
+                        <button class="btn genera-messaggio-like-btn" style="background: var(--primary-color); color: white; font-size: 0.85rem;">
                             <i class="fas fa-heart"></i> Messaggio Like
                         </button>
-                        <button class="btn btn-warning edit-btn">
+                        <button class="btn edit-btn" style="background: var(--secondary-color); color: white; font-size: 0.85rem;">
                             <i class="fas fa-edit"></i> Modifica
                         </button>
-                        <button class="btn btn-danger delete-btn">
+                        <button class="btn delete-btn" style="background: var(--danger-color); color: white; font-size: 0.85rem;">
                             <i class="fas fa-trash"></i> Elimina
                         </button>
                     </div>
@@ -998,7 +999,7 @@
                 field.classList.remove('is-invalid');
                 if (feedback && feedback.classList.contains('validation-feedback')) {
                     feedback.textContent = 'Campo valido';
-                    feedback.className = 'validation-feedback text-success';
+                    feedback.className = 'validation-feedback' ; feedback.style.color = 'var(--success-color)';
                 }
                 return true;
             }
@@ -1170,7 +1171,7 @@
             if (brands.length === 0) return;
             
             const title = document.createElement('h4');
-            title.className = 'mb-4 text-center text-primary fw-bold';
+            title.className = 'mb-4 text-center fw-bold'; title.style.color = 'var(--primary-color)';
             title.innerHTML = '<i class="fas fa-tags me-2"></i>Seleziona un Brand';
             brandSection.appendChild(title);
             
@@ -1356,8 +1357,8 @@
                 text: 'Questa azione non può essere annullata',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#e74c3c',
-                cancelButtonColor: '#6c757d',
+                confirmButtonColor: '#A0522D',
+                cancelButtonColor: '#8B6F47',
                 confirmButtonText: 'Elimina',
                 cancelButtonText: 'Annulla'
             });
@@ -1446,14 +1447,20 @@
                 </h6>
                 <div class="d-flex justify-content-center justify-content-md-start align-items-center">
                     <a href="https://it.vestiairecollective.com/profile/29517320/" target="_blank" 
-                       class="btn btn-outline-secondary btn-sm me-2" 
-                       title="Vintage and Modern su Vestiaire Collective">
+                       class="btn btn-sm me-2" 
+                       style="border: 1px solid var(--secondary-color); color: var(--secondary-color); background: transparent; border-radius: 20px; padding: 8px 16px; font-size: 0.8rem; transition: all 0.3s ease;" 
+                       title="Vintage and Modern su Vestiaire Collective"
+                       onmouseover="this.style.background='var(--secondary-color)'; this.style.color='white';"
+                       onmouseout="this.style.background='transparent'; this.style.color='var(--secondary-color)';">
                         <i class="fas fa-shopping-bag me-1"></i>
                         <span class="d-none d-lg-inline">Vestiaire</span>
                     </a>
                     <a href="https://www.instagram.com/preloved_vintage_and_modern/" target="_blank" 
-                       class="btn btn-outline-secondary btn-sm" 
-                       title="Seguici su Instagram">
+                       class="btn btn-sm" 
+                       style="border: 1px solid var(--secondary-color); color: var(--secondary-color); background: transparent; border-radius: 20px; padding: 8px 16px; font-size: 0.8rem; transition: all 0.3s ease;" 
+                       title="Seguici su Instagram"
+                       onmouseover="this.style.background='var(--secondary-color)'; this.style.color='white';"
+                       onmouseout="this.style.background='transparent'; this.style.color='var(--secondary-color)';">
                         <i class="fab fa-instagram me-1"></i>
                         <span class="d-none d-lg-inline">Instagram</span>
                     </a>
