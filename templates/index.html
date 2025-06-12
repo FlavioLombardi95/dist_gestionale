@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preloved Vintage & Modern - Gestionale Articoli di Lusso</title>
+    <title>Vintage & Modern - Gestionale Articoli di Lusso</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
@@ -445,7 +445,7 @@
         <!-- Header migliorato -->
         <div class="header-section text-center mb-5">
             <h1 class="display-5 fw-bold text-dark mb-3">
-                Preloved Vintage & Modern
+                Vintage & Modern
             </h1>
             <p class="lead text-muted">Gestionale professionale per articoli di lusso preloved autentici</p>
         </div>
@@ -1087,7 +1087,23 @@
             
             brands.forEach((brand, index) => {
                 const btn = document.createElement('button');
-                btn.className = 'btn btn-outline-primary brand-btn animate__animated animate__fadeInUp shadow-sm';
+                                    btn.className = 'btn brand-btn animate__animated animate__fadeInUp shadow-sm';
+                    btn.style.cssText = `
+                        border: 2px solid var(--primary-color);
+                        color: var(--primary-color);
+                        background: white;
+                        transition: all 0.3s ease;
+                    `;
+                    btn.onmouseover = function() {
+                        this.style.background = 'var(--primary-color)';
+                        this.style.color = 'white';
+                        this.style.borderColor = 'var(--primary-color)';
+                    };
+                    btn.onmouseout = function() {
+                        this.style.background = 'white';
+                        this.style.color = 'var(--primary-color)';
+                        this.style.borderColor = 'var(--primary-color)';
+                    };
                 btn.style.animationDelay = `${index * 0.1}s`;
                 btn.innerHTML = `<strong class="text-dark">${brand}</strong><br><small class="text-muted">${articoli.filter(a => a.brand === brand).length} articoli</small>`;
                 btn.onclick = () => {
@@ -1115,6 +1131,16 @@
                                 <i class="fas fa-search"></i>
                                 <h4>Nessun articolo trovato per ${brandSelezionato}</h4>
                                 <p>Prova a modificare i filtri di ricerca</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <h4>Nessun articolo presente</h4>
+                                <p>Aggiungi il primo articolo utilizzando il form sopra</p>
                             </div>
                         </div>
                     `;
@@ -1188,11 +1214,11 @@
 
         // Torna ai brand
         document.getElementById('backToBrands').addEventListener('click', () => {
+            brandSelezionato = null;  // Reset prima di tutto
+            document.getElementById('articoliList').innerHTML = '';  // Pulisci la lista
             mostraBrand(articoliGlobal);
-            mostraArticoli([]);
             document.getElementById('backToBrands').classList.add('d-none');
             document.getElementById('searchContainer').style.display = 'none';
-            brandSelezionato = null;
         });
 
 
@@ -1321,7 +1347,7 @@
             <!-- Company Info -->
             <div class="mb-3">
                 <h5 class="fw-bold mb-2" style="color: var(--primary-color);">
-                    Preloved Vintage & Modern
+                    Vintage & Modern
                 </h5>
                 <p class="small mb-0" style="color: #8B6F47; line-height: 1.6;">
                     Specializzati nella vendita di capi e accessori di lusso autentici preloved.<br>
@@ -1332,7 +1358,7 @@
             <!-- Copyright -->
             <hr style="border-color: var(--accent-color); margin: 2rem 0 1rem 0;">
             <p class="small mb-0" style="color: #8B6F47;">
-                © 2025 Preloved Vintage & Modern - Sistema di gestione articoli di lusso
+                © 2025 Vintage & Modern - Sistema di gestione articoli di lusso
             </p>
         </div>
     </footer>
