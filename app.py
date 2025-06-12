@@ -31,9 +31,20 @@ def configure_database():
     """Configura la connessione al database con fallback automatico"""
     DATABASE_URL = os.environ.get('DATABASE_URL')
     
-    if DATABASE_URL:
+    # Per test locale, forza Supabase se richiesto
+    FORCE_SUPABASE = os.environ.get('FORCE_SUPABASE', 'false').lower() == 'true'
+    
+    if DATABASE_URL or FORCE_SUPABASE:
         try:
-            # Produzione: Supabase PostgreSQL
+            # Se non c'è DATABASE_URL ma FORCE_SUPABASE è true, mostra istruzioni
+            if not DATABASE_URL and FORCE_SUPABASE:
+                logger.error("❌ FORCE_SUPABASE attivo ma DATABASE_URL non configurato!")
+                logger.error("📋 Per usare Supabase, configura DATABASE_URL con:")
+                logger.error("   export DATABASE_URL='postgresql://postgres:[PASSWORD]@[HOST]:[PORT]/postgres'")
+                logger.error("🔗 Ottieni l'URL da: Supabase Dashboard → Settings → Database → Connection string")
+                raise Exception("DATABASE_URL richiesto per FORCE_SUPABASE")
+            
+            # Produzione: Supabase PostgreSQL - Configurazione ottimizzata
             if 'supabase.co' in DATABASE_URL and 'sslmode' not in DATABASE_URL:
                 DATABASE_URL += '?sslmode=require'
             
@@ -43,48 +54,70 @@ def configure_database():
             app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
             app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
                 'pool_pre_ping': True,
-                'pool_recycle': 180,   # Ridotto da 300 a 180s
-                'pool_size': 1,        # DRASTICO: solo 1 connessione base
-                'max_overflow': 2,     # DRASTICO: max 3 connessioni totali
-                'pool_timeout': 10,    # Timeout ridotto a 10s
+                'pool_recycle': 300,      # Aumentato a 5 minuti
+                'pool_size': 5,           # Aumentato a 5 connessioni base
+                'max_overflow': 10,       # Aumentato a 15 connessioni totali
+                'pool_timeout': 30,       # Aumentato timeout a 30s
                 'pool_reset_on_return': 'commit',
                 'connect_args': {
                     'sslmode': 'require',
-                    'connect_timeout': 10,
-                    'application_name': 'gestionale_vintage'
+                    'connect_timeout': 30,    # Timeout connessione 30s
+                    'application_name': 'gestionale_vintage',
+                    'keepalives_idle': 600,   # Keep-alive ogni 10 minuti
+                    'keepalives_interval': 30,
+                    'keepalives_count': 3
                 }
             }
             
-            # Test connessione lazy (solo se necessario)
-            try:
-                from sqlalchemy import create_engine, text
-                test_engine = create_engine(DATABASE_URL, **app.config['SQLALCHEMY_ENGINE_OPTIONS'])
-                
-                # Test veloce con timeout
-                with test_engine.connect() as test_conn:
-                    test_conn.execute(text('SELECT 1'))
-                    test_conn.commit()
-                
-                test_engine.dispose()
-                logger.info("🔗 Connesso a Supabase PostgreSQL (testato)")
-                
-            except Exception as test_error:
-                logger.warning(f"Test connessione fallito: {test_error}")
-                raise test_error
+            # Test connessione con retry
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    from sqlalchemy import create_engine, text
+                    test_engine = create_engine(DATABASE_URL, **app.config['SQLALCHEMY_ENGINE_OPTIONS'])
+                    
+                    logger.info(f"🔄 Tentativo connessione Supabase {attempt + 1}/{max_retries}...")
+                    
+                    # Test con timeout più lungo
+                    with test_engine.connect() as test_conn:
+                        result = test_conn.execute(text('SELECT 1 as test'))
+                        test_result = result.fetchone()
+                        test_conn.commit()
+                        
+                        if test_result and test_result[0] == 1:
+                            logger.info("✅ Connesso a Supabase PostgreSQL (testato)")
+                            test_engine.dispose()
+                            return  # Successo!
+                    
+                    test_engine.dispose()
+                    
+                except Exception as test_error:
+                    logger.warning(f"❌ Tentativo {attempt + 1} fallito: {test_error}")
+                    if attempt < max_retries - 1:
+                        import time
+                        time.sleep(2 ** attempt)  # Backoff esponenziale
+                    else:
+                        raise test_error
             
         except Exception as e:
-            logger.error(f"❌ Errore connessione Supabase: {e}")
-            logger.warning("🔄 Fallback a SQLite per alta disponibilità")
+            logger.error(f"❌ Errore connessione Supabase dopo {max_retries} tentativi: {e}")
             
-            # FALLBACK: SQLite in produzione per alta disponibilità
-            app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gestionale_production.db'
-            app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-                'pool_pre_ping': True,
-                'pool_recycle': 3600,
-                'pool_size': 5,
-                'max_overflow': 10
-            }
-            logger.info("🔗 Usando SQLite di emergenza in produzione")
+            # Solo fallback se non stiamo forzando Supabase
+            if not FORCE_SUPABASE:
+                logger.warning("🔄 Fallback a SQLite per alta disponibilità")
+                
+                # FALLBACK: SQLite in produzione per alta disponibilità
+                app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gestionale_production.db'
+                app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+                    'pool_pre_ping': True,
+                    'pool_recycle': 3600,
+                    'pool_size': 5,
+                    'max_overflow': 10
+                }
+                logger.info("🔗 Usando SQLite di emergenza in produzione")
+            else:
+                logger.error("💥 FORCE_SUPABASE attivo - non uso fallback SQLite")
+                raise e
     else:
         # Sviluppo: SQLite locale
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gestionale.db'

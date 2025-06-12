@@ -1051,3 +1051,28 @@ DROP TABLE articoli]
 2025-06-12 16:59:54,236 - __main__ - ERROR - Errore nell'inizializzazione del database: (builtins.NameError) name 'timezone' is not defined
 [SQL: INSERT INTO articoli (nome, brand, immagine, colore, materiale, keywords, termini_commerciali, condizioni, rarita, vintage, target, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
 [parameters: [{'condizioni': 'Ottime', 'keywords': 'borsa, speedy, monogram, classica', 'nome': 'Borsa Speedy 30', 'materiale': 'Canvas Monogram', 'target': 'Donna' ... (10 characters truncated) ... _commerciali': 'autentica, vintage, collezione', 'rarita': 'Comune', 'vintage': True, 'brand': 'Louis Vuitton', 'colore': 'Marrone', 'immagine': None}, {'condizioni': 'Eccellenti', 'keywords': 'sciarpa, cashmere, elegante', 'nome': 'Sciarpa Cashmere', 'materiale': 'Cashmere', 'target': 'Unisex', 'termini_commerciali': 'lusso, artigianale, francese', 'rarita': 'Raro', 'vintage': False, 'brand': 'Hermès', 'colore': 'Blu Navy', 'immagine': None}, {'condizioni': 'Eccellenti', 'keywords': 'orologio, submariner, diving, automatico', 'nome': 'Orologio Submariner', 'materiale': 'Acciaio Inossidabile ... (27 characters truncated) ... ni_commerciali': 'investimento, collezione, svizzero', 'rarita': 'Molto Raro', 'vintage': False, 'brand': 'Rolex', 'colore': 'Nero', 'immagine': None}, {'condizioni': 'Buone', 'keywords': 'sneakers, jordan, basketball, retro', 'nome': 'Sneakers Air Jordan 1', 'materiale': 'Pelle', 'target': 'Unisex',  ... (10 characters truncated) ... ommerciali': 'limited edition, streetwear, iconica', 'rarita': 'Raro', 'vintage': True, 'brand': 'Nike', 'colore': 'Rosso e Bianco', 'immagine': None}, {'condizioni': 'Eccellenti', 'keywords': 'giacca, blazer, elegante, formale', 'nome': 'Giacca Blazer', 'materiale': 'Tweed', 'target': 'Donna', 'termi ... (2 characters truncated) ... _commerciali': 'haute couture, parigina, sartoriale', 'rarita': 'Molto Raro', 'vintage': False, 'brand': 'Chanel', 'colore': 'Nero', 'immagine': None}]]
+2025-06-12 17:09:28,698 - app - INFO - 🔧 Usando URL Supabase hardcoded per test
+2025-06-12 17:09:28,810 - app - INFO - 🔄 Tentativo connessione Supabase 1/3...
+2025-06-12 17:10:58,842 - app - WARNING - ❌ Tentativo 1 fallito: (psycopg2.OperationalError) connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.30.239), port 6543 failed: timeout expired
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-12 17:10:59,854 - app - INFO - 🔄 Tentativo connessione Supabase 2/3...
+2025-06-12 17:12:29,870 - app - WARNING - ❌ Tentativo 2 fallito: (psycopg2.OperationalError) connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.30.239), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: timeout expired
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-12 17:12:31,874 - app - INFO - 🔄 Tentativo connessione Supabase 3/3...
+2025-06-12 17:14:01,889 - app - WARNING - ❌ Tentativo 3 fallito: (psycopg2.OperationalError) connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.30.239), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: timeout expired
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-12 17:14:01,891 - app - ERROR - ❌ Errore connessione Supabase dopo 3 tentativi: (psycopg2.OperationalError) connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.30.239), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (18.198.145.223), port 6543 failed: timeout expired
+connection to server at "aws-0-eu-central-1.pooler.supabase.com" (52.59.152.35), port 6543 failed: timeout expired
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-12 17:14:01,892 - app - ERROR - 💥 FORCE_SUPABASE attivo - non uso fallback SQLite
