@@ -9,20 +9,21 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --danger-color: #e74c3c;
-            --light-bg: #f8f9fa;
-            --dark-text: #2c3e50;
+            --primary-color: #1a1a1a;
+            --secondary-color: #4a4a4a;
+            --success-color: #6b7280;
+            --warning-color: #9ca3af;
+            --danger-color: #6b7280;
+            --light-bg: #fafafa;
+            --dark-text: #1a1a1a;
+            --accent-color: #d1d5db;
             --border-radius: 8px;
-            --box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --box-shadow: 0 2px 16px rgba(0,0,0,0.06);
             --transition: all 0.3s ease;
         }
 
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #fafafa 0%, #f3f4f6 100%);
             min-height: 100vh;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             color: var(--dark-text);
@@ -91,7 +92,7 @@
 
         .form-control:focus, .form-select:focus {
             border-color: var(--secondary-color);
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+            box-shadow: 0 0 0 0.2rem rgba(74, 74, 74, 0.15);
         }
 
         .form-label {
@@ -121,7 +122,7 @@
         }
 
         .btn-primary:hover {
-            background: #2980b9;
+            background: #333333;
         }
 
         .btn-success {
@@ -234,13 +235,13 @@
         }
 
         .stats-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            border: 1px solid #e9ecef;
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            border: 1px solid #e5e7eb;
             border-radius: var(--border-radius);
             padding: 30px 20px;
             text-align: center;
             margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
             transition: var(--transition);
             position: relative;
             overflow: hidden;
@@ -252,13 +253,13 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 2px;
             background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
         }
 
         .stats-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
         .stats-card h3 {
@@ -274,7 +275,7 @@
         }
 
         .articolo-card {
-            border: 1px solid #e9ecef;
+            border: 1px solid #e5e7eb;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
             transition: var(--transition);
@@ -284,8 +285,9 @@
         }
 
         .articolo-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border-color: #d1d5db;
         }
 
         .articolo-card .card-body {
@@ -404,11 +406,11 @@
             margin-right: 8px;
         }
 
-        .bg-gradient-elegante { background: #6c757d; color: white; }
-        .bg-gradient-emotivo { background: #e74c3c; color: white; }
-        .bg-gradient-amichevole { background: #f39c12; color: white; }
-        .bg-gradient-professionale { background: #17a2b8; color: white; }
-        .bg-gradient-esclusivo { background: #6f42c1; color: white; }
+        .bg-gradient-elegante { background: #4b5563; color: white; }
+        .bg-gradient-emotivo { background: #6b7280; color: white; }
+        .bg-gradient-amichevole { background: #9ca3af; color: white; }
+        .bg-gradient-professionale { background: #374151; color: white; }
+        .bg-gradient-esclusivo { background: #1f2937; color: white; }
 
         @media (max-width: 768px) {
             .main-container {
@@ -481,16 +483,36 @@
 
         /* Footer Brand Styles */
         .footer-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: linear-gradient(135deg, #fafafa 0%, #f3f4f6 100%);
             border-radius: var(--border-radius);
             margin: 20px -32px -32px -32px;
             padding: 32px !important;
         }
 
-        /* Instagram link minimal styling */
-        .footer-section a:hover {
-            color: #6c757d !important;
+        .footer-section h6 {
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-section .btn-outline-secondary {
+            border-color: #6c757d;
+            color: #6c757d;
+            font-size: 0.85rem;
+            padding: 0.375rem 0.75rem;
+        }
+
+        .footer-section .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+            transform: translateY(-1px);
             transition: var(--transition);
+        }
+
+        @media (max-width: 768px) {
+            .footer-section .btn-outline-secondary .d-none {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -501,22 +523,22 @@
             <h1 class="display-5 fw-bold text-dark mb-3">
                 Preloved Vintage & Modern
             </h1>
-            <p class="lead text-muted">Gestionale per articoli di lusso amati e curati con passione</p>
+            <p class="lead text-muted">Gestionale professionale per articoli di lusso preloved autentici</p>
         </div>
 
         <!-- Statistiche -->
         <div class="row mb-5" id="statsSection">
             <div class="col-md-6 col-lg-4 offset-lg-2 mb-3">
                 <div class="stats-card text-center">
-                    <i class="fas fa-box-open text-primary mb-2" style="font-size: 2rem;"></i>
-                    <h3 id="totalArticoli" class="fw-bold text-primary">0</h3>
+                    <i class="fas fa-box-open text-secondary mb-2" style="font-size: 2rem;"></i>
+                    <h3 id="totalArticoli" class="fw-bold text-dark">0</h3>
                     <p class="text-muted mb-0">Totale Articoli</p>
                 </div>
             </div>
             <div class="col-md-6 col-lg-4 mb-3">
                 <div class="stats-card text-center">
-                    <i class="fas fa-tags text-success mb-2" style="font-size: 2rem;"></i>
-                    <h3 id="totalBrands" class="fw-bold text-success">0</h3>
+                    <i class="fas fa-tags text-secondary mb-2" style="font-size: 2rem;"></i>
+                    <h3 id="totalBrands" class="fw-bold text-dark">0</h3>
                     <p class="text-muted mb-0">Brand Presenti</p>
                 </div>
             </div>
@@ -1398,35 +1420,51 @@
     </script>
 
     <!-- Footer Brand -->
-    <footer class="footer-section mt-5 pt-4 border-top text-center">
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <h6 class="fw-bold text-dark mb-2">
+    <footer class="footer-section mt-5 pt-4 border-top">
+        <div class="row text-center text-md-start">
+            <div class="col-md-4 mb-3">
+                <h6 class="fw-bold text-dark mb-3">
                     Preloved Vintage & Modern
                 </h6>
-                <p class="small text-muted mb-0">
-                    Articoli di lusso amati e curati con passione.<br>
-                    Ogni pezzo racconta una storia unica.
+                <p class="small text-muted mb-0 lh-base">
+                    Specializzati nella vendita di capi e accessori di lusso autentici preloved, 
+                    selezionati con attenzione per offrire il massimo della qualità e dello stile.
                 </p>
             </div>
-            <div class="col-md-6 mb-3">
-                <h6 class="fw-bold text-dark mb-2">
+            <div class="col-md-4 mb-3">
+                <h6 class="fw-bold text-dark mb-3">
                     La Nostra Missione
                 </h6>
-                <p class="small text-muted mb-0">
-                    Diamo nuova vita agli articoli di lusso vintage e moderni,<br>
-                    creando valore per chi li ama e per l'ambiente.
+                <p class="small text-muted mb-0 lh-base">
+                    Promuovere un approccio sostenibile alla moda, dando nuova vita 
+                    a pezzi iconici senza tempo che rappresentano l'eleganza eterna.
                 </p>
             </div>
+            <div class="col-md-4 mb-3">
+                <h6 class="fw-bold text-dark mb-3">
+                    Seguici Online
+                </h6>
+                <div class="d-flex justify-content-center justify-content-md-start align-items-center">
+                    <a href="https://it.vestiairecollective.com/profile/29517320/" target="_blank" 
+                       class="btn btn-outline-secondary btn-sm me-2" 
+                       title="Vintage and Modern su Vestiaire Collective">
+                        <i class="fas fa-shopping-bag me-1"></i>
+                        <span class="d-none d-lg-inline">Vestiaire</span>
+                    </a>
+                    <a href="https://www.instagram.com/preloved_vintage_and_modern/" target="_blank" 
+                       class="btn btn-outline-secondary btn-sm" 
+                       title="Seguici su Instagram">
+                        <i class="fab fa-instagram me-1"></i>
+                        <span class="d-none d-lg-inline">Instagram</span>
+                    </a>
+                </div>
+            </div>
         </div>
-        <hr class="my-3">
-        <div class="d-flex justify-content-between align-items-center">
+        <hr class="my-4">
+        <div class="text-center">
             <p class="small text-muted mb-0">
                 © 2025 Preloved Vintage & Modern - Sistema di gestione articoli di lusso
             </p>
-            <a href="https://www.instagram.com/preloved_vintage_and_modern/" target="_blank" class="text-muted">
-                <i class="fab fa-instagram" style="font-size: 1.2rem;"></i>
-            </a>
         </div>
     </footer>
 
