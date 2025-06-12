@@ -234,19 +234,31 @@
         }
 
         .stats-card {
-            background: white;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             border: 1px solid #e9ecef;
             border-radius: var(--border-radius);
-            padding: 20px;
+            padding: 30px 20px;
             text-align: center;
             margin-bottom: 20px;
-            box-shadow: var(--box-shadow);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
         }
 
         .stats-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
         }
 
         .stats-card h3 {
@@ -471,33 +483,36 @@
 <body>
     <div class="main-container">
         <!-- Header migliorato -->
-        <div class="header-section">
-            <h1>Gestionale Articoli di Lusso</h1>
-            <p>Sistema professionale per la gestione e promozione di articoli di lusso</p>
+        <div class="header-section text-center mb-5">
+            <h1 class="display-5 fw-bold text-dark mb-3">
+                <i class="fas fa-gem text-warning me-3"></i>
+                Gestionale Articoli di Lusso
+            </h1>
+            <p class="lead text-muted">Sistema professionale per la gestione e promozione di articoli di lusso</p>
         </div>
 
         <!-- Statistiche -->
-        <div class="row mb-4" id="statsSection">
-            <div class="col-md-3 col-6">
-                <div class="stats-card">
-                    <h3 id="totalArticoli">0</h3>
-                    <p>Totale Articoli</p>
+        <div class="row mb-5" id="statsSection">
+            <div class="col-md-6 col-lg-4 offset-lg-2 mb-3">
+                <div class="stats-card text-center">
+                    <i class="fas fa-box-open text-primary mb-2" style="font-size: 2rem;"></i>
+                    <h3 id="totalArticoli" class="fw-bold text-primary">0</h3>
+                    <p class="text-muted mb-0">Totale Articoli</p>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stats-card">
-                    <h3 id="totalBrands">0</h3>
-                    <p>Brand Presenti</p>
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="stats-card text-center">
+                    <i class="fas fa-tags text-success mb-2" style="font-size: 2rem;"></i>
+                    <h3 id="totalBrands" class="fw-bold text-success">0</h3>
+                    <p class="text-muted mb-0">Brand Presenti</p>
                 </div>
             </div>
-
-
         </div>
 
         <!-- Form migliorato per nuovo articolo -->
-        <div class="form-card card">
-            <div class="card-header">
-                <h5><i class="fas fa-plus"></i> <span id="formTitle">Nuovo Articolo</span></h5>
+        <div class="form-card card shadow-sm mb-5">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-plus me-2"></i> <span id="formTitle">Nuovo Articolo</span></h5>
             </div>
             <div class="card-body">
                 <form id="articoloForm" enctype="multipart/form-data">
@@ -1120,15 +1135,15 @@
             if (brands.length === 0) return;
             
             const title = document.createElement('h4');
-            title.className = 'mb-4 text-primary';
-            title.textContent = 'Seleziona un Brand';
+            title.className = 'mb-4 text-center text-primary fw-bold';
+            title.innerHTML = '<i class="fas fa-tags me-2"></i>Seleziona un Brand';
             brandSection.appendChild(title);
             
             brands.forEach((brand, index) => {
                 const btn = document.createElement('button');
-                btn.className = 'btn btn-outline-dark brand-btn animate__animated animate__fadeInUp';
+                btn.className = 'btn btn-outline-primary brand-btn animate__animated animate__fadeInUp shadow-sm';
                 btn.style.animationDelay = `${index * 0.1}s`;
-                btn.innerHTML = `<strong>${brand}</strong><br><small>${articoli.filter(a => a.brand === brand).length} articoli</small>`;
+                btn.innerHTML = `<strong class="text-dark">${brand}</strong><br><small class="text-muted">${articoli.filter(a => a.brand === brand).length} articoli</small>`;
                 btn.onclick = () => {
                     brandSelezionato = brand;
                     const articoliBrand = articoliGlobal.filter(a => a.brand === brand);
