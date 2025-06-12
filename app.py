@@ -264,16 +264,24 @@ def riconosci_tipo_articolo(nome: str) -> str:
     nome_lower = nome.lower()
     
     # CONTROLLO DIRETTO per tipi principali (priorità massima - ESPANSO)
-    if 'orologio' in nome_lower:
+    if 'orologio' in nome_lower or 'watch' in nome_lower:
         return 'orologio'
-    if 'portafoglio' in nome_lower:
+    if 'portafoglio' in nome_lower or 'wallet' in nome_lower:
         return 'portafoglio'
+    if 'bracciale' in nome_lower or 'bracelet' in nome_lower or 'love' in nome_lower:  # NUOVO
+        return 'bracciale'
+    if 'cintura' in nome_lower or 'belt' in nome_lower or 'cinta' in nome_lower:  # NUOVO
+        return 'cintura'
+    if 'collana' in nome_lower or 'necklace' in nome_lower or 'chain' in nome_lower:  # NUOVO
+        return 'collana'
     if 'borsa' in nome_lower or 'bag' in nome_lower:
         return 'borsa'
-    if 'scarpa' in nome_lower or 'scarpe' in nome_lower:
+    if 'scarpa' in nome_lower or 'scarpe' in nome_lower or 'sneakers' in nome_lower or 'stivali' in nome_lower:
         return 'scarpe'
-    if 'giacca' in nome_lower or 'blazer' in nome_lower or 'jacket' in nome_lower:
+    if 'giacca' in nome_lower or 'blazer' in nome_lower or 'jacket' in nome_lower or 'cappotto' in nome_lower or 'trench' in nome_lower:
         return 'giacca'
+    if 'piumino' in nome_lower or 'down' in nome_lower or 'giubbotto' in nome_lower:  # NUOVO
+        return 'piumino'
     if 'anello' in nome_lower or 'ring' in nome_lower:
         return 'anello'
     if 'felpa' in nome_lower or 'hoodie' in nome_lower or 'sweatshirt' in nome_lower:
@@ -1074,7 +1082,7 @@ def _pulisci_messaggio_vestiaire_migliorato(messaggio: str, brand: str, nome_pul
         (rf'\b{re.escape(brand)}\s+ricercata\b' if genere_prodotto == 'm' else 'SKIP', f'{brand} ricercato', re.IGNORECASE),
         (rf'\b{re.escape(brand)}\s+bellissima\b' if genere_prodotto == 'm' else 'SKIP', f'{brand} bellissimo', re.IGNORECASE),
         
-        # Forme aggettivali tronche (MIGLIORATO)
+        # Forme aggettivali tronche (MIGLIORATO) - CORREZIONI PRIORITARIE
         (r'\bbellissim\b', 'bellissimo' if genere_prodotto == 'm' else 'bellissima', 0),
         (r'\brarissim\b', 'rarissimo' if genere_prodotto == 'm' else 'rarissima', 0),
         (r'\bricercat\b', 'ricercato' if genere_prodotto == 'm' else 'ricercata', 0),
@@ -1088,6 +1096,17 @@ def _pulisci_messaggio_vestiaire_migliorato(messaggio: str, brand: str, nome_pul
         (r'\bintirissanti\b', 'interessanti', 0),  # correzione typo plurale
         (r'\bspecial\b', 'speciale', 0),
         
+        # CORREZIONI SPECIFICHE PER ERRORI RILEVATI NEI TEST
+        (r'\binteressante\s+(\w+)\s+interessant\b', lambda m: f'interessanti {m.group(1)}', re.IGNORECASE),  # plurale
+        (r'\binteressant\s+(\w+)\b', lambda m: f'interessante {m.group(1)}', re.IGNORECASE),  # singolare
+        (r'\bun\'\s+interessant\s+(\w+)\b', lambda m: f'un interessante {m.group(1)}', re.IGNORECASE),
+        
+        # CORREZIONI AGGRESSIVE PER ERRORI TEST (priorità massima)
+        (r'\bun\'\s+interessante\s+(\w+)\b', lambda m: f'degli interessanti {m.group(1)}' if m.group(1) == 'occhiali' else f'un interessante {m.group(1)}', re.IGNORECASE),
+        (r'\buna\s+interessante\s+(\w+)\b', lambda m: f'una interessante {m.group(1)}', re.IGNORECASE),
+        (r'\buna\s+bellissimo\s+(\w+)\b', lambda m: f'una bellissima {m.group(1)}', re.IGNORECASE),
+        (r'\bè una\s+bellissimo\s+(\w+)\b', lambda m: f'è una bellissima {m.group(1)}', re.IGNORECASE),
+        
         # CORREZIONI ARTICOLI SPECIFICHE per "articolo" e "occhiali" 
         (r'\buna\s+(bellissima?|splendida?|speciale|ottima?|rara?|particolare|meravigliosa?)\s+(articolo|borsa|giacca|felpa|camicia)\b', 
          lambda m: f"un{'a' if m.group(2) in ['borsa', 'giacca', 'felpa', 'camicia'] else ''} {concordanza_aggettivo(m.group(1), 'f' if m.group(2) in ['borsa', 'giacca', 'felpa', 'camicia'] else 'm')} {m.group(2)}", re.IGNORECASE),
@@ -1099,7 +1118,9 @@ def _pulisci_messaggio_vestiaire_migliorato(messaggio: str, brand: str, nome_pul
         (r'\bè un\'\s+occhiali\b', 'sono degli occhiali', re.IGNORECASE),
         (r'\bè un\'\s+(\w+)\s+occhiali\b', lambda m: f'sono degli {m.group(1)} occhiali', re.IGNORECASE),
         (r'\bocchiali\s+\w+\s+perfetto\b', lambda m: m.group(0).replace('perfetto', 'perfetti'), re.IGNORECASE),
-        (r'\bsono\s+degli\s+(\w+)\s+occhiali\b', lambda m: f'sono degli occhiali {m.group(1)}' if m.group(1) in ['splendidi', 'perfetti', 'bellissimi'] else m.group(0), re.IGNORECASE),
+        (r'\bsono\s+degli\s+(\w+)\s+occhiali\b', lambda m: f'sono degli occhiali {m.group(1)}' if m.group(1) in ['splendidi', 'perfetti', 'bellissimi', 'splendido', 'perfetto', 'bellissimo'] else m.group(0), re.IGNORECASE),
+        (r'\bdegli\s+(splendid[oi]|perfett[oi]|bellissim[oi])\s+occhiali\b', lambda m: f"degli occhiali {m.group(1).replace('o', 'i')}", re.IGNORECASE),
+        (r'\bocchiali\s+(splendido|perfetto|bellissimo)\b', lambda m: f"occhiali {m.group(1).replace('o', 'i')}", re.IGNORECASE),
         (r'\bun\'\s+perfetto\s+anello\b', 'un perfetto anello', re.IGNORECASE),
         (r'\bun\'\s+anello\s+(\w+)\s+perfetto\b', lambda m: f'un anello {m.group(1)} perfetto', re.IGNORECASE),
         (r'\buna particolar articolo\b', 'un particolare articolo', 0),
@@ -1297,18 +1318,7 @@ def _get_articolo_indeterminativo_corretto(genere: str, tipo: str) -> str:
 # SISTEMA CACHE PER MESSAGGI (semplificato)
 # ===============================
 
-# Mantieni retrocompatibilità per funzioni deprecate ma ancora chiamate
-def _costruisci_ringraziamento_like() -> str:
-    """Versione legacy - usa la versione pesata"""
-    return _costruisci_ringraziamento_like_pesato()
-
-def _costruisci_offerta_personalizzata() -> str:
-    """Versione legacy - usa la versione pesata"""
-    return _costruisci_offerta_personalizzata_pesata()
-
-def _costruisci_chiusura_cortese() -> str:
-    """Versione legacy - usa la versione pesata"""
-    return _costruisci_chiusura_cortese_pesata()
+# FUNZIONI LEGACY RIMOSSE - SI USANO SOLO QUELLE PESATE
 
 # ===============================
 # MANTIENI COMPATIBILITÀ BACKWARD - RIMOSSE FUNZIONI SUPERFLUE
@@ -1320,19 +1330,23 @@ def pulisci_cache_frasi():
     MESSAGGI_RECENTI_CACHE.clear()
     logger.info("Cache messaggi recenti pulita - memoria liberata")
 
-def _get_articolo_determinativo(genere: str, tipo: str) -> str:
-    """Ottiene l'articolo determinativo corretto"""
-    if genere == 'f':
-        return 'la' if tipo != 'scarpe' else 'le'
+def get_articolo_unificato(genere: str, tipo: str, determinativo: bool = True) -> str:
+    """FUNZIONE UNIFICATA per articoli determinativi e indeterminativi - OTTIMIZZATA"""
+    if determinativo:
+        if genere == 'f':
+            return 'la' if tipo not in ['scarpe', 'borse'] else 'le'
+        return 'il' if tipo not in ['pantaloni', 'occhiali'] else 'gli'
     else:
-        return 'il' if tipo not in ['pantaloni'] else 'i'
+        if genere == 'f':
+            return 'una' if tipo not in ['scarpe', 'borse'] else 'delle'
+        return 'un' if tipo not in ['pantaloni', 'occhiali'] else 'degli'
+
+# COMPATIBILITÀ LEGACY (da rimuovere gradualmente)
+def _get_articolo_determinativo(genere: str, tipo: str) -> str:
+    return get_articolo_unificato(genere, tipo, True)
 
 def _get_articolo_indeterminativo(genere: str, tipo: str) -> str:
-    """Ottiene l'articolo indeterminativo corretto"""
-    if genere == 'f':
-        return 'una' if tipo != 'scarpe' else 'delle'
-    else:
-        return 'un' if tipo not in ['pantaloni'] else 'dei'
+    return get_articolo_unificato(genere, tipo, False)
 
 # ===============================
 # ROUTES OTTIMIZZATE
