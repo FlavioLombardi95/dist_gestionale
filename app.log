@@ -820,3 +820,52 @@
 2025-06-12 15:46:42,308 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
 2025-06-12 15:46:42,323 - werkzeug - WARNING -  * Debugger is active!
 2025-06-12 15:46:42,337 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 15:52:17,096 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 15:52:17,251 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 15:52:18,126 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 15:52:18,172 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 15:52:18,177 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 15:52:18,200 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 15:52:18,217 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 15:52:28,314 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 15:52:28,470 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 15:52:29,167 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 15:52:29,207 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 15:52:29,213 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 15:52:29,229 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 15:52:29,241 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 15:52:43,395 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 15:52:43,667 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 15:52:45,093 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 15:52:45,159 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 15:52:45,168 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 15:52:45,201 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 15:52:45,217 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 15:53:04,479 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 15:53:04,644 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 15:53:05,689 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 15:53:05,850 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 15:53:05,860 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 15:53:05,893 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 15:53:05,924 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 15:53:07,964 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 15:53:08,074 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 15:53:08,776 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 15:53:08,907 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 15:53:08,912 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 15:53:08,930 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 15:53:08,945 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 15:53:28,097 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 15:53:28,335 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 15:53:29,222 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 15:53:29,265 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 15:53:29,271 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 15:53:29,291 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 15:53:29,307 - werkzeug - INFO -  * Debugger PIN: 381-560-159
+2025-06-12 15:53:31,343 - werkzeug - INFO -  * Detected change in '/Users/flavio.lombardi/Desktop/Gestionale/app.py', reloading
+2025-06-12 15:53:31,449 - werkzeug - INFO -  * Restarting with stat
+2025-06-12 15:53:32,112 - __main__ - INFO - 🔗 Usando SQLite locale per sviluppo
+2025-06-12 15:53:32,148 - __main__ - INFO - Database di sviluppo inizializzato
+2025-06-12 15:53:32,154 - __main__ - INFO - 🚀 Avvio applicazione su porta 3000 (debug: True)
+2025-06-12 15:53:32,168 - werkzeug - WARNING -  * Debugger is active!
+2025-06-12 15:53:32,180 - werkzeug - INFO -  * Debugger PIN: 381-560-159

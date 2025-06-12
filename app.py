@@ -28,28 +28,56 @@ app = Flask(__name__)
 # ===============================
 
 def configure_database():
-    """Configura la connessione al database"""
+    """Configura la connessione al database con fallback automatico"""
     DATABASE_URL = os.environ.get('DATABASE_URL')
     
     if DATABASE_URL:
-        # Produzione: Supabase PostgreSQL
-        if 'supabase.co' in DATABASE_URL and 'sslmode' not in DATABASE_URL:
-            DATABASE_URL += '?sslmode=require'
-        
-        if DATABASE_URL.startswith('postgres://'):
-            DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
-        
-        app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
-        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-            'pool_pre_ping': True,
-            'pool_recycle': 300,
-            'pool_size': 3,        # Ridotto da 10 a 3
-            'max_overflow': 5,     # Ridotto da 20 a 5
-            'pool_timeout': 20,    # Timeout per ottenere connessione
-            'pool_reset_on_return': 'commit',
-            'connect_args': {'sslmode': 'require'}
-        }
-        logger.info("🔗 Connesso a Supabase PostgreSQL")
+        try:
+            # Produzione: Supabase PostgreSQL
+            if 'supabase.co' in DATABASE_URL and 'sslmode' not in DATABASE_URL:
+                DATABASE_URL += '?sslmode=require'
+            
+            if DATABASE_URL.startswith('postgres://'):
+                DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+            
+            app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+            app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+                'pool_pre_ping': True,
+                'pool_recycle': 180,   # Ridotto da 300 a 180s
+                'pool_size': 1,        # DRASTICO: solo 1 connessione base
+                'max_overflow': 2,     # DRASTICO: max 3 connessioni totali
+                'pool_timeout': 10,    # Timeout ridotto a 10s
+                'pool_reset_on_return': 'commit',
+                'pool_checkout_timeout': 10,
+                'connect_args': {
+                    'sslmode': 'require',
+                    'connect_timeout': 10,
+                    'application_name': 'gestionale_vintage'
+                }
+            }
+            
+            # Test connessione immediato
+            from sqlalchemy import create_engine
+            test_engine = create_engine(DATABASE_URL, **app.config['SQLALCHEMY_ENGINE_OPTIONS'])
+            test_conn = test_engine.connect()
+            test_conn.close()
+            test_engine.dispose()
+            
+            logger.info("🔗 Connesso a Supabase PostgreSQL (testato)")
+            
+        except Exception as e:
+            logger.error(f"❌ Errore connessione Supabase: {e}")
+            logger.warning("🔄 Fallback a SQLite per alta disponibilità")
+            
+            # FALLBACK: SQLite in produzione per alta disponibilità
+            app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gestionale_production.db'
+            app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+                'pool_pre_ping': True,
+                'pool_recycle': 3600,
+                'pool_size': 5,
+                'max_overflow': 10
+            }
+            logger.info("🔗 Usando SQLite di emergenza in produzione")
     else:
         # Sviluppo: SQLite locale
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gestionale.db'
@@ -230,17 +258,59 @@ def after_request(response):
         db.session.close()
     return response
 
-def retry_db_operation(func, max_retries=3, delay=1):
-    """Retry automatico per operazioni database con backoff esponenziale"""
+# Circuit Breaker per Supabase
+SUPABASE_CIRCUIT_BREAKER = {
+    'failures': 0,
+    'last_failure': 0,
+    'threshold': 5,  # Dopo 5 fallimenti consecutivi
+    'timeout': 300   # Aspetta 5 minuti prima di riprovare
+}
+
+def is_circuit_open():
+    """Controlla se il circuit breaker è aperto"""
+    if SUPABASE_CIRCUIT_BREAKER['failures'] >= SUPABASE_CIRCUIT_BREAKER['threshold']:
+        if time.time() - SUPABASE_CIRCUIT_BREAKER['last_failure'] < SUPABASE_CIRCUIT_BREAKER['timeout']:
+            return True
+        else:
+            # Reset dopo timeout
+            SUPABASE_CIRCUIT_BREAKER['failures'] = 0
+    return False
+
+def record_failure():
+    """Registra un fallimento nel circuit breaker"""
+    SUPABASE_CIRCUIT_BREAKER['failures'] += 1
+    SUPABASE_CIRCUIT_BREAKER['last_failure'] = time.time()
+    logger.warning(f"Circuit breaker: {SUPABASE_CIRCUIT_BREAKER['failures']} fallimenti")
+
+def record_success():
+    """Registra un successo (reset circuit breaker)"""
+    SUPABASE_CIRCUIT_BREAKER['failures'] = 0
+
+def retry_db_operation(func, max_retries=2, delay=0.5):
+    """Retry automatico per operazioni database con circuit breaker"""
+    
+    # Se circuit breaker è aperto, fallisci immediatamente
+    if is_circuit_open():
+        logger.warning("Circuit breaker aperto - operazione saltata")
+        raise Exception("Database temporaneamente non disponibile")
+    
     for attempt in range(max_retries):
         try:
-            return func()
+            result = func()
+            record_success()  # Reset circuit breaker su successo
+            return result
+            
         except (OperationalError, DisconnectionError) as e:
-            if "Max client connections reached" in str(e) or "connection" in str(e).lower():
+            error_msg = str(e).lower()
+            
+            if "max client connections reached" in error_msg or "connection" in error_msg:
+                record_failure()
+                
                 if attempt < max_retries - 1:
                     wait_time = delay * (2 ** attempt)  # Backoff esponenziale
                     logger.warning(f"Tentativo {attempt + 1} fallito, retry tra {wait_time}s: {e}")
                     time.sleep(wait_time)
+                    
                     # Forza chiusura connessioni
                     try:
                         db.session.close()
@@ -252,8 +322,11 @@ def retry_db_operation(func, max_retries=3, delay=1):
                     logger.error(f"Tutti i {max_retries} tentativi falliti: {e}")
                     raise
             else:
+                record_failure()
                 raise
+                
         except Exception as e:
+            record_failure()
             logger.error(f"Errore non recuperabile: {e}")
             raise
 
@@ -1475,7 +1548,32 @@ def service_worker():
 @app.route('/static/manifest.json')
 def manifest():
     """Manifest per PWA"""
-    return app.send_static_file('manifest.json'), 200, {'Content-Type': 'application/json'}
+    return app.send_static_file('manifest.json')
+
+@app.route('/health')
+def health_check():
+    """Health check per monitoraggio sistema"""
+    try:
+        # Test connessione database
+        db.session.execute('SELECT 1')
+        db_status = "OK"
+        db_type = "PostgreSQL" if "postgresql" in str(db.engine.url) else "SQLite"
+    except Exception as e:
+        db_status = f"ERROR: {str(e)[:100]}"
+        db_type = "UNKNOWN"
+    
+    circuit_status = "OPEN" if is_circuit_open() else "CLOSED"
+    
+    return jsonify({
+        'status': 'OK' if db_status == 'OK' else 'DEGRADED',
+        'database': {
+            'status': db_status,
+            'type': db_type,
+            'circuit_breaker': circuit_status,
+            'failures': SUPABASE_CIRCUIT_BREAKER['failures']
+        },
+        'timestamp': datetime.utcnow().isoformat()
+    }), 200, {'Content-Type': 'application/json'}
 
 @app.route('/api/articoli', methods=['GET'])
 @handle_errors
