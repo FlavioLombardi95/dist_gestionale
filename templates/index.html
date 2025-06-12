@@ -490,18 +490,8 @@
                     <p>Brand Presenti</p>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="stats-card">
-                    <h3 id="frasiGenerate">0</h3>
-                    <p>Frasi Generate</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="stats-card">
-                    <h3 id="articoliVintage">0</h3>
-                    <p>Articoli Vintage</p>
-                </div>
-            </div>
+
+
         </div>
 
         <!-- Form migliorato per nuovo articolo -->
@@ -759,7 +749,7 @@
     <script>
         let articoliGlobal = [];
         let brandSelezionato = null;
-        let frasiGenerateCount = 0;
+
 
         // Configurazione animazioni
         const animationConfig = {
@@ -807,32 +797,17 @@
         async function updateStats(articoli) {
             const totalArticoli = articoli.length;
             const totalBrands = [...new Set(articoli.map(a => a.brand))].length;
-            const articoliVintage = articoli.filter(a => a.vintage).length;
+            
             
             // Statistiche frasi semplificate (endpoint rimosso)
-            frasiGenerateCount = articoli.filter(a => a.keywords && a.keywords.length > 0).length;
+            
             
             // Animazione contatori
-            animateCounter('totalArticoli', totalArticoli);
-            animateCounter('totalBrands', totalBrands);
-            animateCounter('frasiGenerate', frasiGenerateCount);
-            animateCounter('articoliVintage', articoliVintage);
+                          animateCounter('totalArticoli', totalArticoli);
+              animateCounter('totalBrands', totalBrands);
         }
 
-        function showAdvancedFraseStats(stats) {
-            // Aggiungi tooltip avanzato alla statistica frasi
-            const frasiElement = document.getElementById('frasiGenerate');
-            if (frasiElement && stats.stats_stili) {
-                const stiliInfo = Object.entries(stats.stats_stili)
-                    .map(([stile, count]) => `${stile}: ${count}`)
-                    .join(', ');
-                
-                frasiElement.parentElement.title = 
-                    `Frasi per stile: ${stiliInfo}\n` +
-                    `Articoli attivi: ${stats.total_articoli_con_frasi}\n` +
-                    `Algoritmo ottimizzato attivo`;
-            }
-        }
+
 
         function animateCounter(elementId, targetValue) {
             const element = document.getElementById(elementId);
@@ -895,7 +870,6 @@
                     }
                 });
                 
-                frasiGenerateCount++;
                 updateStats(articoliGlobal);
                 showAlert('Messaggio generato con successo!', 'success');
                 
